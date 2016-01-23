@@ -16,7 +16,8 @@ Breakdown of the above command:
 
 1. `push` what we're going to do, can be either `push` or `pull`
 2. `-d` the "dry run" flag for Rsync. If using `-d` will execute a dry run and no files will actually be copied. To issue a live run use the `-l` flag instead
-3. What to push/pull. Options are
+3. The environment to push/pull to/fro
+4. What to push/pull. Options are
   1. `all` for everything (doesn't include database; for files only)
   2. `uploads` for the upload directories (both user defined and **images/uploads**)
   3. `templates` for the **system/user/templates** directory
