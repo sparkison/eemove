@@ -135,26 +135,25 @@ public class ConfigReader implements EEExtras {
 								}
 							}
 						}
-						/*
-						 * We've got all of our config vars, create the EEconfig
-						 * object and add to hashmap
-						 */
-						configVars.put(environment, new EEconfig(environment, host, directory, user, pass, port, db,
-								dbUser, dbPass, dbHost, dbPort));
-
-						// Clear out the variables just to be safe
-						environment = "";
-						directory = "";
-						user = "";
-						pass = "";
-						port = "22"; // Set a default port
-						db = "";
-						dbUser = "";
-						dbPass = "";
-						dbHost = "";
-						dbPort = "3306"; // Set a default port
-
 					}
+					/*
+					 * We've got all of our config vars, create the EEconfig
+					 * object and add to hashmap
+					 */
+					configVars.put(environment, new EEconfig(environment, host, directory, user, pass, port, db,
+							dbUser, dbPass, dbHost, dbPort));
+
+					// Clear out the variables just to be safe
+					environment = "";
+					directory = "";
+					user = "";
+					pass = "";
+					port = "22"; // Set a default port
+					db = "";
+					dbUser = "";
+					dbPass = "";
+					dbHost = "";
+					dbPort = "3306"; // Set a default port
 				}
 
 			}

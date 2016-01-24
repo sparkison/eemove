@@ -55,9 +55,9 @@ public class EEPushPull implements EEExtras{
 			dryRun = "--dry-run";
 		String rsyncCommand = "";
 		if(type.equals("push"))
-			rsyncCommand = "rsync -rvP " + dryRun + " -e \"ssh -p " + config.getSshPort() + "\" --exclude-from=" + EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+			rsyncCommand = "rsync -rvP " + dryRun + " -e \"ssh -p " + config.getSshPort() + "\" --exclude-from=\"" + EEExtras.CWD + "/eemove.ignore\" \"" + src + "\" " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync -rvP " + dryRun + " -e \"ssh -p " + config.getSshPort() + "\" --exclude-from=" + EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+			rsyncCommand = "rsync -rvP " + dryRun + " -e \"ssh -p " + config.getSshPort() + "\" --exclude-from=\"" + EEExtras.CWD + "/eemove.ignore\" " + user + "@" + host + ":" + dest + " \"" + src + "\"";
 			
 		/*
 		 * Create temp file so we can use exec command
