@@ -78,7 +78,9 @@ public class EEMove implements EEExtras {
 	}
 
 	/*
-	 * Start working!
+	 * Start working! 
+	 * TODO break this up into seperate methods to make things
+	 * 		cleaner and easier to read!
 	 */
 	private void syncItUp() {
 		Scanner scan = new Scanner(System.in);
