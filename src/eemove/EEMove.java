@@ -212,9 +212,9 @@ public class EEMove implements EEExtras {
 	 */
 	private String exampleCmd() {
 		String returnString = "";
-		returnString += EEExtras.ANSI_YELLOW + "[Note] the flags [-d, -l] represent dry and live runs repsectively. "
-				+ "To see what will be transfered without actually changing anything use the -d flag. "
-				+ "NOTE: must use the -l flag if doing a database push/pull.\n";
+		returnString += EEExtras.ANSI_YELLOW + "[Note] the flags [-d, -l] represent dry and live runs repsectively.\n"
+				+ "To see what will be transfered without actually transfering anything use the -d flag.\n"
+				+ "[Note] must use the -l flag if doing a database push/pull.\n\n";
 		returnString += "[ Push examples ]\n";
 		returnString += "\"push -l staging all\"\n";
 		returnString += "\"push -l staging plugins\"\n";
