@@ -36,8 +36,9 @@ public class EEMove implements EEExtras {
 
 	// Since this program will be run from command line, add main method
 	public static void main(String[] args) {
-		System.out.println(EEExtras.ANSI_YELLOW + "****************************************************" + EEExtras.ANSI_RESET);
-		System.out.println(EEExtras.ANSI_YELLOW + "Welcome to eemove, starting engines!..."  + EEExtras.ANSI_RESET);
+		System.out.println(
+				EEExtras.ANSI_YELLOW + "****************************************************" + EEExtras.ANSI_RESET);
+		System.out.println(EEExtras.ANSI_YELLOW + "Welcome to eemove, starting engines!..." + EEExtras.ANSI_RESET);
 		// Start 'er up!!
 		new EEMove();
 	}
@@ -51,8 +52,9 @@ public class EEMove implements EEExtras {
 			if (checkForConfigFile()) {
 				System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
 				readConfigFile();
-				System.out.print(EEExtras.ANSI_YELLOW + "all done!\n"   + EEExtras.ANSI_RESET);
-				System.out.print(EEExtras.ANSI_YELLOW + "Your currently configured environments are: " + EEExtras.ANSI_RESET);
+				System.out.print(EEExtras.ANSI_YELLOW + "all done!\n" + EEExtras.ANSI_RESET);
+				System.out.print(
+						EEExtras.ANSI_YELLOW + "Your currently configured environments are: " + EEExtras.ANSI_RESET);
 				String configurations = EEExtras.ANSI_YELLOW + "";
 				for (String key : config.keySet()) {
 					configurations += "\"" + key + "\", ";
@@ -60,10 +62,13 @@ public class EEMove implements EEExtras {
 				configurations += EEExtras.ANSI_RESET;
 				System.out.print(configurations.substring(0, configurations.length() - 2) + "\n");
 				configurations.substring(0, configurations.length() - 2);
-				System.out.println(EEExtras.ANSI_YELLOW + "****************************************************" + EEExtras.ANSI_RESET);
+				System.out.println(EEExtras.ANSI_YELLOW + "****************************************************"
+						+ EEExtras.ANSI_RESET);
 			} else {
-				System.out.println(EEExtras.ANSI_YELLOW + "No configuration file found, let's create one now." + EEExtras.ANSI_RESET);
-				System.out.println(EEExtras.ANSI_YELLOW + "****************************************************" + EEExtras.ANSI_RESET);
+				System.out.println(EEExtras.ANSI_YELLOW + "No configuration file found, let's create one now."
+						+ EEExtras.ANSI_RESET);
+				System.out.println(EEExtras.ANSI_YELLOW + "****************************************************"
+						+ EEExtras.ANSI_RESET);
 				createConfigFile();
 			}
 		} catch (Exception e) { // Catch generic exception
@@ -183,7 +188,13 @@ public class EEMove implements EEExtras {
 										+ "Database push/pull does not support \"dry\" runs, please use the \"-l\" flag instead."
 										+ EEExtras.ANSI_RESET);
 							} else {
-								new DBPushPull(thisConfig, config.get("local"), type);
+								if (config.get("local") == null) {
+									System.out.println(EEExtras.ANSI_RED
+											+ "You do not have an environment for \"local\", please add one to your \"eemove.config\" file and try again."
+											+ EEExtras.ANSI_RESET);
+								} else {
+									new DBPushPull(thisConfig, config.get("local"), type);
+								}
 							}
 						} else {
 							System.out.println("The command you entered is invalid, please try again.");
