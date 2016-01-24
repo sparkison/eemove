@@ -443,10 +443,12 @@ public class EEMove implements EEExtras {
 						directory = "";
 						user = "";
 						pass = "";
+						port = "22";
 						db = "";
 						dbUser = "";
 						dbPass = "";
 						dbHost = "";
+						dbPort = "3306";
 					}
 				}
 
