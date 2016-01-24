@@ -4,6 +4,7 @@ eemove.ignore
 db_backups
 build
 *.jar
+bin
 app
 system
 /lib/
