@@ -47,7 +47,7 @@ public class EEconfig {
 	 * env_dbuser=DB_USER 
 	 * env_dbpass=DB_PASS
 	 * env_dbhost=DB_HOST
-	 * env_dbport=D_BPORT
+	 * env_dbport=DB_BPORT
 	 */
 	@Override
 	public String toString() {

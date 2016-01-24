@@ -10,7 +10,7 @@ jar file `eemove.jar` will be created within the newly created **dist** folder.
 
 Move **eemove.jar** to your ExpressionEngine websites root on your local dev and run using `java -jar eemove.jar`, then simply follow the prompts!
 
-## Command examples
+## Useage
 Push everything to staging environment: `push -d staging all`
 
 Breakdown of the above command:
@@ -26,6 +26,50 @@ Breakdown of the above command:
   5. `app` for the public facing directories
   6. `system` for the system directory
   7. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
+
+## Config file example
+
+```yaml
+# Global EE settings
+
+globals:
+  ee_system: "system"
+  ee_app: "app"
+  upload_dir: "uploads" # optional, if using custom upload directory/ies
+  above_root: "true" # use true or false to signify whether the system folder is above root or not
+
+# Begin environment specific configuration(s)
+
+local:
+  vhost: "http://yoursite.dev"
+  ee_path: "/home/john/sites/your_site" # use an absolute path here
+
+  database:
+    name: "database_name"
+    user: "root"
+    password: "root"
+    host: "127.0.0.1"
+
+staging:
+  vhost: "http://example.com"
+  ee_path: "/var/www/your_site" # use an absolute path here
+
+  database:
+    name: "database_name"
+    user: "user"
+    password: "password"
+    host: "host"
+    port: 3306 # Port is optional, will default to 3306, use to overwrite default
+
+  ssh:
+    host: "host"
+    user: "user"
+    password: "password"
+    port: 22 # Port is optional, will default to 22, use to overwrite default
+
+# production: # multiple environments can be specified
+#  [...]
+```
 
 ## Additional info
 Right now eemove is only configured for ExpressionEngine 3. Once the source is more stable and had more testing will likely add EE2 support.
