@@ -6,7 +6,7 @@
  * 
  */
 
-package helpers;
+package rsync;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import ch.ethz.ssh2.StreamGobbler;
+import helpers.EEconfig;
 import util.EEExtras;
 
 public class EEPushPull implements EEExtras{

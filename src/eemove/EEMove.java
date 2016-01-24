@@ -18,8 +18,8 @@ import java.util.Scanner;
 
 import db.DBPushPull;
 import helpers.EEconfig;
+import rsync.EEPushPull;
 import util.EEExtras;
-import helpers.EEPushPull;
 
 public class EEMove implements EEExtras {
 
