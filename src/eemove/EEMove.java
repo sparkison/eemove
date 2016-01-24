@@ -354,6 +354,7 @@ public class EEMove implements EEExtras {
 				done = true;
 			}
 		}
+		outFile.flush();
 		outFile.close();
 		scan.close();
 	}
