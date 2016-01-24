@@ -3,7 +3,7 @@ Automated deployment for ExpressionEngine websites
 ![alt text][logo]
 ---
 
-## Instructions
+## Build instructions
 Includes ANT build file. Compile using `ant compile clean dist`
 
 jar file `eemove.jar` will be created within the newly created **dist** folder.
