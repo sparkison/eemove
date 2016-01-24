@@ -165,9 +165,9 @@ public class EEMove implements EEExtras {
 							String uploadDest = appDest + "/images/uploads";
 							new EEPushPull(uploadSrc, uploadDest, type, dryRun, thisConfig);
 							if (!uploadDir.equals("")) {
-								uploadSrc = appSrc + "/" + uploadDir;
-								uploadDest = appDest + "/" + uploadDir;
-								new EEPushPull(uploadSrc, uploadDest, type, dryRun, thisConfig);
+								String customUploadSrc = appSrc + "/" + uploadDir;
+								String customUploadDest = appDest + "/" + uploadDir;
+								new EEPushPull(customUploadSrc, customUploadDest, type, dryRun, thisConfig);
 							}
 						} else if (directory.equalsIgnoreCase("system")) {
 							// Push system directory to environment
