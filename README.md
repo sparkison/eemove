@@ -52,6 +52,9 @@ Right now eemove is only configured for ExpressionEngine 3. Once the source is m
 --eemove.ignore
 
 ```
+
+You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
+
 Currently a work in progress... check back soon for updates and amendments
 
 [logo]: https://github.com/sparkison/eemove/blob/master/eemove.jpg "eemove logo"
