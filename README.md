@@ -27,7 +27,7 @@ Breakdown of the above command:
   6. `system` for the system directory
   7. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
-### Additional info
+## Additional info
 Right now eemove is only configured for ExpressionEngine 3. Once the source is more stable and had more testing will likely add EE2 support.
 
 **NOTE:** eemove assumes your directory structure is with the **system** folder above root.
@@ -55,6 +55,8 @@ Right now eemove is only configured for ExpressionEngine 3. Once the source is m
 
 You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
 
-Currently a work in progress... check back soon for updates and amendments
+### Notice
+
+This project is currently a work in progress... check back soon for updates, fixes and amendments
 
 [logo]: https://github.com/sparkison/eemove/blob/master/eemove.jpg "eemove logo"
