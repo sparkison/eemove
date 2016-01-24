@@ -49,9 +49,11 @@ public class EEMove implements EEExtras {
 		try {
 			// Attempt to create eemove ignore file, if not created
 			eemoveIgnore();
-			// Create or load our config file
+			// Instantiate the ConfigReader class for reading and creating our
+			// config file
 			ConfigReader cr = new ConfigReader("eemove.config");
 			System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
+			// Create or load our config file
 			this.config = cr.getConfig();
 			System.out.print(EEExtras.ANSI_YELLOW + "all done!\n" + EEExtras.ANSI_RESET);
 			System.out
