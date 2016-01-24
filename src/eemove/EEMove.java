@@ -185,6 +185,8 @@ public class EEMove implements EEExtras {
 							} else {
 								new DBPushPull(thisConfig, config.get("local"), type);
 							}
+						} else {
+							System.out.println("The command you entered is invalid, please try again.");
 						}
 
 					}
