@@ -11,7 +11,6 @@ package helpers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
@@ -49,6 +48,7 @@ public class ConfigReader implements EEExtras {
 	/*
 	 * Parse the config file and return a HashMap of the environment variables
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public HashMap<String, EEconfig> getConfig() {
 
 		// Create the config file first, if it doesn't exist
