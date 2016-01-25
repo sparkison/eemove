@@ -26,9 +26,9 @@ public class EEMove implements EEExtras {
 	private HashMap<String, EEconfig> config;
 	private File rsyncIgnore = new File("eemove.ignore");
 	// EE folder structure configuration, set some defaults just in case
-	private String eeApp = "app";
-	private String eeSystem = "system";
-	private String uploadDir = "uploads";
+	private String eeApp;
+	private String eeSystem;
+	private String uploadDir;
 	private boolean eeAboveRoot = true;
 
 	// Since this program will be run from command line, add main method
@@ -51,6 +51,11 @@ public class EEMove implements EEExtras {
 			System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
 			// Create or load our config file
 			this.config = cr.getConfig();
+			// Grab some of the gloabsl we'll need later
+			this.eeApp = cr.getAppDir();
+			this.eeSystem = cr.getSysDir();
+			this.uploadDir = cr.getUpDir();
+			this.eeAboveRoot = cr.isAboveRoot();
 			System.out.print(EEExtras.ANSI_YELLOW + "all done!\n" + EEExtras.ANSI_RESET);
 			System.out
 					.print(EEExtras.ANSI_YELLOW + "Your currently configured environments are: " + EEExtras.ANSI_RESET);

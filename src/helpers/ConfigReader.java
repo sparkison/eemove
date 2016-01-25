@@ -287,5 +287,21 @@ public class ConfigReader implements EEExtras {
 		}
 
 	}
+	
+	public String getSysDir() {
+		return sysDir;
+	}
+
+	public String getAppDir() {
+		return appDir;
+	}
+
+	public String getUpDir() {
+		return upDir;
+	}
+
+	public boolean isAboveRoot() {
+		return aboveRoot;
+	}
 
 }
