@@ -145,9 +145,9 @@ public class DBPushPull implements EEExtras {
 		File localDbBackup = new File(
 				EEExtras.CWD + "/db_backups/" + localConfig.getEnvironment() + "_db_" + timestamp + ".sql");
 		OutputStream out = new FileOutputStream(localDbBackup);
-		String command = EEExtras.PATH + "mysqldump --opt --add-drop-table --no-create-db --user="
+		String[] command = {"/bin/sh", "-c", EEExtras.PATH + "/mysqldump --opt --add-drop-table --no-create-db --user="
 				+ localConfig.getDbUser() + " --password=" + localConfig.getDbPass() + " --port="
-				+ localConfig.getDbPort() + " --databases " + localConfig.getDatabase();
+				+ localConfig.getDbPort() + " --databases " + localConfig.getDatabase()};
 
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
@@ -208,7 +208,7 @@ public class DBPushPull implements EEExtras {
 	 * Import the remote dump into the local database
 	 */
 	private void importRemoteDbBackup(File file) {
-		String[] command = {"/bin/sh", "-c", EEExtras.PATH + "mysql --verbose --user=" + localConfig.getDbUser() + " --password="
+		String[] command = {"/bin/sh", "-c", EEExtras.PATH + "/mysql --verbose --user=" + localConfig.getDbUser() + " --password="
 				+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
 				+ localConfig.getDatabase() + " < " + file.getAbsolutePath()};
 
