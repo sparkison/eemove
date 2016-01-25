@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -34,8 +33,9 @@ public class DBPushPull implements EEExtras {
 	private EEconfig destConfig, localConfig;
 	private Connection connection;
 	private String timestamp;
-	
+
 	// Make sure backup folder exists, if not create it
+	@SuppressWarnings("unused")
 	private boolean dbBackupFolder = new File(EEExtras.CWD + "/db_backups").mkdir();
 
 	/*
@@ -177,11 +177,22 @@ public class DBPushPull implements EEExtras {
 			}
 
 			// Print errors stdout so user knows what went wrong
-			OutputStreamWriter oswStd = new OutputStreamWriter(stdin);
 			while ((val = brErr.readLine()) != null) {
 				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
 			}
+
 			int exitVal = proc.waitFor();
+
+			if (exitVal != 0) {
+				System.out.println(EEExtras.ANSI_RED + "There was a problem creating the local database backup. Please try again."
+						+ EEExtras.ANSI_RESET);
+			}
+
+			// Clean up
+			brStd.close();
+			brErr.close();
+			stdin.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -197,8 +208,8 @@ public class DBPushPull implements EEExtras {
 	 * Import the remote dump into the local database
 	 */
 	private void importRemoteDbBackup(File file) {
-		String command = EEExtras.PATH + "mysql --verbose --user=" + localConfig.getDbUser()
-				+ " --password=" + localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
+		String command = EEExtras.PATH + "mysql --verbose --user=" + localConfig.getDbUser() + " --password="
+				+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
 				+ localConfig.getDatabase() + " < " + file.getAbsolutePath();
 
 		Runtime rt = Runtime.getRuntime();
@@ -223,11 +234,22 @@ public class DBPushPull implements EEExtras {
 			}
 
 			// Print errors stdout so user knows what went wrong
-			OutputStreamWriter oswStd = new OutputStreamWriter(stdin);
 			while ((val = brErr.readLine()) != null) {
 				System.err.println(EEExtras.ANSI_RED + ">> [Error]: " + val + EEExtras.ANSI_RESET);
 			}
+			
 			int exitVal = proc.waitFor();
+			
+			if (exitVal != 0) {
+				System.out.println(EEExtras.ANSI_RED + "There was a problem creating the remote database backup. Please try again."
+						+ EEExtras.ANSI_RESET);
+			}
+
+			// Clean up
+			brStd.close();
+			brErr.close();
+			stdin.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -9,19 +9,17 @@
 package rsync;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 import ch.ethz.ssh2.StreamGobbler;
 import helpers.EEconfig;
 import util.EEExtras;
 
-public class EEPushPull implements EEExtras{
+public class EEPushPull implements EEExtras {
 
 	private String src;
 	private String dest;
@@ -40,7 +38,7 @@ public class EEPushPull implements EEExtras{
 		this.user = config.getSshUser();
 		this.host = config.getHost();
 		try {
-			push(config);
+			push(this.config);
 		} catch (Exception e) {
 			System.out.println("Error pushing directory/files: ");
 			System.out.println(e.getMessage());
@@ -51,27 +49,28 @@ public class EEPushPull implements EEExtras{
 		// Currently uses passwordless SSH keys to login, will be prompted for
 		// password if not set
 		String dryRun = "";
-		if(isDryRun) 
+		if (isDryRun)
 			dryRun = "--dry-run";
 		String rsyncCommand = "";
-		if(type.equals("push"))
-			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from=" + EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+		if (type.equals("push"))
+			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from="
+					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from=" + EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
-			
+			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from="
+					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+
 		/*
-		 * Create temp file so we can use exec command
-		 * Not ideal, but best I could come up with for now
-		 * Uses underlying system commands, not relying on external libraries
-		 * this way. File will be deleted at end of execution.
-		 * In the case of program error, will also be removed upon
+		 * Create temp file so we can use exec command Not ideal, but best I
+		 * could come up with for now Uses underlying system commands, not
+		 * relying on external libraries this way. File will be deleted at end
+		 * of execution. In the case of program error, will also be removed upon
 		 * JVM termination (if it still persists).
 		 */
 		File tempBashCmd = File.createTempFile("tmp", ".sh", new File("/tmp"));
 		FileWriter bashFile = new FileWriter(tempBashCmd);
 		tempBashCmd.setExecutable(true);
 		tempBashCmd.deleteOnExit();
-		
+
 		/*
 		 * Write out expect command to tmp shell script
 		 */
@@ -88,7 +87,7 @@ public class EEPushPull implements EEExtras{
 		bashFile.write("expect eof");
 		bashFile.write("\n");
 		bashFile.close();
-		
+
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
 		try {
@@ -111,13 +110,23 @@ public class EEPushPull implements EEExtras{
 					System.out.println(">>sending password ...");
 				}
 			}
-			
+
 			// Print errors stdout so user knows what went wrong
-			OutputStreamWriter oswStd = new OutputStreamWriter(stdin);
 			while ((val = brErr.readLine()) != null) {
 				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
+
+			if (exitVal != 0) {
+				System.out.println(EEExtras.ANSI_RED + "There was a problem executing the command. Please try again."
+						+ EEExtras.ANSI_RESET);
+			}
+
+			// Clean up
+			brStd.close();
+			brErr.close();
+			stdin.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
