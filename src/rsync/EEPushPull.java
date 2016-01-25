@@ -133,7 +133,8 @@ public class EEPushPull implements EEExtras {
 
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
-				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+				if(!val.contains("stdin: is not a tty"))
+					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
 
