@@ -8,9 +8,7 @@
 
 package eemove;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,9 +23,7 @@ import util.EEExtras;
 public class EEMove implements EEExtras {
 
 	// Our primary variables
-	private FileWriter outFile;
 	private HashMap<String, EEconfig> config;
-	private File configFile = new File("eemove.config");
 	private File rsyncIgnore = new File("eemove.ignore");
 	// EE folder structure configuration, set some defaults just in case
 	private String eeApp = "app";
@@ -79,7 +75,7 @@ public class EEMove implements EEExtras {
 
 	/*
 	 * Start working! 
-	 * TODO break this up into seperate methods to make things
+	 * TODO break this up into separate methods to make things
 	 * 		cleaner and easier to read!
 	 */
 	private void syncItUp() {
@@ -265,16 +261,6 @@ public class EEMove implements EEExtras {
 		}
 		rsyncIgnore.setExecutable(true);
 		rsyncIgnore.setReadable(true);
-	}
-
-	/*
-	 * Checking to see if there is a config file already created
-	 */
-	private boolean checkForConfigFile() throws IOException {
-		if (configFile.exists()) {
-			return true;
-		}
-		return false;
 	}
 
 }
