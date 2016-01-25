@@ -24,6 +24,7 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import helpers.ConfigReader;
 import helpers.EEconfig;
 import util.EEExtras;
 
@@ -33,6 +34,7 @@ public class DBPushPull implements EEExtras {
 	private EEconfig destConfig, localConfig;
 	private Connection connection;
 	private String timestamp;
+	private ConfigReader cr;
 
 	// Make sure backup folder exists, if not create it
 	@SuppressWarnings("unused")
@@ -41,10 +43,12 @@ public class DBPushPull implements EEExtras {
 	/*
 	 * Constructor
 	 */
-	public DBPushPull(EEconfig destConfig, EEconfig localConfig, String type) {
-		// Set the destConfiguration
+	public DBPushPull(EEconfig destConfig, EEconfig localConfig, String type, ConfigReader cr) {
+		// Set the configurations
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;
+		// Grab the config file info
+		this.cr = cr;
 		// Grab a timestamp
 		timestamp = new SimpleDateFormat("MM.dd.yyyy_dd.HH.mm.ss").format(new Date());
 		// Initiate a null connection
@@ -334,7 +338,11 @@ public class DBPushPull implements EEExtras {
 	public Connection connectTo() throws IOException {
 		Connection connection = new Connection(destConfig.getHost());
 		connection.connect();
-		connection.authenticateWithPassword(destConfig.getSshUser(), destConfig.getSshPass());
+		if (cr.isUseKeyAuth()) {
+			connection.authenticateWithPublicKey(destConfig.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
+		} else {
+			connection.authenticateWithPassword(destConfig.getSshUser(), destConfig.getSshPass());
+		}
 		return connection;
 	}
 }

@@ -42,6 +42,11 @@ globals:
   upload_dir: "uploads" # optional, if using custom upload directory/ies
   above_root: "true" # use true or false to signify whether the system folder is above root or not
 
+  authentication:
+    type: "key" # Use either 'key' for public key authentication or 'password' for password
+    keyfile: "~/.ssh/id_rsa" # Optional, only needed if using 'key' for type
+    keypass: "password" # Optional, only needed if using 'key' for type and the file is password protected
+
 # Begin environment specific configuration(s)
 
 local:

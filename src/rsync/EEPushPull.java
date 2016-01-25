@@ -21,6 +21,7 @@ import java.util.List;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import helpers.ConfigReader;
 import helpers.EEconfig;
 import util.EEExtras;
 
@@ -32,9 +33,10 @@ public class EEPushPull implements EEExtras {
 	private String host;
 	private String user;
 	private String type;
+	private ConfigReader cr;
 	private boolean isDryRun = true;
 
-	public EEPushPull(String src, String dest, String type, boolean dryRun, EEconfig config) {
+	public EEPushPull(String src, String dest, String type, boolean dryRun, EEconfig config, ConfigReader cr) {
 		this.src = EEExtras.CWD + "/" + src;
 		this.dest = dest;
 		this.isDryRun = dryRun;
@@ -42,6 +44,7 @@ public class EEPushPull implements EEExtras {
 		this.config = config;
 		this.user = config.getSshUser();
 		this.host = config.getHost();
+		this.cr = cr;
 		try {
 			push(this.config);
 		} catch (Exception e) {
@@ -123,7 +126,8 @@ public class EEPushPull implements EEExtras {
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW + ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
+				System.out.println(EEExtras.ANSI_YELLOW
+						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
 						+ EEExtras.ANSI_RESET);
 			}
 
@@ -141,21 +145,20 @@ public class EEPushPull implements EEExtras {
 		System.out.println("*\tTransfer complete\t*");
 		System.out.println("*********************************" + EEExtras.ANSI_RESET);
 	}
-	
+
 	/*
-	 * If uploading files to server, ensure proper permissions set
-	 * TODO
+	 * If uploading files to server, ensure proper permissions set TODO
 	 */
-	private void fixPermissions() throws IOException{
+	private void fixPermissions() throws IOException {
 		System.out.println(EEExtras.ANSI_CYAN + "*********************************");
 		System.out.println("*\tUpdating permissions\t*");
 		System.out.println("*********************************" + EEExtras.ANSI_RESET);
-		
+
 		List<String> result = new LinkedList<>();
 		String command = "chmod ";
 		Connection connection = this.connectTo();
 		Session session = null;
-		
+
 		try {
 			session = connection.openSession();
 			session.execCommand(command);
@@ -178,16 +181,20 @@ public class EEPushPull implements EEExtras {
 				session.close();
 			}
 		}
-		
+
 	}
-	
+
 	/*
 	 * Creates a connection to host and returns it
 	 */
 	public Connection connectTo() throws IOException {
 		Connection connection = new Connection(config.getHost());
 		connection.connect();
-		connection.authenticateWithPassword(config.getSshUser(), config.getSshPass());
+		if (cr.isUseKeyAuth()) {
+			connection.authenticateWithPublicKey(config.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
+		} else {
+			connection.authenticateWithPassword(config.getSshUser(), config.getSshPass());
+		}
 		return connection;
 	}
 

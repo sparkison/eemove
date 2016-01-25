@@ -29,6 +29,7 @@ public class EEMove implements EEExtras {
 	private String eeApp;
 	private String eeSystem;
 	private String uploadDir;
+	private ConfigReader cr;
 	private boolean eeAboveRoot = true;
 
 	// Since this program will be run from command line, add main method
@@ -47,7 +48,7 @@ public class EEMove implements EEExtras {
 			eemoveIgnore();
 			// Instantiate the ConfigReader class for reading and creating our
 			// config file
-			ConfigReader cr = new ConfigReader("eemove.config");
+			cr = new ConfigReader("eemove.config");
 			System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
 			// Create or load our config file
 			this.config = cr.getConfig();
@@ -147,37 +148,37 @@ public class EEMove implements EEExtras {
 						if (directory.equalsIgnoreCase("all")) {
 							// Push all contents of app and system
 							// directories to environment
-							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig);
-							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig);
+							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
+							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("plugins")) {
 							// Push plugin directories to environment
 							appSrc += "/themes/user";
 							appDest += "/themes/user";
 							sysSrc += "/user/addons";
 							sysDest += "/user/addons";
-							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig);
-							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig);
+							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
+							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("themes")) {
 							// Push theme directory to environment
 							sysSrc += "/user/templates";
 							sysDest += "/user/templates";
-							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig);
+							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
 							String uploadSrc = appSrc + "/images/uploads";
 							String uploadDest = appDest + "/images/uploads";
-							new EEPushPull(uploadSrc, uploadDest, type, dryRun, thisConfig);
+							new EEPushPull(uploadSrc, uploadDest, type, dryRun, thisConfig, cr);
 							if (!uploadDir.equals("")) {
 								String customUploadSrc = appSrc + "/" + uploadDir;
 								String customUploadDest = appDest + "/" + uploadDir;
-								new EEPushPull(customUploadSrc, customUploadDest, type, dryRun, thisConfig);
+								new EEPushPull(customUploadSrc, customUploadDest, type, dryRun, thisConfig, cr);
 							}
 						} else if (directory.equalsIgnoreCase("system")) {
 							// Push system directory to environment
-							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig);
+							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("app")) {
 							// Push app directory to environment
-							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig);
+							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("database")) {
 							// Database push/pull doesn't support dry-run, tell
 							// user
@@ -191,7 +192,7 @@ public class EEMove implements EEExtras {
 											+ "You do not have an environment for \"local\", please add one to your \"eemove.config\" file and try again."
 											+ EEExtras.ANSI_RESET);
 								} else {
-									new DBPushPull(thisConfig, config.get("local"), type);
+									new DBPushPull(thisConfig, config.get("local"), type, cr);
 								}
 							}
 						} else {

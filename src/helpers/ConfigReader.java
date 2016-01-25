@@ -24,10 +24,14 @@ import util.EEExtras;
 
 public class ConfigReader implements EEExtras {
 
-	public final String CONF;
+	private final String CONF;
+	
+	public File keyfile;
+	public String keyPass;
 	public String sysDir;
 	public String appDir;
 	public String upDir;
+	public boolean useKeyAuth;
 	public boolean aboveRoot;
 
 	/*
@@ -83,6 +87,17 @@ public class ConfigReader implements EEExtras {
 							this.upDir = subValues.get(subValueKey).toString();
 						} else if (keyItem.equalsIgnoreCase("above_root")) {
 							this.aboveRoot = Boolean.valueOf((subValueKey).toString());
+						} else if (keyItem.equalsIgnoreCase("authentication")) {
+							Map authentication = (LinkedHashMap) subValues.get(subValueKey);
+							for (Object authItem : authentication.keySet()) {
+								if (authItem.toString().equals("type")) {
+									this.useKeyAuth = Boolean.valueOf(authentication.get(authItem).toString());
+								} else if (authItem.toString().equals("keyfile")) {
+									this.keyfile = new File(authentication.get(authItem).toString());
+								} else if (authItem.toString().equals("keypass")) {
+									this.keyPass = authentication.get(authItem).toString();
+								}
+							}
 						}
 					}
 				} else {
@@ -199,6 +214,18 @@ public class ConfigReader implements EEExtras {
 				line = "above_root: \"true\" # use true or false to signify whether the system folder is above root or not";
 				formatter.format("%" + (line.length() + 4) + "s", line + "\n\n");
 
+				line = "authentication:";
+				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
+				
+				line = "type: \"key\" # Use either 'key' for public key authentication or 'password' for password";
+				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
+				
+				line = "keyfile: \"~/.ssh/id_rsa\" # Optional, only needed if using 'key' for type";
+				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
+				
+				line = "keypass: \"password\" # Optional, only needed if using 'key' for type and the file is password protected";
+				formatter.format("%" + (line.length() + 6) + "s", line + "\n\n");
+				
 				formatter.format("%s", "# Begin environment specific configuration(s)\n\n");
 
 				formatter.format("%s", "local:\n");
@@ -280,6 +307,9 @@ public class ConfigReader implements EEExtras {
 
 	}
 	
+	/*
+	 * Getters
+	 */
 	public String getSysDir() {
 		return sysDir;
 	}
@@ -294,6 +324,18 @@ public class ConfigReader implements EEExtras {
 
 	public boolean isAboveRoot() {
 		return aboveRoot;
+	}
+
+	public File getKeyfile() {
+		return keyfile;
+	}
+
+	public String getKeyPass() {
+		return keyPass;
+	}
+
+	public boolean isUseKeyAuth() {
+		return useKeyAuth;
 	}
 
 }
