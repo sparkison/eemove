@@ -41,6 +41,6 @@ public interface EEExtras {
 	 * 		different OS (Mac vs Linux) could reside in multiple different paths
 	 * 		depending on end user system
 	 */
-	public static final String PATH = OS.indexOf("mac") >= 0 ? "/Applications/MAMP/Library/bin/" : "/usr/local/bin/";
+	public static final String PATH = OS.indexOf("Mac") >= 0 ? "/Applications/MAMP/Library/bin/" : "/usr/local/bin/";
 	
 }
