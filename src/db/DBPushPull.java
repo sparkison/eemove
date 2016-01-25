@@ -184,7 +184,7 @@ public class DBPushPull implements EEExtras {
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_RED + "There was a problem creating the local database backup. Please try again."
+				System.out.println(EEExtras.ANSI_YELLOW + ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
 						+ EEExtras.ANSI_RESET);
 			}
 
@@ -241,7 +241,7 @@ public class DBPushPull implements EEExtras {
 			int exitVal = proc.waitFor();
 			
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_RED + "There was a problem creating the remote database backup. Please try again."
+				System.out.println(EEExtras.ANSI_YELLOW + ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
 						+ EEExtras.ANSI_RESET);
 			}
 
