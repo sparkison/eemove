@@ -86,7 +86,7 @@ public class ConfigReader implements EEExtras {
 						} else if (keyItem.equalsIgnoreCase("upload_dir")) {
 							this.upDir = subValues.get(subValueKey).toString();
 						} else if (keyItem.equalsIgnoreCase("above_root")) {
-							this.aboveRoot = Boolean.valueOf((subValueKey).toString());
+							this.aboveRoot = Boolean.valueOf(subValues.get(subValueKey).toString());
 						} else if (keyItem.equalsIgnoreCase("authentication")) {
 							Map authentication = (LinkedHashMap) subValues.get(subValueKey);
 							for (Object authItem : authentication.keySet()) {

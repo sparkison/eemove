@@ -127,7 +127,7 @@ public class EEMove implements EEExtras {
 								}
 							}
 						} else {
-							sysDest = thisConfig.getDirectory();
+							sysDest = thisConfig.getDirectory() + "/";
 						}
 						sysDest += eeSystem;
 						String appSrc = eeApp;
@@ -160,6 +160,8 @@ public class EEMove implements EEExtras {
 							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("themes")) {
 							// Push theme directory to environment
+							appSrc += "/dist";
+							appDest += "/dist";
 							sysSrc += "/user/templates";
 							sysDest += "/user/templates";
 							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
