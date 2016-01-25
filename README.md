@@ -57,7 +57,7 @@ staging:
   database:
     name: "database_name"
     user: "user"
-    password: "password"
+    password: "password" # Only sent if not using public/private key authentication
     host: "host"
     port: 3306 # Port is optional, will default to 3306, use to overwrite default
 

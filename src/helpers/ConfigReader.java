@@ -265,7 +265,7 @@ public class ConfigReader implements EEExtras {
 				line = "user: \"user\"";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 
-				line = "password: \"password\"";
+				line = "password: \"password\" # Only sent if not using public/private key authentication";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 
 				line = "port: 22 # Port is optional, will default to 22, use to overwrite default";
