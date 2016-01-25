@@ -91,7 +91,10 @@ public class ConfigReader implements EEExtras {
 							Map authentication = (LinkedHashMap) subValues.get(subValueKey);
 							for (Object authItem : authentication.keySet()) {
 								if (authItem.toString().equals("type")) {
-									this.useKeyAuth = Boolean.valueOf(authentication.get(authItem).toString());
+									boolean useKey = false;
+									if(authentication.get(authItem).toString().equals("key"))
+										useKey = true;
+									this.useKeyAuth = useKey;
 								} else if (authItem.toString().equals("keyfile")) {
 									this.keyfile = new File(authentication.get(authItem).toString());
 								} else if (authItem.toString().equals("keypass")) {
@@ -220,7 +223,7 @@ public class ConfigReader implements EEExtras {
 				line = "type: \"key\" # Use either 'key' for public key authentication or 'password' for password";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 				
-				line = "keyfile: \"~/.ssh/id_rsa\" # Optional, only needed if using 'key' for type";
+				line = "keyfile: \"/user/john/.ssh/id_rsa\" # Optional, only needed if using 'key' for type. Use an absolute path here";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 				
 				line = "keypass: \"password\" # Optional, only needed if using 'key' for type and the file is password protected";

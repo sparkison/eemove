@@ -80,27 +80,35 @@ public class EEPushPull implements EEExtras {
 		tempBashCmd.deleteOnExit();
 
 		/*
-		 * Write out expect command to tmp shell script
+		 * Write out expect command to tmp shell script (if using password authentication
 		 */
-		bashFile.write("#!/usr/bin/expect -f");
-		bashFile.write("\n");
-		bashFile.write("set timeout -1");
-		bashFile.write("\n");
-		bashFile.write("spawn " + rsyncCommand);
-		bashFile.write("\n");
-		bashFile.write("expect -re \"assword:\"");
-		bashFile.write("\n");
-		bashFile.write("send \"" + config.getSshPass() + "\\n\"");
-		bashFile.write("\n");
-		bashFile.write("expect eof");
-		bashFile.write("\n");
-		bashFile.close();
+		
+		if (!cr.isUseKeyAuth()) {
+			bashFile.write("#!/usr/bin/expect -f");
+			bashFile.write("\n");
+			bashFile.write("set timeout -1");
+			bashFile.write("\n");
+			bashFile.write("spawn " + rsyncCommand);
+			bashFile.write("\n");
+			bashFile.write("expect -re \"assword:\"");
+			bashFile.write("\n");
+			bashFile.write("send \"" + config.getSshPass() + "\\n\"");
+			bashFile.write("\n");
+			bashFile.write("expect eof");
+			bashFile.write("\n");
+			bashFile.close();
+		}
 
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
 		try {
 			// Using underlying 'expect' command to pass password for rsync
-			proc = rt.exec("expect " + tempBashCmd.getAbsolutePath());
+			if (cr.isUseKeyAuth()) {
+				String[] command = {"/bin/sh", "-c", rsyncCommand};
+				proc = rt.exec(command);
+			} else {
+				proc = rt.exec("expect " + tempBashCmd.getAbsolutePath());
+			}
 			// Use StreamGobbler to for err/stdout to prevent blocking
 			InputStream stdout = new StreamGobbler(proc.getInputStream());
 			InputStream stderr = new StreamGobbler(proc.getErrorStream());

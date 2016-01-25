@@ -44,7 +44,7 @@ globals:
 
   authentication:
     type: "key" # Use either 'key' for public key authentication or 'password' for password
-    keyfile: "~/.ssh/id_rsa" # Optional, only needed if using 'key' for type
+    keyfile: "/user/john/.ssh/id_rsa" # Optional, only needed if using 'key' for type. Use an absolute path here
     keypass: "password" # Optional, only needed if using 'key' for type and the file is password protected
 
 # Begin environment specific configuration(s)
