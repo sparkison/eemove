@@ -61,10 +61,10 @@ public class EEPushPull implements EEExtras {
 			dryRun = "--dry-run";
 		String rsyncCommand = "";
 		if (type.equals("push"))
-			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from="
+			rsyncCommand = "rsync -rvP -e 'ssh -p " + config.getSshPort() + "' " + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from="
+			rsyncCommand = "rsync -rvP -e 'ssh -p " + config.getSshPort() + "' " + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 
 		/*
@@ -83,7 +83,13 @@ public class EEPushPull implements EEExtras {
 		 * Write out expect command to tmp shell script (if using password authentication
 		 */
 		
-		if (!cr.isUseKeyAuth()) {
+		if (cr.isUseKeyAuth()) {
+			bashFile.write("#!/bin/bash");
+			bashFile.write("\n");
+			bashFile.write(rsyncCommand);
+			bashFile.write("\n");
+			bashFile.close();
+		} else {
 			bashFile.write("#!/usr/bin/expect -f");
 			bashFile.write("\n");
 			bashFile.write("set timeout -1");
@@ -98,14 +104,12 @@ public class EEPushPull implements EEExtras {
 			bashFile.write("\n");
 			bashFile.close();
 		}
-
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
 		try {
 			// Using underlying 'expect' command to pass password for rsync
 			if (cr.isUseKeyAuth()) {
-				String[] command = {"/bin/sh", "-c", rsyncCommand};
-				proc = rt.exec(command);
+				proc = rt.exec("sh " + tempBashCmd.getAbsolutePath());
 			} else {
 				proc = rt.exec("expect " + tempBashCmd.getAbsolutePath());
 			}

@@ -148,38 +148,46 @@ public class EEMove implements EEExtras {
 						if (directory.equalsIgnoreCase("all")) {
 							// Push all contents of app and system
 							// directories to environment
+							appSrc += "/";
+							appDest += "/";
+							sysSrc += "/";
+							sysDest += "/";
 							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("plugins")) {
 							// Push plugin directories to environment
-							appSrc += "/themes/user";
-							appDest += "/themes/user";
-							sysSrc += "/user/addons";
-							sysDest += "/user/addons";
+							appSrc += "/themes/user/";
+							appDest += "/themes/user/";
+							sysSrc += "/user/addons/";
+							sysDest += "/user/addons/";
 							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("themes")) {
 							// Push theme directory to environment
-							appSrc += "/dist";
-							appDest += "/dist";
-							sysSrc += "/user/templates";
-							sysDest += "/user/templates";
+							appSrc += "/dist/";
+							appDest += "/dist/";
+							sysSrc += "/user/templates/";
+							sysDest += "/user/templates/";
 							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
-							String uploadSrc = appSrc + "/images/uploads";
-							String uploadDest = appDest + "/images/uploads";
+							String uploadSrc = appSrc + "/images/uploads/";
+							String uploadDest = appDest + "/images/uploads/";
 							new EEPushPull(uploadSrc, uploadDest, type, dryRun, thisConfig, cr);
 							if (!uploadDir.equals("")) {
-								String customUploadSrc = appSrc + "/" + uploadDir;
-								String customUploadDest = appDest + "/" + uploadDir;
+								String customUploadSrc = appSrc + "/" + uploadDir + "/";
+								String customUploadDest = appDest + "/" + uploadDir + "/";
 								new EEPushPull(customUploadSrc, customUploadDest, type, dryRun, thisConfig, cr);
 							}
 						} else if (directory.equalsIgnoreCase("system")) {
 							// Push system directory to environment
+							sysSrc += "/";
+							sysDest += "/";
 							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("app")) {
 							// Push app directory to environment
+							appSrc += "/";
+							appDest += "/";
 							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("database")) {
 							// Database push/pull doesn't support dry-run, tell
