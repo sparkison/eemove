@@ -55,9 +55,9 @@ public class EEPushPull implements EEExtras{
 			dryRun = "--dry-run";
 		String rsyncCommand = "";
 		if(type.equals("push"))
-			rsyncCommand = "rsync -rvP " + dryRun + " -e \"ssh -p " + config.getSshPort() + "\" --exclude-from=\"" + EEExtras.CWD + "/eemove.ignore\" \"" + src + "\" " + user + "@" + host + ":" + dest;
+			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from=" + EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync -rvP " + dryRun + " -e \"ssh -p " + config.getSshPort() + "\" --exclude-from=\"" + EEExtras.CWD + "/eemove.ignore\" " + user + "@" + host + ":" + dest + " \"" + src + "\"";
+			rsyncCommand = "rsync -rvP " + dryRun + " -e ssh -p " + config.getSshPort() + " --exclude-from=" + EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 			
 		/*
 		 * Create temp file so we can use exec command
@@ -108,14 +108,14 @@ public class EEPushPull implements EEExtras{
 			while ((val = brStd.readLine()) != null) {
 				System.out.println(">>" + val);
 				if (new String(val.getBytes()).contains("assword:")) {
-					System.out.println(">> Sending password ...");
+					System.out.println(">>sending password ...");
 				}
 			}
 			
 			// Print errors stdout so user knows what went wrong
 			OutputStreamWriter oswStd = new OutputStreamWriter(stdin);
 			while ((val = brErr.readLine()) != null) {
-				System.err.println(EEExtras.ANSI_RED + ">> [Error]: " + val + EEExtras.ANSI_RESET);
+				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
 		} catch (Exception e) {

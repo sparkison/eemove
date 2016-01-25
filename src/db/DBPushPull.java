@@ -179,7 +179,7 @@ public class DBPushPull implements EEExtras {
 			// Print errors stdout so user knows what went wrong
 			OutputStreamWriter oswStd = new OutputStreamWriter(stdin);
 			while ((val = brErr.readLine()) != null) {
-				System.err.println(EEExtras.ANSI_RED + ">> [Error]: " + val + EEExtras.ANSI_RESET);
+				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
 		} catch (Exception e) {
