@@ -11,10 +11,15 @@ package rsync;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 import helpers.EEconfig;
 import util.EEExtras;
@@ -135,6 +140,55 @@ public class EEPushPull implements EEExtras {
 		System.out.println(EEExtras.ANSI_CYAN + "*********************************");
 		System.out.println("*\tTransfer complete\t*");
 		System.out.println("*********************************" + EEExtras.ANSI_RESET);
+	}
+	
+	/*
+	 * If uploading files to server, ensure proper permissions set
+	 * TODO
+	 */
+	private void fixPermissions() throws IOException{
+		System.out.println(EEExtras.ANSI_CYAN + "*********************************");
+		System.out.println("*\tUpdating permissions\t*");
+		System.out.println("*********************************" + EEExtras.ANSI_RESET);
+		
+		List<String> result = new LinkedList<>();
+		String command = "chmod ";
+		Connection connection = this.connectTo();
+		Session session = null;
+		
+		try {
+			session = connection.openSession();
+			session.execCommand(command);
+			InputStream stdout = new StreamGobbler(session.getStdout());
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
+				String line = br.readLine();
+				while (line != null) {
+					/*
+					 * Don't include the USE `database` name since they will
+					 * likely differ from local to remote sources, also ignore
+					 * comments
+					 */
+					System.out.println(line);
+					result.add(line);
+					line = br.readLine();
+				}
+			}
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
+		
+	}
+	
+	/*
+	 * Creates a connection to host and returns it
+	 */
+	public Connection connectTo() throws IOException {
+		Connection connection = new Connection(config.getHost());
+		connection.connect();
+		connection.authenticateWithPassword(config.getSshUser(), config.getSshPass());
+		return connection;
 	}
 
 }
