@@ -3,6 +3,10 @@ Automated deployment for ExpressionEngine websites
 ![alt text][logo]
 ---
 
+## Included libraries
+* [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) - used for digesting the config file
+* [Ganymed SSH-2 for Java](http://www.ganymed.ethz.ch/ssh2/) - used for establishing SSH connections and issuing SCP commands
+
 ## Build instructions
 Includes ANT build file. Compile using `ant compile clean dist`
 
