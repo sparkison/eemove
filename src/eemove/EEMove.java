@@ -265,7 +265,6 @@ public class EEMove implements EEExtras {
 		}
 		rsyncIgnore.setExecutable(true);
 		rsyncIgnore.setReadable(true);
-		Runtime.getRuntime().exec("chmod 777 " + rsyncIgnore.getAbsolutePath());
 	}
 
 	/*
