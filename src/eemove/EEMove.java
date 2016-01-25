@@ -110,7 +110,6 @@ public class EEMove implements EEExtras {
 						// Get the directory parts
 						String envDirParts[] = thisConfig.getDirectory().split("/");
 						// Determine app and system destination directories
-						boolean copyAll = false;
 						String sysDest = "";
 						String appDest = thisConfig.getDirectory();
 						if (eeAboveRoot == true) {
