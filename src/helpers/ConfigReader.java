@@ -31,14 +31,6 @@ public class ConfigReader implements EEExtras {
 	public boolean aboveRoot;
 
 	/*
-	 * Main class for testing everything is working as expected
-	 */
-	public static void main(String args[]) {
-		ConfigReader cf = new ConfigReader("eemove.config");
-		cf.getConfig();
-	}
-
-	/*
 	 * Constructor
 	 */
 	public ConfigReader(String configFile) {
