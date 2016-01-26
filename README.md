@@ -112,4 +112,4 @@ You can download my EE project bootstrap here: [ee_bootstrap](https://github.com
 
 This project is currently a work in progress... check back soon for updates, fixes and amendments
 
-[logo]: https://github.com/sparkison/eemove/blob/master/eemove.jpg "eemove logo"
+[logo]: https://github.com/sparkison/eemove/resources/images/blob/master/eemove.jpg "eemove logo"

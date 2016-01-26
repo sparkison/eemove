@@ -1,7 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="dist" name="eemove">
   <description>
     eemove ANT build file
   </description>
+
   <!-- set global properties for this build -->
   <property location="src" name="src"/>
   <property location="build" name="build"/>
