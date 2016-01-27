@@ -249,9 +249,15 @@ public class DBPushPull implements EEExtras {
 			String val = null;
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
+			int lineCount = 0;
 			while ((val = brStd.readLine()) != null) {
-				System.out.print("*"); // print dots to the screen to show
-											// something is happening
+				// Print out loading animation
+				if(lineCount % 5 == 0) System.out.print("--\r");
+				else if(lineCount % 5 == 1) System.out.print("\\ \r");
+				else if(lineCount % 5 == 2) System.out.print("| \r");
+				else if(lineCount % 5 == 3) System.out.print("/ \r");
+				else if(lineCount % 5 == 4) System.out.print("--\r");
+				lineCount++;
 			}
 
 			// Print errors stdout so user knows what went wrong
@@ -260,8 +266,9 @@ public class DBPushPull implements EEExtras {
 			}
 
 			int exitVal = proc.waitFor();
-
-			System.out.println();
+			
+			// Clean up the loading animation line
+			System.out.print("  \r");
 
 			if (exitVal != 0) {
 				System.out.println(EEExtras.ANSI_YELLOW
@@ -288,7 +295,7 @@ public class DBPushPull implements EEExtras {
 		// Pass things off to the next method to import the database and delete
 		// the sql dump file
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + "scp " + file.getAbsolutePath()
-				+ " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp" + file.getName());
+				+ " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + file.getName());
 		importLocalDbBackupToRemote(file);
 	}
 
@@ -310,8 +317,15 @@ public class DBPushPull implements EEExtras {
 			InputStream stdout = new StreamGobbler(session.getStdout());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
 				String line = br.readLine();
+				int lineCount = 0;
 				while (line != null) {
-					System.out.println(line);
+					// Print out loading animation
+					if(lineCount % 5 == 0) System.out.print("--\r");
+					else if(lineCount % 5 == 1) System.out.print("\\ \r");
+					else if(lineCount % 5 == 2) System.out.print("| \r");
+					else if(lineCount % 5 == 3) System.out.print("/ \r");
+					else if(lineCount % 5 == 4) System.out.print("--\r");
+					lineCount++;
 					result.add(line);
 					line = br.readLine();
 				}
@@ -323,6 +337,10 @@ public class DBPushPull implements EEExtras {
 				session.close();
 			}
 		}
+		
+		// Clean up the loading animation line
+		System.out.print("  \r");
+		
 		// Remove the file after importing it
 		try {
 			removeTempFile("/tmp/" + file.getName());
