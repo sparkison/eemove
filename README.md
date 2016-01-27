@@ -43,9 +43,9 @@ globals:
   above_root: "true" # use true or false to signify whether the system folder is above root or not
 
   authentication:
-    type: "key" # Use either 'key' for public key authentication or 'password' for password
-    keyfile: "/user/john/.ssh/id_rsa" # Optional, only needed if using 'key' for type. Use an absolute path here
-    keypass: "password" # Optional, only needed if using 'key' for type and the file is password protected
+    type: "key" # use either 'key' for public key authentication or 'password' for password
+    keyfile: "/user/john/.ssh/id_rsa" # optional, only needed if using 'key' for type. Use an absolute path here
+    keypass: "password" # optional, only needed if using 'key' for type and the key file is password protected
 
 # Begin environment specific configuration(s)
 
@@ -66,14 +66,14 @@ staging:
   database:
     name: "database_name"
     user: "user"
-    password: "password" # Only sent if not using public/private key authentication
+    password: "password"
     host: "host"
     port: 3306 # Port is optional, will default to 3306, use to overwrite default
 
   ssh:
     host: "host"
     user: "user"
-    password: "password"
+    password: "password" # Only sent if not using public/private key authentication
     port: 22 # Port is optional, will default to 22, use to overwrite default
 
 # production: # multiple environments can be specified
