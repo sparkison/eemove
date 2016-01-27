@@ -179,8 +179,8 @@ public class EEMove implements EEExtras {
 							appDest += "/dist/";
 							sysSrc += "/user/templates/";
 							sysDest += "/user/templates/";
-							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
-							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
+							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
 							String uploadSrc = appSrc + "/images/uploads/";
