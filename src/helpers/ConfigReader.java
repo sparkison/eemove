@@ -220,13 +220,13 @@ public class ConfigReader implements EEExtras {
 				line = "authentication:";
 				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
 				
-				line = "type: \"key\" # Use either 'key' for public key authentication or 'password' for password";
+				line = "type: \"key\" # use either 'key' for public key authentication or 'password' for password";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 				
-				line = "keyfile: \"/user/john/.ssh/id_rsa\" # Optional, only needed if using 'key' for type. Use an absolute path here";
+				line = "keyfile: \"/user/john/.ssh/id_rsa\" # optional, only needed if using 'key' for type. Use an absolute path here";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 				
-				line = "keypass: \"password\" # Optional, only needed if using 'key' for type and the file is password protected";
+				line = "keypass: \"password\" # optional, only needed if using 'key' for type and the key file is password protected";
 				formatter.format("%" + (line.length() + 6) + "s", line + "\n\n");
 				
 				formatter.format("%s", "# Begin environment specific configuration(s)\n\n");
@@ -275,7 +275,7 @@ public class ConfigReader implements EEExtras {
 				line = "host: \"host\"";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 
-				line = "port: 3306 # Port is optional, will default to 3306, use to overwrite default";
+				line = "port: 3306 # port is optional, will default to 3306, use to overwrite default";
 				formatter.format("%" + (line.length() + 6) + "s", line + "\n\n");
 
 				line = "ssh:";
@@ -287,10 +287,10 @@ public class ConfigReader implements EEExtras {
 				line = "user: \"user\"";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 
-				line = "password: \"password\" # Only sent if not using public/private key authentication";
+				line = "password: \"password\" # only sent if not using public/private key authentication";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
 
-				line = "port: 22 # Port is optional, will default to 22, use to overwrite default";
+				line = "port: 22 # port is optional, will default to 22, use to overwrite default";
 				formatter.format("%" + (line.length() + 6) + "s", line + "\n\n");
 
 				formatter.format("%s", "# production: # multiple environments can be specified\n");
