@@ -3,7 +3,7 @@
  * @info Was tired of manually creating rsync commands and fussing with
  * Capistrano trying to automate the ExpressionEngine deployment process, so I created this simple
  * Java program to handle the heavy lifting and tedious tasks associated with that process.
- * 
+ *
  */
 
 package eemove;
@@ -91,7 +91,7 @@ public class EEMove implements EEExtras {
 	}
 
 	/*
-	 * Start working! 
+	 * Start working!
 	 * TODO break this up into separate methods to make things
 	 * 		cleaner and easier to read!
 	 */
@@ -179,7 +179,8 @@ public class EEMove implements EEExtras {
 							appDest += "/dist/";
 							sysSrc += "/user/templates/";
 							sysDest += "/user/templates/";
-							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+							new EEPushPull(appSrc, appDest, type, dryRun, thisConfig, cr);
+							new EEPushPull(sysSrc, sysDest, type, dryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
 							String uploadSrc = appSrc + "/images/uploads/";
