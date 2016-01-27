@@ -57,18 +57,18 @@ public class DBPushPull implements EEExtras {
 		connection = null;
 		try {
 			// Try to connect to server
-			String consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to " + destConfig.getEnvironment() + " host " + EEExtras.ANSI_RESET, 80, '▬');
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to " + destConfig.getEnvironment() + " host " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			connection = connectTo();
 			/*
 			 * If connection successful, make backups of local and remote
 			 * databases and save them to the projects db_backup folder
 			 */
-			consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of " + destConfig.getEnvironment() + " database " + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of " + destConfig.getEnvironment() + " database " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			File remoteBackup = makeRemoteDbBackup(connection);
 			
-			consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of local database " + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of local database " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			File localBackup = localDbBackup();
 
@@ -80,14 +80,14 @@ public class DBPushPull implements EEExtras {
 				 * Push local dump to remote, import the dump, then remove the
 				 * dump file from the server
 				 */
-				consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Sending local database backup to " + destConfig.getEnvironment() + " and importing " + EEExtras.ANSI_RESET, 80, '▬');
+				consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Sending local database backup to " + destConfig.getEnvironment() + " and importing " + EEExtras.ANSI_RESET, 80, '▬');
 				System.out.println(consolMsg);
 				importLocalDbBackup(connection, localBackup);
 			} else {
 				/*
 				 * Import the remote dump, simple!
 				 */
-				consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Importing " + destConfig.getEnvironment() + " database to local " + EEExtras.ANSI_RESET, 80, '▬');
+				consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Importing " + destConfig.getEnvironment() + " database to local " + EEExtras.ANSI_RESET, 80, '▬');
 				System.out.println(consolMsg);
 				importRemoteDbBackup(remoteBackup);
 			}
@@ -95,7 +95,7 @@ public class DBPushPull implements EEExtras {
 			/*
 			 * Database push/pull complete!
 			 */
-			consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " DB Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " DB Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 				
 		} catch (IOException e) {

@@ -156,7 +156,7 @@ public class EEPushPull implements EEExtras {
 		}
 		// Remove the file, print completion message
 		tempBashCmd.delete();
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Transfer complete " + EEExtras.ANSI_RESET, 80, '▬');
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Transfer complete " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 	}
 
@@ -164,7 +164,7 @@ public class EEPushPull implements EEExtras {
 	 * If uploading files to server, ensure proper permissions set TODO
 	 */
 	private void fixPermissions() throws IOException {
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 
 		List<String> result = new LinkedList<>();
