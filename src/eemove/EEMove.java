@@ -50,14 +50,25 @@ public class EEMove implements EEExtras {
 			// config file
 			cr = new ConfigReader("eemove.config");
 			System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
-			// Create or load our config file
+			/*
+			 * Create or load our config file:
+			 * If no config file found, will generate a bootstrap one
+			 * then prompt user to adjust as needed and exit.
+			 */
 			this.config = cr.getConfig();
-			// Grab some of the gloabsl we'll need later
+			/*
+			 * If config file read successfully
+			 * grab some of the globals we'll need later
+			 */
 			this.eeApp = cr.getAppDir();
 			this.eeSystem = cr.getSysDir();
 			this.uploadDir = cr.getUpDir();
 			this.eeAboveRoot = cr.isAboveRoot();
+			/*
+			 * Done loading config and getting needed startup info
+			 */
 			System.out.print(EEExtras.ANSI_YELLOW + "all done!\n" + EEExtras.ANSI_RESET);
+			// Show user the environment we've loaded
 			System.out
 					.print(EEExtras.ANSI_YELLOW + "Your currently configured environments are: " + EEExtras.ANSI_RESET);
 			String configurations = EEExtras.ANSI_YELLOW + "";
