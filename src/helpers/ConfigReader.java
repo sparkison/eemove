@@ -25,7 +25,7 @@ import util.EEExtras;
 public class ConfigReader implements EEExtras {
 
 	private final String CONF;
-	
+
 	public File keyfile;
 	public String keyPass;
 	public String sysDir;
@@ -92,7 +92,7 @@ public class ConfigReader implements EEExtras {
 							for (Object authItem : authentication.keySet()) {
 								if (authItem.toString().equals("type")) {
 									boolean useKey = false;
-									if(authentication.get(authItem).toString().equals("key"))
+									if (authentication.get(authItem).toString().equals("key"))
 										useKey = true;
 									this.useKeyAuth = useKey;
 								} else if (authItem.toString().equals("keyfile")) {
@@ -150,8 +150,8 @@ public class ConfigReader implements EEExtras {
 					 * We've got all of our config vars, create the EEconfig
 					 * object and add to hashmap
 					 */
-					configVars.put(environment, new EEconfig(environment, host, directory, user, pass, port, db,
-							dbUser, dbPass, dbHost, dbPort));
+					configVars.put(environment, new EEconfig(environment, host, directory, user, pass, port, db, dbUser,
+							dbPass, dbHost, dbPort));
 
 					// Clear out the variables just to be safe
 					environment = "";
@@ -184,8 +184,7 @@ public class ConfigReader implements EEExtras {
 		File eemoveConfig = new File(CONF);
 		if (!eemoveConfig.exists()) {
 			System.out.println(EEExtras.ANSI_YELLOW
-					+ "\n Looks like you don't have a config file created yet. Creating one for you now.\n"
-					+ "Please add environments and make adjustments as needed.\n"
+					+ "\n It looks like you don't have a config file created yet. Creating one for you now...\n"
 					+ EEExtras.ANSI_RESET);
 			try {
 				outFile = new FileWriter(eemoveConfig);
@@ -219,16 +218,16 @@ public class ConfigReader implements EEExtras {
 
 				line = "authentication:";
 				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
-				
+
 				line = "type: \"key\" # use either 'key' for public key authentication or 'password' for password";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
-				
+
 				line = "keyfile: \"/user/john/.ssh/id_rsa\" # optional, only needed if using 'key' for type. Use an absolute path here";
 				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
-				
+
 				line = "keypass: \"password\" # optional, only needed if using 'key' for type and the key file is password protected";
 				formatter.format("%" + (line.length() + 6) + "s", line + "\n\n");
-				
+
 				formatter.format("%s", "# Begin environment specific configuration(s)\n\n");
 
 				formatter.format("%s", "local:\n");
@@ -302,14 +301,28 @@ public class ConfigReader implements EEExtras {
 				outFile.flush();
 				outFile.close();
 
+				// Bootstrap config file created
+				// Prompt user to edit the details and re-run eemove
+				System.out.println(EEExtras.ANSI_YELLOW + "Config file created." + EEExtras.ANSI_RESET);
+				System.out.println(EEExtras.ANSI_YELLOW
+						+ "Please add environments and make adjustments as needed, then run eemove again to get started!\n"
+						+ EEExtras.ANSI_RESET);
+				System.out.println(EEExtras.ANSI_YELLOW + "****************************************************"
+						+ EEExtras.ANSI_RESET);
+				// Exit eemove, can't use the auto-generated config as it
+				// doesn't contain actual environment variables
+				System.exit(0);
+
 			} catch (IOException e) {
 				System.out.println(
 						EEExtras.ANSI_RED + "Error wrting config file: " + e.getMessage() + EEExtras.ANSI_RESET);
+				System.exit(0);
 			}
+			
 		}
 
 	}
-	
+
 	/*
 	 * Getters
 	 */
