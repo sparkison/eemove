@@ -86,7 +86,7 @@ public class DBPushPull implements EEExtras {
 			 * Database push/pull complete!
 			 */
 			String consolMsg = Strings.padEnd(
-					"▬▬ ✓ " + EEExtras.ANSI_CYAN + " Database Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
+					"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Database Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 
 		} catch (IOException e) {
@@ -246,12 +246,11 @@ public class DBPushPull implements EEExtras {
 			BufferedReader brErr = new BufferedReader(isrErr);
 
 			// Print status to stdout
-			System.out.print("Importing database dump from " + destConfig.getEnvironment());
 			String val = null;
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
 			while ((val = brStd.readLine()) != null) {
-				System.out.print(" . "); // print dots to the screen to show
+				System.out.print("*"); // print dots to the screen to show
 											// something is happening
 			}
 
@@ -370,12 +369,12 @@ public class DBPushPull implements EEExtras {
 		String consolMsg = "";
 		if (cr.isUseKeyAuth()) {
 			connection.authenticateWithPublicKey(destConfig.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to "
-					+ destConfig.getEnvironment() + " host using PKA" + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Connecting to "
+					+ destConfig.getEnvironment() + " host using PKA " + EEExtras.ANSI_RESET, 80, '▬');
 		} else {
 			connection.authenticateWithPassword(destConfig.getSshUser(), destConfig.getSshPass());
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to "
-					+ destConfig.getEnvironment() + " host using PASSWORD" + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Connecting to "
+					+ destConfig.getEnvironment() + " host using PASSWORD " + EEExtras.ANSI_RESET, 80, '▬');
 		}
 		System.out.println(consolMsg);
 		return connection;
