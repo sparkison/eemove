@@ -236,18 +236,18 @@ public class EEMove implements EEExtras {
 				+ "To see what will be transfered without actually transfering anything use the -d flag.\n"
 				+ "[Note] must use the -l flag if doing a database push/pull.\n\n";
 		returnString += "[ Push examples ]\n";
-		returnString += "\"push -l staging all\"\n";
-		returnString += "\"push -l staging plugins\"\n";
-		returnString += "\"push -l production themes\"\n";
-		returnString += "\"push -l production uploads\"\n";
-		returnString += "\"push -l production system\"\n";
-		returnString += "\"push -l production database\"\n";
+		returnString += "\"push -l staging all\" (pushes app and system directories to desired environment)\n";
+		returnString += "\"push -l staging plugins\" (pushes add-ons to desired environment)\n";
+		returnString += "\"push -l production themes\" (pushes themes to desired environment)\n";
+		returnString += "\"push -l production uploads\" (pushes uploads to desired environment)\n";
+		returnString += "\"push -l production system\" (pushes system directory to desired environment)\n";
+		returnString += "\"push -l production database\" (pushes database to desired environment)\n";
 		returnString += "\n[ Pull examples ]\n";
-		returnString += "\"pull -l production plugins\"\n";
-		returnString += "\"pull -l staging themes\"\n";
-		returnString += "\"pull -l production uploads\"\n";
-		returnString += "\"pull -l staging app\"\n";
-		returnString += "\"pull -l staging database\"\n\n" + EEExtras.ANSI_RESET;
+		returnString += "\"pull -l production plugins\" (pulls add-ons from desired environment)\n";
+		returnString += "\"pull -l staging themes\" (pulls themes from desired environment)\n";
+		returnString += "\"pull -l production uploads\" (pulls uploads from desired environment)\n";
+		returnString += "\"pull -l staging app\" (pulls app directory desired environment)\n";
+		returnString += "\"pull -l staging database\" (pulls database from desired environment)\n\n" + EEExtras.ANSI_RESET;
 		return returnString;
 	}
 
