@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/ganymed-ssh2-build210.jar"/>
 	<classpathentry kind="lib" path="lib/snake-yaml.jar"/>
+	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

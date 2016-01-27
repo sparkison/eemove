@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
@@ -154,18 +156,16 @@ public class EEPushPull implements EEExtras {
 		}
 		// Remove the file, print completion message
 		tempBashCmd.delete();
-		System.out.println(EEExtras.ANSI_CYAN + "*********************************");
-		System.out.println("*\tTransfer complete\t*");
-		System.out.println("*********************************" + EEExtras.ANSI_RESET);
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Transfer complete " + EEExtras.ANSI_RESET, 80, '▬');
+		System.out.println(consolMsg);
 	}
 
 	/*
 	 * If uploading files to server, ensure proper permissions set TODO
 	 */
 	private void fixPermissions() throws IOException {
-		System.out.println(EEExtras.ANSI_CYAN + "*********************************");
-		System.out.println("*\tUpdating permissions\t*");
-		System.out.println("*********************************" + EEExtras.ANSI_RESET);
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
+		System.out.println(consolMsg);
 
 		List<String> result = new LinkedList<>();
 		String command = "chmod ";

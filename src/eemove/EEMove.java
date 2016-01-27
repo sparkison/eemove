@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import com.google.common.base.Strings;
+
 import db.DBPushPull;
 import helpers.ConfigReader;
 import helpers.EEconfig;
@@ -146,10 +148,13 @@ public class EEMove implements EEExtras {
 						String type = "";
 						boolean isDryRun = true;
 
-						if (pushPull.equalsIgnoreCase("push"))
+						if (pushPull.equalsIgnoreCase("push")) {
 							type = "push";
-						else
+							pushPull = "Pushing";
+						} else {
 							type = "pull";
+							pushPull = "Pulling";
+						}
 
 						if (runType.equalsIgnoreCase("-d"))
 							isDryRun = true;
@@ -159,6 +164,8 @@ public class EEMove implements EEExtras {
 						if (directory.equalsIgnoreCase("all")) {
 							// Push all contents of app and system
 							// directories to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " All ", 80, '▬');
+							System.out.println(consolMsg);
 							appSrc += "/";
 							appDest += "/";
 							sysSrc += "/";
@@ -167,6 +174,8 @@ public class EEMove implements EEExtras {
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("plugins")) {
 							// Push plugin directories to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Plugins ", 80, '▬');
+							System.out.println(consolMsg);
 							appSrc += "/themes/user/";
 							appDest += "/themes/user/";
 							sysSrc += "/user/addons/";
@@ -175,6 +184,8 @@ public class EEMove implements EEExtras {
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("themes")) {
 							// Push theme directory to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Themes ", 80, '▬');
+							System.out.println(consolMsg);
 							appSrc += "/dist/";
 							appDest += "/dist/";
 							sysSrc += "/user/templates/";
@@ -183,21 +194,29 @@ public class EEMove implements EEExtras {
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Uploads ", 80, '▬');
+							System.out.println(consolMsg);
 							String uploadSrc = appSrc + "/images/uploads/";
 							String uploadDest = appDest + "/images/uploads/";
 							new EEPushPull(uploadSrc, uploadDest, type, isDryRun, thisConfig, cr);
 							if (!uploadDir.equals("")) {
+								consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Custom Uploads Directory ", 80, '▬');
+								System.out.println(consolMsg);
 								String customUploadSrc = appSrc + "/" + uploadDir + "/";
 								String customUploadDest = appDest + "/" + uploadDir + "/";
 								new EEPushPull(customUploadSrc, customUploadDest, type, isDryRun, thisConfig, cr);
 							}
 						} else if (directory.equalsIgnoreCase("system")) {
 							// Push system directory to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " System ", 80, '▬');
+							System.out.println(consolMsg);
 							sysSrc += "/";
 							sysDest += "/";
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("app")) {
 							// Push app directory to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " App ", 80, '▬');
+							System.out.println(consolMsg);
 							appSrc += "/";
 							appDest += "/";
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
@@ -214,6 +233,8 @@ public class EEMove implements EEExtras {
 											+ "You do not have an environment for \"local\", please add one to your \"eemove.config\" file and try again."
 											+ EEExtras.ANSI_RESET);
 								} else {
+									String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Database ", 80, '▬');
+									System.out.println(consolMsg);
 									new DBPushPull(thisConfig, config.get("local"), type, cr);
 								}
 							}

@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.common.base.Strings;
+
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SCPClient;
 import ch.ethz.ssh2.Session;
@@ -55,12 +57,19 @@ public class DBPushPull implements EEExtras {
 		connection = null;
 		try {
 			// Try to connect to server
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to " + destConfig.getEnvironment() + " host " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
 			connection = connectTo();
 			/*
 			 * If connection successful, make backups of local and remote
 			 * databases and save them to the projects db_backup folder
 			 */
+			consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of " + destConfig.getEnvironment() + " database " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
 			File remoteBackup = makeRemoteDbBackup(connection);
+			
+			consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of local database " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
 			File localBackup = localDbBackup();
 
 			/*
@@ -71,20 +80,24 @@ public class DBPushPull implements EEExtras {
 				 * Push local dump to remote, import the dump, then remove the
 				 * dump file from the server
 				 */
+				consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Sending local database backup to " + destConfig.getEnvironment() + " and importing " + EEExtras.ANSI_RESET, 80, '▬');
+				System.out.println(consolMsg);
 				importLocalDbBackup(connection, localBackup);
 			} else {
 				/*
 				 * Import the remote dump, simple!
 				 */
+				consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " Importing " + destConfig.getEnvironment() + " database to local " + EEExtras.ANSI_RESET, 80, '▬');
+				System.out.println(consolMsg);
 				importRemoteDbBackup(remoteBackup);
 			}
 
 			/*
 			 * Database push/pull complete!
 			 */
-			System.out.println(EEExtras.ANSI_CYAN + "*********************************");
-			System.out.println("*\tDB Transfer complete!\t*");
-			System.out.println("*********************************" + EEExtras.ANSI_RESET);
+			consolMsg = Strings.padEnd("▬▬ ✓ " + "▬▬ ✓ " + EEExtras.ANSI_CYAN + " DB Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
+				
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -229,12 +242,13 @@ public class DBPushPull implements EEExtras {
 			InputStreamReader isrErr = new InputStreamReader(stderr);
 			BufferedReader brErr = new BufferedReader(isrErr);
 
-			// Print output to stdout
+			// Print status to stdout
+			System.out.print("Importing database dump from " + destConfig.getEnvironment());
 			String val = null;
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
 			while ((val = brStd.readLine()) != null) {
-				System.out.println(val.toString());
+				System.out.print(" . "); // print dots to the screen to show something is happening
 			}
 
 			// Print errors stdout so user knows what went wrong
@@ -243,6 +257,8 @@ public class DBPushPull implements EEExtras {
 			}
 			
 			int exitVal = proc.waitFor();
+			
+			System.out.println();
 			
 			if (exitVal != 0) {
 				System.out.println(EEExtras.ANSI_YELLOW + ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
