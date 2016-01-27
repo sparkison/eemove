@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,19 +58,12 @@ public class DBPushPull implements EEExtras {
 		connection = null;
 		try {
 			// Try to connect to server
-			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to " + destConfig.getEnvironment() + " host " + EEExtras.ANSI_RESET, 80, '▬');
-			System.out.println(consolMsg);
 			connection = connectTo();
 			/*
 			 * If connection successful, make backups of local and remote
 			 * databases and save them to the projects db_backup folder
 			 */
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of " + destConfig.getEnvironment() + " database " + EEExtras.ANSI_RESET, 80, '▬');
-			System.out.println(consolMsg);
 			File remoteBackup = makeRemoteDbBackup(connection);
-			
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Createing backup of local database " + EEExtras.ANSI_RESET, 80, '▬');
-			System.out.println(consolMsg);
 			File localBackup = localDbBackup();
 
 			/*
@@ -80,24 +74,21 @@ public class DBPushPull implements EEExtras {
 				 * Push local dump to remote, import the dump, then remove the
 				 * dump file from the server
 				 */
-				consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Sending local database backup to " + destConfig.getEnvironment() + " and importing " + EEExtras.ANSI_RESET, 80, '▬');
-				System.out.println(consolMsg);
 				importLocalDbBackup(connection, localBackup);
 			} else {
 				/*
 				 * Import the remote dump, simple!
 				 */
-				consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Importing " + destConfig.getEnvironment() + " database to local " + EEExtras.ANSI_RESET, 80, '▬');
-				System.out.println(consolMsg);
 				importRemoteDbBackup(remoteBackup);
 			}
 
 			/*
 			 * Database push/pull complete!
 			 */
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " DB Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
+			String consolMsg = Strings.padEnd(
+					"▬▬ ✓ " + EEExtras.ANSI_CYAN + " Database Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-				
+
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -121,6 +112,11 @@ public class DBPushPull implements EEExtras {
 		String command = "mysqldump --opt --add-drop-table --no-create-db --verbose --user=" + destConfig.getDbUser()
 				+ " --password=" + destConfig.getDbPass() + " --port=" + destConfig.getDbPort() + " --databases "
 				+ destConfig.getDatabase();
+
+		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | create file: " + EEExtras.ANSI_RESET + backupFile);
+		System.out
+				.println(EEExtras.ANSI_PURPLE + "\tremote | pipe output to local file: " + EEExtras.ANSI_RESET + command);
+
 		OutputStream out = new FileOutputStream(backupFile);
 		Session session = null;
 		try {
@@ -162,9 +158,12 @@ public class DBPushPull implements EEExtras {
 		File localDbBackup = new File(
 				EEExtras.CWD + "/db_backups/" + localConfig.getEnvironment() + "_db_" + timestamp + ".sql");
 		OutputStream out = new FileOutputStream(localDbBackup);
-		String[] command = {"/bin/sh", "-c", EEExtras.PATH + "/mysqldump --opt --add-drop-table --no-create-db --user="
-				+ localConfig.getDbUser() + " --password=" + localConfig.getDbPass() + " --port="
-				+ localConfig.getDbPort() + " --databases " + localConfig.getDatabase()};
+		String[] command = { "/bin/sh", "-c",
+				EEExtras.PATH + "/mysqldump --opt --add-drop-table --no-create-db --user=" + localConfig.getDbUser()
+						+ " --password=" + localConfig.getDbPass() + " --port=" + localConfig.getDbPort()
+						+ " --databases " + localConfig.getDatabase() };
+
+		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | " + EEExtras.ANSI_RESET + Arrays.toString(command));
 
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
@@ -201,7 +200,8 @@ public class DBPushPull implements EEExtras {
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW + ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
+				System.out.println(EEExtras.ANSI_YELLOW
+						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
 						+ EEExtras.ANSI_RESET);
 			}
 
@@ -225,9 +225,12 @@ public class DBPushPull implements EEExtras {
 	 * Import the remote dump into the local database
 	 */
 	private void importRemoteDbBackup(File file) {
-		String[] command = {"/bin/sh", "-c", EEExtras.PATH + "/mysql --verbose --user=" + localConfig.getDbUser() + " --password="
-				+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
-				+ localConfig.getDatabase() + " < " + file.getAbsolutePath()};
+		String[] command = { "/bin/sh", "-c",
+				EEExtras.PATH + "/mysql --verbose --user=" + localConfig.getDbUser() + " --password="
+						+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
+						+ localConfig.getDatabase() + " < " + file.getAbsolutePath() };
+
+		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | " + EEExtras.ANSI_RESET + Arrays.toString(command));
 
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
@@ -248,20 +251,22 @@ public class DBPushPull implements EEExtras {
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
 			while ((val = brStd.readLine()) != null) {
-				System.out.print(" . "); // print dots to the screen to show something is happening
+				System.out.print(" . "); // print dots to the screen to show
+											// something is happening
 			}
 
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
 				System.err.println(EEExtras.ANSI_RED + ">> [Error]: " + val + EEExtras.ANSI_RESET);
 			}
-			
+
 			int exitVal = proc.waitFor();
-			
+
 			System.out.println();
-			
+
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW + ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
+				System.out.println(EEExtras.ANSI_YELLOW
+						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
 						+ EEExtras.ANSI_RESET);
 			}
 
@@ -269,7 +274,7 @@ public class DBPushPull implements EEExtras {
 			brStd.close();
 			brErr.close();
 			stdin.close();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -283,6 +288,8 @@ public class DBPushPull implements EEExtras {
 		scp.put(file.getAbsolutePath(), "/tmp/");
 		// Pass things off to the next method to import the database and delete
 		// the sql dump file
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + "scp " + file.getAbsolutePath()
+				+ " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp" + file.getName());
 		importLocalDbBackupToRemote(file);
 	}
 
@@ -293,6 +300,9 @@ public class DBPushPull implements EEExtras {
 		String command = "mysql --verbose --user=" + destConfig.getDbUser() + " --password=" + destConfig.getDbPass()
 				+ " --port=" + destConfig.getDbPort() + " --database=" + destConfig.getDatabase() + " < " + "/tmp/"
 				+ file.getName();
+		
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		
 		List<String> result = new LinkedList<>();
 		Session session = null;
 		try {
@@ -327,6 +337,9 @@ public class DBPushPull implements EEExtras {
 	 */
 	private void removeTempFile(String filename) throws IOException {
 		String command = "rm " + filename;
+		
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		
 		List<String> result = new LinkedList<>();
 		Session session = null;
 		try {
@@ -354,11 +367,17 @@ public class DBPushPull implements EEExtras {
 	public Connection connectTo() throws IOException {
 		Connection connection = new Connection(destConfig.getHost());
 		connection.connect();
+		String consolMsg = "";
 		if (cr.isUseKeyAuth()) {
 			connection.authenticateWithPublicKey(destConfig.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to "
+					+ destConfig.getEnvironment() + " host using PKA" + EEExtras.ANSI_RESET, 80, '▬');
 		} else {
 			connection.authenticateWithPassword(destConfig.getSshUser(), destConfig.getSshPass());
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + " Connecting to "
+					+ destConfig.getEnvironment() + " host using PASSWORD" + EEExtras.ANSI_RESET, 80, '▬');
 		}
+		System.out.println(consolMsg);
 		return connection;
 	}
 }
