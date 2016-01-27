@@ -303,6 +303,10 @@ public class EEMove implements EEExtras {
 			ignoreFile.write("\n");
 			ignoreFile.write("_thumbs/");
 			ignoreFile.write("\n");
+			ignoreFile.write("# ignore system in the case it's in same directory as app");
+			ignoreFile.write("\n");
+			ignoreFile.write("system");
+			ignoreFile.write("\n");
 			ignoreFile.write("/user/cache/");
 			ignoreFile.write("\n");
 			ignoreFile.close();

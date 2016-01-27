@@ -232,10 +232,7 @@ public class ConfigReader implements EEExtras {
 
 				formatter.format("%s", "local:\n");
 				line = "vhost: \"http://yoursite.dev\"";
-				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
-
-				line = "ee_path: \"/home/john/sites/your_site\" # use an absolute path here";
-				formatter.format("%" + (line.length() + 4) + "s", line + "\n\n");
+				formatter.format("%" + (line.length() + 3) + "s", line + "\n\n");
 
 				line = "database:";
 				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
