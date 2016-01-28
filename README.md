@@ -51,7 +51,6 @@ globals:
 
 local:
   vhost: "http://yoursite.dev"
-  ee_path: "/home/john/sites/your_site" # use an absolute path here
 
   database:
     name: "database_name"
