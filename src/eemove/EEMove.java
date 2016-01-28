@@ -182,7 +182,7 @@ public class EEMove implements EEExtras {
 							sysDest += "/user/addons/";
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
-						} else if (directory.equalsIgnoreCase("themes")) {
+						} else if (directory.equalsIgnoreCase("templates")) {
 							// Push theme directory to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Themes ", 80, '▬');
 							System.out.println(consolMsg);
@@ -220,6 +220,25 @@ public class EEMove implements EEExtras {
 							appSrc += "/";
 							appDest += "/";
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+						} else if (directory.equalsIgnoreCase("custom")) {
+							// Push app directory to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Custom Directory ", 80, '▬');
+							System.out.println(consolMsg);
+							String source, destination;
+							
+							System.out.print(EEExtras.ANSI_GREEN + "Enter the local path (relative to " + EEExtras.CWD + "): " + EEExtras.ANSI_RESET);
+							source = scan.nextLine();
+							System.out.print(EEExtras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + EEExtras.ANSI_RESET);
+							destination = scan.nextLine();
+							System.out.println();
+							
+							if (type.equalsIgnoreCase("push")) {
+								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + EEExtras.CWD + "/" + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":/" + destination + "\"" + EEExtras.ANSI_RESET);
+							} else {
+								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":/" + destination + "\" to \"" + EEExtras.CWD + "/" + source + "\"" + EEExtras.ANSI_RESET);
+							}
+														
+							new EEPushPull(source, destination, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("database")) {
 							// Database push/pull doesn't support dry-run, tell
 							// user
@@ -258,18 +277,19 @@ public class EEMove implements EEExtras {
 				+ "To see what will be transfered without actually transfering anything use the -d flag.\n"
 				+ "[Note] must use the -l flag if doing a database push/pull.\n\n";
 		returnString += "[ Push examples ]\n";
-		returnString += "\"push -l staging all\" (pushes app and system directories to desired environment)\n";
-		returnString += "\"push -l staging plugins\" (pushes add-ons to desired environment)\n";
-		returnString += "\"push -l production themes\" (pushes themes to desired environment)\n";
-		returnString += "\"push -l production uploads\" (pushes uploads to desired environment)\n";
-		returnString += "\"push -l production system\" (pushes system directory to desired environment)\n";
-		returnString += "\"push -l production database\" (pushes database to desired environment)\n";
+		returnString += "\"push -l staging all\"\t\t(pushes app and system directories to desired environment)\n";
+		returnString += "\"push -l staging plugins\"\t(pushes add-ons to desired environment)\n";
+		returnString += "\"push -l production templates\"\t(pushes templates to desired environment)\n";
+		returnString += "\"push -l production uploads\"\t(pushes uploads to desired environment)\n";
+		returnString += "\"push -l production system\"\t(pushes system directory to desired environment)\n";
+		returnString += "\"push -l production database\"\t(pushes database to desired environment)\n";
+		returnString += "\"push -l production custom\"\t(will be prompted for source and destination)\n";
 		returnString += "\n[ Pull examples ]\n";
-		returnString += "\"pull -l production plugins\" (pulls add-ons from desired environment)\n";
-		returnString += "\"pull -l staging themes\" (pulls themes from desired environment)\n";
-		returnString += "\"pull -l production uploads\" (pulls uploads from desired environment)\n";
-		returnString += "\"pull -l staging app\" (pulls app directory desired environment)\n";
-		returnString += "\"pull -l staging database\" (pulls database from desired environment)\n\n" + EEExtras.ANSI_RESET;
+		returnString += "\"pull -l production plugins\"\t(pulls add-ons from desired environment)\n";
+		returnString += "\"pull -l staging templates\"\t(pulls templates from desired environment)\n";
+		returnString += "\"pull -l production uploads\"\t(pulls uploads from desired environment)\n";
+		returnString += "\"pull -l staging app\"\t\t(pulls app directory from desired environment)\n";
+		returnString += "\"pull -l staging database\"\t(pulls database from desired environment)\n\n" + EEExtras.ANSI_RESET;
 		return returnString;
 	}
 
