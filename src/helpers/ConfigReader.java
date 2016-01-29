@@ -53,7 +53,7 @@ public class ConfigReader implements EEExtras {
 		// The item we're going to return
 		HashMap<String, EEconfig> configVars = new HashMap<String, EEconfig>();
 
-		// Instantiate the Yamp parser
+		// Instantiate the Yaml parser
 		Yaml yaml = new Yaml();
 		String environment = "", host = "", directory = "", user = "", pass = "", port = "22", db = "", dbUser = "",
 				dbPass = "", dbHost = "", dbPort = "3306";

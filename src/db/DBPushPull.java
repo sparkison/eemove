@@ -38,6 +38,7 @@ public class DBPushPull implements EEExtras {
 	private Connection connection;
 	private String timestamp;
 	private ConfigReader cr;
+	private String type;
 
 	// Make sure backup folder exists, if not create it
 	@SuppressWarnings("unused")
@@ -50,6 +51,7 @@ public class DBPushPull implements EEExtras {
 		// Set the configurations
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;
+		this.type = type;
 		// Grab the config file info
 		this.cr = cr;
 		// Grab a timestamp
@@ -75,11 +77,21 @@ public class DBPushPull implements EEExtras {
 				 * dump file from the server
 				 */
 				importLocalDbBackup(connection, localBackup);
+				/*
+				 * Remove the local dump as we're done with it and it contains updated database info only relevant to remote
+				 */
+				System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + localBackup);
+				localBackup.delete();
 			} else {
 				/*
 				 * Import the remote dump, simple!
 				 */
 				importRemoteDbBackup(remoteBackup);
+				/*
+				 * Remove the remote dump as we're done with it and it contains updated database info only relevant to local
+				 */
+				System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + remoteBackup);
+				remoteBackup.delete();
 			}
 
 			/*
@@ -101,7 +113,7 @@ public class DBPushPull implements EEExtras {
 	}
 
 	/*
-	 * Make a dump of the remote database To do this we're executing the
+	 * Make a dump of the remote database. To do this we're executing the
 	 * 'mysqldump' command on the remote server and grabbing its output and
 	 * writing it to local file. This measn we don't need to write the output to
 	 * a file and download it and remove it later, much cleaner
@@ -125,6 +137,7 @@ public class DBPushPull implements EEExtras {
 			InputStream stdout = new StreamGobbler(session.getStdout());
 			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
 				String line = br.readLine();
+				String lineReplace = null, lineReplace2 = null, lineReplace3 = null;
 				while (line != null) {
 					/*
 					 * Don't include the USE `database` name since they will
@@ -132,8 +145,23 @@ public class DBPushPull implements EEExtras {
 					 * comments
 					 */
 					if (!(line.startsWith("USE") || line.startsWith("--"))) {
+						// If this dump will be imported from remote server to local need to change upload prefs
+						if(type.equals("pull")) {
+							if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
+								lineReplace = line.replace(destConfig.getHost(), localConfig.getHost());
+								lineReplace2 = lineReplace.replace(destConfig.getDirectory() + "/images", EEExtras.CWD + "/" + cr.getAppDir() + "/images");
+								if(!cr.getUpDir().equals(""))
+									lineReplace3 = lineReplace2.replace(destConfig.getDirectory() + "/" + cr.getUpDir(), EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir());
+								else
+									lineReplace3 = lineReplace2;
+								// Point the original 'line' to the updated string
+								line = lineReplace3;
+							}
+						}
+						// Write out the bytes to the file
 						out.write(line.getBytes());
 						out.write("\n".getBytes());
+						
 					}
 					line = br.readLine();
 				}
@@ -178,23 +206,39 @@ public class DBPushPull implements EEExtras {
 			BufferedReader brErr = new BufferedReader(isrErr);
 
 			// Print output to stdout
-			String val = null;
+			String line = null;
+			String lineReplace = null, lineReplace2 = null, lineReplace3 = null;
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
-			while ((val = brStd.readLine()) != null) {
+			while ((line = brStd.readLine()) != null) {
 				/*
 				 * Don't include the USE `database` name since they will likely
 				 * differ from local to remote sources, also ignore comments
 				 */
-				if (!(val.startsWith("USE") || val.startsWith("--"))) {
-					out.write(val.getBytes());
+				if (!(line.startsWith("USE") || line.startsWith("--"))) {
+					// If this dump will be uploaded to remote server from local need to change upload prefs
+					if(type.equals("push")) {
+						if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
+							lineReplace = line.replace(localConfig.getHost(), destConfig.getHost());
+							lineReplace2 = lineReplace.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/images", destConfig.getDirectory() + "/images");
+							if(!cr.getUpDir().equals(""))
+								lineReplace3 = lineReplace2.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir(), destConfig.getDirectory() + "/" + cr.getUpDir());
+							else
+								lineReplace3 = lineReplace2;
+							// Point the original 'line' to the updated string
+							line = lineReplace3;
+						} 
+					}
+					// Write out the bytes to the file
+					out.write(line.getBytes());
 					out.write("\n".getBytes());
 				}
+					
 			}
 
 			// Print errors stdout so user knows what went wrong
-			while ((val = brErr.readLine()) != null) {
-				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+			while ((line = brErr.readLine()) != null) {
+				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + line + EEExtras.ANSI_RESET);
 			}
 
 			int exitVal = proc.waitFor();
