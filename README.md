@@ -29,7 +29,8 @@ Breakdown of the above command:
   4. `plugins` for the **system/user/addons** and **app/themes/user** directories
   5. `app` for the public facing directories
   6. `system` for the system directory
-  7. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
+  7. `custom` specify a custom local and remote directory to push/pull to/from
+  8. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
 ## Config file example
 
