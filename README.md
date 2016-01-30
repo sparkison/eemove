@@ -100,7 +100,6 @@ Right now eemove is only configured for ExpressionEngine 3. Once the source is m
 ----addons
 ----templates
 ----...
---eemove.jar
 --eemove.config
 --eemove.ignore
 
