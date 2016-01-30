@@ -26,7 +26,7 @@ Breakdown of the above command:
   1. `all` for everything (doesn't include database; for files only)
   2. `uploads` for the upload directories (both user defined and **images/uploads**)
   3. `templates` for the **system/user/templates** directory
-  4. `plugins` for the **system/user/addons** and **app/themes/user** directories
+  4. `addons` for the **system/user/addons** and **app/themes/user** directories
   5. `app` for the public facing directories
   6. `system` for the system directory
   7. `custom` specify a custom local and remote directory to push/pull to/from
