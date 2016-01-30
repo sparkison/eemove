@@ -13,7 +13,7 @@ Includes ANT build file. Compile using `ant compile clean dist`
 
 jar file `eemove.jar` will be created within the newly created **dist** folder.
 
-Or you can download one of the precompiled release via the [releases](https://github.com/sparkison/eemove/releases) tab. (Note: the release are typically a few commits behind. For the latest version download and compile the source).
+Or you can download one of the precompiled release via the [releases](https://github.com/sparkison/eemove/releases) tab. (Note: the releases are typically a few commits behind master. For the latest version download and compile the source).
 
 Move **eemove.jar** to wherever you like, then `cd` into your ExpressionEngine websites root on your local dev and run using `java -jar /PATH_TO_EEMOVE/eemove.jar`, and simply follow the prompts!
 
