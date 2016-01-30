@@ -146,18 +146,18 @@ public class DBPushPull implements EEExtras {
 					 */
 					if (!(line.startsWith("USE") || line.startsWith("--"))) {
 						// If this dump will be imported from remote server to local need to change upload prefs
-						if(type.equals("pull")) {
-							if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
-								lineReplace = line.replace(destConfig.getHost(), localConfig.getHost());
-								lineReplace2 = lineReplace.replace(destConfig.getDirectory() + "/images", EEExtras.CWD + "/" + cr.getAppDir() + "/images");
-								if(!cr.getUpDir().equals(""))
-									lineReplace3 = lineReplace2.replace(destConfig.getDirectory() + "/" + cr.getUpDir(), EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir());
-								else
-									lineReplace3 = lineReplace2;
-								// Point the original 'line' to the updated string
-								line = lineReplace3;
-							}
-						}
+//						if(type.equals("pull")) {
+//							if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
+//								lineReplace = line.replace(destConfig.getHost(), localConfig.getHost());
+//								lineReplace2 = lineReplace.replace(destConfig.getDirectory() + "/images", EEExtras.CWD + "/" + cr.getAppDir() + "/images");
+//								if(!cr.getUpDir().equals(""))
+//									lineReplace3 = lineReplace2.replace(destConfig.getDirectory() + "/" + cr.getUpDir(), EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir());
+//								else
+//									lineReplace3 = lineReplace2;
+//								// Point the original 'line' to the updated string
+//								line = lineReplace3;
+//							}
+//						}
 						// Write out the bytes to the file
 						out.write(line.getBytes());
 						out.write("\n".getBytes());
@@ -217,18 +217,18 @@ public class DBPushPull implements EEExtras {
 				 */
 				if (!(line.startsWith("USE") || line.startsWith("--"))) {
 					// If this dump will be uploaded to remote server from local need to change upload prefs
-					if(type.equals("push")) {
-						if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
-							lineReplace = line.replace(localConfig.getHost(), destConfig.getHost());
-							lineReplace2 = lineReplace.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/images", destConfig.getDirectory() + "/images");
-							if(!cr.getUpDir().equals(""))
-								lineReplace3 = lineReplace2.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir(), destConfig.getDirectory() + "/" + cr.getUpDir());
-							else
-								lineReplace3 = lineReplace2;
-							// Point the original 'line' to the updated string
-							line = lineReplace3;
-						} 
-					}
+//					if(type.equals("push")) {
+//						if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
+//							lineReplace = line.replace(localConfig.getHost(), destConfig.getHost());
+//							lineReplace2 = lineReplace.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/images", destConfig.getDirectory() + "/images");
+//							if(!cr.getUpDir().equals(""))
+//								lineReplace3 = lineReplace2.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir(), destConfig.getDirectory() + "/" + cr.getUpDir());
+//							else
+//								lineReplace3 = lineReplace2;
+//							// Point the original 'line' to the updated string
+//							line = lineReplace3;
+//						} 
+//					}
 					// Write out the bytes to the file
 					out.write(line.getBytes());
 					out.write("\n".getBytes());

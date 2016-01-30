@@ -172,7 +172,7 @@ public class EEMove implements EEExtras {
 							sysDest += "/";
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
-						} else if (directory.equalsIgnoreCase("plugins")) {
+						} else if (directory.equalsIgnoreCase("addons")) {
 							// Push plugin directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Plugins ", 80, '▬');
 							System.out.println(consolMsg);
