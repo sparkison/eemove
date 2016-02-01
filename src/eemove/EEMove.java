@@ -174,7 +174,7 @@ public class EEMove implements EEExtras {
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("addons")) {
 							// Push plugin directories to environment
-							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Plugins ", 80, '▬');
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Add-ons ", 80, '▬');
 							System.out.println(consolMsg);
 							appSrc += "/themes/user/";
 							appDest += "/themes/user/";
@@ -182,9 +182,19 @@ public class EEMove implements EEExtras {
 							sysDest += "/user/addons/";
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+						}else if (directory.equalsIgnoreCase("update")) {
+							// Push plugin directories to environment
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Update files ", 80, '▬');
+							System.out.println(consolMsg);
+							appSrc += "/themes/ee/";
+							appDest += "/themes/ee/";
+							sysSrc += "/ee/";
+							sysDest += "/ee/";
+							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("templates")) {
 							// Push theme directory to environment
-							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Themes ", 80, '▬');
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Templates ", 80, '▬');
 							System.out.println(consolMsg);
 							appSrc += "/dist/";
 							appDest += "/dist/";
@@ -278,14 +288,15 @@ public class EEMove implements EEExtras {
 				+ "[Note] must use the -l flag if doing a database push/pull.\n\n";
 		returnString += "[ Push examples ]\n";
 		returnString += "\"push -l staging all\"\t\t(pushes app and system directories to desired environment)\n";
-		returnString += "\"push -l staging plugins\"\t(pushes add-ons to desired environment)\n";
+		returnString += "\"push -l staging addons\"\t(pushes add-ons to desired environment)\n";
 		returnString += "\"push -l production templates\"\t(pushes templates to desired environment)\n";
 		returnString += "\"push -l production uploads\"\t(pushes uploads to desired environment)\n";
 		returnString += "\"push -l production system\"\t(pushes system directory to desired environment)\n";
 		returnString += "\"push -l production database\"\t(pushes database to desired environment)\n";
 		returnString += "\"push -l production custom\"\t(will be prompted for source and destination)\n";
+		returnString += "\"push -l staging update\"\t(pushes the system/ee and app/themes/ee directories)\n";
 		returnString += "\n[ Pull examples ]\n";
-		returnString += "\"pull -l production plugins\"\t(pulls add-ons from desired environment)\n";
+		returnString += "\"pull -l production addons\"\t(pulls add-ons from desired environment)\n";
 		returnString += "\"pull -l staging templates\"\t(pulls templates from desired environment)\n";
 		returnString += "\"pull -l production uploads\"\t(pulls uploads from desired environment)\n";
 		returnString += "\"pull -l staging app\"\t\t(pulls app directory from desired environment)\n";

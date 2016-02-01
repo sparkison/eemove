@@ -33,7 +33,8 @@ Breakdown of the above command:
   5. `app` for the public facing directories
   6. `system` for the system directory
   7. `custom` specify a custom local and remote directory to push/pull to/from
-  8. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
+  8. `update` for EE updates; for the **system/ee** and **app/themes/ee** directories
+  9. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
 ## Config file example
 
