@@ -186,12 +186,15 @@ public class EEMove implements EEExtras {
 							// Push plugin directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Update files ", 80, '▬');
 							System.out.println(consolMsg);
+							String configSrc = sysSrc + "/user/config/config.php";
+							String configDest = sysDest + "/user/config/config.php";
 							appSrc += "/themes/ee/";
 							appDest += "/themes/ee/";
 							sysSrc += "/ee/";
 							sysDest += "/ee/";
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+							new EEPushPull(configSrc, configDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("templates")) {
 							// Push theme directory to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Templates ", 80, '▬');
@@ -294,7 +297,7 @@ public class EEMove implements EEExtras {
 		returnString += "\"push -l production system\"\t(pushes system directory to desired environment)\n";
 		returnString += "\"push -l production database\"\t(pushes database to desired environment)\n";
 		returnString += "\"push -l production custom\"\t(will be prompted for source and destination)\n";
-		returnString += "\"push -l staging update\"\t(pushes the system/ee and app/themes/ee directories)\n";
+		returnString += "\"push -l staging update\"\t(pushes the system/ee and app/themes/ee directories as well as the system/user/config/config.php file)\n";
 		returnString += "\n[ Pull examples ]\n";
 		returnString += "\"pull -l production addons\"\t(pulls add-ons from desired environment)\n";
 		returnString += "\"pull -l staging templates\"\t(pulls templates from desired environment)\n";
