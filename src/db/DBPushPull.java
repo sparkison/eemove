@@ -115,7 +115,7 @@ public class DBPushPull implements EEExtras {
 	/*
 	 * Make a dump of the remote database. To do this we're executing the
 	 * 'mysqldump' command on the remote server and grabbing its output and
-	 * writing it to local file. This measn we don't need to write the output to
+	 * writing it to local file. This means we don't need to write the output to
 	 * a file and download it and remove it later, much cleaner
 	 */
 	private File makeRemoteDbBackup(Connection connection) throws IOException {
@@ -179,7 +179,7 @@ public class DBPushPull implements EEExtras {
 
 	/*
 	 * Make local backup of database To do this we're going to exec a process
-	 * and grabe the ouput of the mysql dump from the local machine and save to
+	 * and grab the ouput of the mysql dump from the local machine and save to
 	 * file in db_backups folder
 	 */
 	private File localDbBackup() throws IOException {
@@ -296,11 +296,11 @@ public class DBPushPull implements EEExtras {
 			int lineCount = 0;
 			while ((val = brStd.readLine()) != null) {
 				// Print out loading animation
-				if(lineCount % 5 == 0) System.out.print("--\r");
-				else if(lineCount % 5 == 1) System.out.print("\\ \r");
-				else if(lineCount % 5 == 2) System.out.print("| \r");
-				else if(lineCount % 5 == 3) System.out.print("/ \r");
-				else if(lineCount % 5 == 4) System.out.print("--\r");
+				if(lineCount % 5 == 0) System.out.print("*** -- ***\r");
+				else if(lineCount % 5 == 1) System.out.print("*** \\  ***\r");
+				else if(lineCount % 5 == 2) System.out.print("*** |  ***\r");
+				else if(lineCount % 5 == 3) System.out.print("*** /  ***\r");
+				else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
 				lineCount++;
 			}
 
@@ -312,7 +312,7 @@ public class DBPushPull implements EEExtras {
 			int exitVal = proc.waitFor();
 			
 			// Clean up the loading animation line
-			System.out.print("  \r");
+			System.out.print("          \r");
 
 			if (exitVal != 0) {
 				System.out.println(EEExtras.ANSI_YELLOW
@@ -364,11 +364,11 @@ public class DBPushPull implements EEExtras {
 				int lineCount = 0;
 				while (line != null) {
 					// Print out loading animation
-					if(lineCount % 5 == 0) System.out.print("--\r");
-					else if(lineCount % 5 == 1) System.out.print("\\ \r");
-					else if(lineCount % 5 == 2) System.out.print("| \r");
-					else if(lineCount % 5 == 3) System.out.print("/ \r");
-					else if(lineCount % 5 == 4) System.out.print("--\r");
+					if(lineCount % 5 == 0) System.out.print("*** -- ***\r");
+					else if(lineCount % 5 == 1) System.out.print("*** \\  ***\r");
+					else if(lineCount % 5 == 2) System.out.print("*** |  ***\r");
+					else if(lineCount % 5 == 3) System.out.print("*** /  ***\r");
+					else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
 					lineCount++;
 					result.add(line);
 					line = br.readLine();
@@ -383,7 +383,7 @@ public class DBPushPull implements EEExtras {
 		}
 		
 		// Clean up the loading animation line
-		System.out.print("  \r");
+		System.out.print("          \r");
 		
 		// Remove the file after importing it
 		try {
@@ -440,5 +440,14 @@ public class DBPushPull implements EEExtras {
 		}
 		System.out.println(consolMsg);
 		return connection;
+	}
+	
+	/*
+	 * Fix permissions on remote server once uploaded
+	 * We're not using the archive flag (-a) for rsync as it causes more problems
+	 * than it solves. Instead, fix permissions of remote files once we're done uploading them
+	 */
+	public void fixPermissions(Connection connection) {
+		// TODO	
 	}
 }
