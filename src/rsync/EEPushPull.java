@@ -63,10 +63,10 @@ public class EEPushPull implements EEExtras {
 			dryRun = "--dry-run";
 		String rsyncCommand = "";
 		if (type.equals("push"))
-			rsyncCommand = "rsync -rvP -e 'ssh -p " + config.getSshPort() + "' " + dryRun + " --exclude-from="
+			rsyncCommand = "rsync -rv -e 'ssh -p " + config.getSshPort() + "' " + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync -rvP -e 'ssh -p " + config.getSshPort() + "' " + dryRun + " --exclude-from="
+			rsyncCommand = "rsync -rv -e 'ssh -p " + config.getSshPort() + "' " + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 
 		/*
