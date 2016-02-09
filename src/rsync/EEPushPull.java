@@ -161,40 +161,12 @@ public class EEPushPull implements EEExtras {
 	}
 
 	/*
-	 * If uploading files to server, ensure proper permissions set TODO
+	 * If uploading files to server, ensure proper permissions set
 	 */
-	private void fixPermissions() throws IOException {
+	private void fixPermissions(Connection connection) throws IOException {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
-
-		List<String> result = new LinkedList<>();
-		String command = "chmod ";
-		Connection connection = this.connectTo();
-		Session session = null;
-
-		try {
-			session = connection.openSession();
-			session.execCommand(command);
-			InputStream stdout = new StreamGobbler(session.getStdout());
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
-				String line = br.readLine();
-				while (line != null) {
-					/*
-					 * Don't include the USE `database` name since they will
-					 * likely differ from local to remote sources, also ignore
-					 * comments
-					 */
-					System.out.println(line);
-					result.add(line);
-					line = br.readLine();
-				}
-			}
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-		}
-
+		// TODO
 	}
 
 	/*
