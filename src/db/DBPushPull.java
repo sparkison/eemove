@@ -55,7 +55,7 @@ public class DBPushPull implements EEExtras {
 		// Grab the config file info
 		this.cr = cr;
 		// Grab a timestamp
-		timestamp = new SimpleDateFormat("MM.dd.yyyy_dd.HH.mm.ss").format(new Date());
+		timestamp = new SimpleDateFormat("MM.dd.yyyy_HH.mm.ss").format(new Date());
 		// Initiate a null connection
 		connection = null;
 		try {
