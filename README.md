@@ -36,6 +36,11 @@ Breakdown of the above command:
   8. `update` for the **system/ee** and **app/themes/ee** directories as well as the **system/user/config/config.php** file
   9. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
+Helper commands
+
+1. `help` displays an example list of commands
+2. `fixperms [environment]` attempts to fix permissions on the environment selected (eg. `fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
+
 ## Config file example
 
 ```yaml
