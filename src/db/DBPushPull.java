@@ -9,8 +9,11 @@
 package db;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,7 +74,7 @@ public class DBPushPull implements EEExtras {
 			/*
 			 * See what we're doing, pushing or pulling the database
 			 */
-			if (type.equalsIgnoreCase("push")) {
+			if (this.type.equalsIgnoreCase("push")) {
 				/*
 				 * Push local dump to remote, import the dump, then remove the
 				 * dump file from the server
@@ -90,8 +93,8 @@ public class DBPushPull implements EEExtras {
 				/*
 				 * Remove the remote dump as we're done with it and it contains updated database info only relevant to local
 				 */
-				System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + remoteBackup);
-				remoteBackup.delete();
+				//System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + remoteBackup);
+				//remoteBackup.delete();
 			}
 
 			/*
@@ -119,61 +122,25 @@ public class DBPushPull implements EEExtras {
 	 * a file and download it and remove it later, much cleaner
 	 */
 	private File makeRemoteDbBackup(Connection connection) throws IOException {
-		File backupFile = new File(
-				EEExtras.CWD + "/db_backups/" + destConfig.getEnvironment() + "_db_" + timestamp + ".sql");
-		String command = "mysqldump --opt --add-drop-table --no-create-db --verbose --user=" + destConfig.getDbUser()
+		String fileName = destConfig.getEnvironment() + "_db_" + timestamp + ".sql";
+		
+		String command = "mysqldump --opt --quick --add-drop-table --skip-comments --no-create-db --user=" + destConfig.getDbUser()
 				+ " --password=" + destConfig.getDbPass() + " --port=" + destConfig.getDbPort() + " --databases "
-				+ destConfig.getDatabase();
+				+ destConfig.getDatabase() + " --result-file=/tmp/" + fileName;
 
-		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | create file: " + EEExtras.ANSI_RESET + backupFile);
-		System.out
-				.println(EEExtras.ANSI_PURPLE + "\tremote | pipe output to local file: " + EEExtras.ANSI_RESET + command);
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 
-		OutputStream out = new FileOutputStream(backupFile);
 		Session session = null;
 		try {
 			session = connection.openSession();
-			session.execCommand(command);
-			InputStream stdout = new StreamGobbler(session.getStdout());
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
-				String line = br.readLine();
-				String lineReplace = null, lineReplace2 = null, lineReplace3 = null;
-				while (line != null) {
-					/*
-					 * Don't include the USE `database` name since they will
-					 * likely differ from local to remote sources, also ignore
-					 * comments
-					 */
-					if (!(line.startsWith("USE") || line.startsWith("--"))) {
-						// If this dump will be imported from remote server to local need to change upload prefs
-//						if(type.equals("pull")) {
-//							if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
-//								lineReplace = line.replace(destConfig.getHost(), localConfig.getHost());
-//								lineReplace2 = lineReplace.replace(destConfig.getDirectory() + "/images", EEExtras.CWD + "/" + cr.getAppDir() + "/images");
-//								if(!cr.getUpDir().equals(""))
-//									lineReplace3 = lineReplace2.replace(destConfig.getDirectory() + "/" + cr.getUpDir(), EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir());
-//								else
-//									lineReplace3 = lineReplace2;
-//								// Point the original 'line' to the updated string
-//								line = lineReplace3;
-//							}
-//						}
-						// Write out the bytes to the file
-						out.write(line.getBytes());
-						out.write("\n".getBytes());
-						
-					}
-					line = br.readLine();
-				}
-			}
+			session.execCommand(command);			
 		} finally {
 			if (session != null) {
 				session.close();
 			}
-			out.flush();
-			out.close();
 		}
-
+		// Get the backup file, adapt it, and return it
+		File backupFile = importRemoteDbBackup(connection, fileName);
 		return backupFile;
 	}
 
@@ -187,7 +154,7 @@ public class DBPushPull implements EEExtras {
 				EEExtras.CWD + "/db_backups/" + localConfig.getEnvironment() + "_db_" + timestamp + ".sql");
 		OutputStream out = new FileOutputStream(localDbBackup);
 		String[] command = { "/bin/sh", "-c",
-				EEExtras.PATH + "/mysqldump --opt --add-drop-table --no-create-db --user=" + localConfig.getDbUser()
+				EEExtras.PATH + "/mysqldump --opt --add-drop-table --skip-comments --no-create-db --user=" + localConfig.getDbUser()
 						+ " --password=" + localConfig.getDbPass() + " --port=" + localConfig.getDbPort()
 						+ " --databases " + localConfig.getDatabase() };
 
@@ -207,7 +174,6 @@ public class DBPushPull implements EEExtras {
 
 			// Print output to stdout
 			String line = null;
-			String lineReplace = null, lineReplace2 = null, lineReplace3 = null;
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
 			while ((line = brStd.readLine()) != null) {
@@ -216,19 +182,6 @@ public class DBPushPull implements EEExtras {
 				 * differ from local to remote sources, also ignore comments
 				 */
 				if (!(line.startsWith("USE") || line.startsWith("--"))) {
-					// If this dump will be uploaded to remote server from local need to change upload prefs
-//					if(type.equals("push")) {
-//						if(line.matches("INSERT INTO `integro_upload_prefs`(.*)")) {
-//							lineReplace = line.replace(localConfig.getHost(), destConfig.getHost());
-//							lineReplace2 = lineReplace.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/images", destConfig.getDirectory() + "/images");
-//							if(!cr.getUpDir().equals(""))
-//								lineReplace3 = lineReplace2.replace(EEExtras.CWD + "/" + cr.getAppDir() + "/" + cr.getUpDir(), destConfig.getDirectory() + "/" + cr.getUpDir());
-//							else
-//								lineReplace3 = lineReplace2;
-//							// Point the original 'line' to the updated string
-//							line = lineReplace3;
-//						} 
-//					}
 					// Write out the bytes to the file
 					out.write(line.getBytes());
 					out.write("\n".getBytes());
@@ -270,7 +223,7 @@ public class DBPushPull implements EEExtras {
 	 */
 	private void importRemoteDbBackup(File file) {
 		String[] command = { "/bin/sh", "-c",
-				EEExtras.PATH + "/mysql --verbose --user=" + localConfig.getDbUser() + " --password="
+				EEExtras.PATH + "/mysql --user=" + localConfig.getDbUser() + " --password="
 						+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
 						+ localConfig.getDatabase() + " < " + file.getAbsolutePath() };
 
@@ -329,6 +282,32 @@ public class DBPushPull implements EEExtras {
 			e.printStackTrace();
 		}
 	}
+	
+	/*
+	 * Pull the remote database from the remote server
+	 * Once downloaded, remove it from the server
+	 */
+	private File importRemoteDbBackup(Connection connection, String remoteFile) throws IOException {
+		SCPClient scp = new SCPClient(connection);
+		scp.get("/tmp/" + remoteFile, EEExtras.CWD + "/db_backups/");
+		// Pass things off to the next method to import the database and delete
+		// the sql dump file
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + "scp " + destConfig.getSshUser()
+				+ "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/"
+				+ remoteFile);
+		// Remove the file from the remote server
+		removeTempFile("/tmp/" + remoteFile);
+		// The name of the remote dump and the lines to remove
+		String localBackupOfRemoteDump = EEExtras.CWD + "/db_backups/" + remoteFile;
+		String[] removeLines = {"--", "USE"};
+		// Adapt the file for local import
+		adaptDump(localBackupOfRemoteDump, removeLines);
+		// Grab the adapted dump file
+		File remoteDbDump = new File(localBackupOfRemoteDump);
+		// And return it
+		return remoteDbDump;
+	}
+
 
 	/*
 	 * Push the local database up to the server
@@ -421,6 +400,62 @@ public class DBPushPull implements EEExtras {
 			}
 		}
 	}
+	
+	/*
+	 * Adapt dump:
+	 * Currently used to remove comments and the "USE"
+	 * statement from DB dump (only needed for remote dump)
+	 */
+	public void adaptDump(String file, String[] linesToRemove) {
+		try {
+
+			File inFile = new File(file);
+
+			if (!inFile.isFile()) {
+				System.out.println("Unable to locate file: " + file);
+				return;
+			}
+
+			// Construct the new file that will later be renamed to the original
+			// filename.
+			File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+
+			BufferedReader br = new BufferedReader(new FileReader(inFile));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
+
+			String line = null;
+			boolean match = false;
+
+			// Read from the original file and write to the new
+			// unless content matches data to be removed.
+			while ((line = br.readLine()) != null) {
+				for (String remove : linesToRemove) {
+					if (line.startsWith(remove)) {
+						match = true;
+						break;
+					}
+					match = false;
+				}
+				if (!match)
+					bw.write(line + System.getProperty("line.separator"));
+			}
+			bw.flush();
+			bw.close();
+			br.close();
+
+			// Delete the original file
+			if (!inFile.delete()) {
+				System.out.println("Could not delete file");
+				return;
+			}
+			// Rename the new file to the filename the original file had.
+			if (!tempFile.renameTo(inFile))
+				System.out.println("Could not rename file");
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	/*
 	 * Creates a connection to host and returns it
@@ -441,13 +476,5 @@ public class DBPushPull implements EEExtras {
 		System.out.println(consolMsg);
 		return connection;
 	}
-	
-	/*
-	 * Fix permissions on remote server once uploaded
-	 * We're not using the archive flag (-a) for rsync as it causes more problems
-	 * than it solves. Instead, fix permissions of remote files once we're done uploading them
-	 */
-	public void fixPermissions(Connection connection) {
-		// TODO	
-	}
+
 }

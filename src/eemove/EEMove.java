@@ -19,6 +19,7 @@ import com.google.common.base.Strings;
 import db.DBPushPull;
 import helpers.ConfigReader;
 import helpers.EEconfig;
+import helpers.PermissionsFixer;
 import rsync.EEPushPull;
 import util.EEExtras;
 
@@ -113,14 +114,27 @@ public class EEMove implements EEExtras {
 			if (command.equalsIgnoreCase("help")) {
 				System.out.println(exampleCmd());
 			} else {
+				// Get the command pieces
 				parts = command.split(" ");
-				if (parts.length < 4) {
+				
+				// Determine what the command is
+				if (parts.length == 2 && parts[0].equalsIgnoreCase("fixperms")) {
+					if (config.get(parts[1]) == null) {
+						System.out.println("Unable to find environment entered in config file, please try again.");
+					} else {
+						new PermissionsFixer(this.cr, config.get(parts[1]));
+					}
+				}
+				// If not fix perms, need 4 arguments
+				else if (parts.length < 4) {
 					System.out.println("The command you entered is invalid, please try again.");
 				} else {
+					// Set our variables based on arguments passed
 					pushPull = parts[0];
 					runType = parts[1];
 					environment = parts[2];
 					directory = parts[3];
+					// Make sure we can get the config (is it valid)
 					if (config.get(environment) == null) {
 						System.out.println("Unable to find environment entered in config file, please try again.");
 					} else {
@@ -147,7 +161,8 @@ public class EEMove implements EEExtras {
 						String sysSrc = eeSystem;
 						String type = "";
 						boolean isDryRun = true;
-
+						
+						// Are we pushing or pulling
 						if (pushPull.equalsIgnoreCase("push")) {
 							type = "push";
 							pushPull = "Pushing";
@@ -156,11 +171,13 @@ public class EEMove implements EEExtras {
 							pushPull = "Pulling";
 						}
 
+						// Is it a "dry-run" or not
 						if (runType.equalsIgnoreCase("-d"))
 							isDryRun = true;
 						else
 							isDryRun = false;
-
+						
+						// Start working
 						if (directory.equalsIgnoreCase("all")) {
 							// Push all contents of app and system
 							// directories to environment
@@ -289,6 +306,8 @@ public class EEMove implements EEExtras {
 		returnString += EEExtras.ANSI_YELLOW + "\n[Note] the flags [-d, -l] represent dry and live runs repsectively.\n"
 				+ "To see what will be transfered without actually transfering anything use the -d flag.\n"
 				+ "[Note] must use the -l flag if doing a database push/pull.\n\n";
+		returnString += "[ Helper examples ]\n";
+		returnString += "\"fixperms staging\"\t\t(attempts to fix permissions on selected enviroonment using \"chmod\" command)\n\n";
 		returnString += "[ Push examples ]\n";
 		returnString += "\"push -l staging all\"\t\t(pushes app and system directories to desired environment)\n";
 		returnString += "\"push -l staging addons\"\t(pushes add-ons to desired environment)\n";
