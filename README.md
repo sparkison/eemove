@@ -92,7 +92,7 @@ staging:
 ## Additional info
 Right now eemove is only configured for ExpressionEngine 3. Once the source is more stable and had more testing will likely add EE2 support.
 
-**NOTE:** eemove assumes your directory structure is with the **system** folder above root.
+**NOTE:** eemove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
 
 ```
 [ExpressionEngine Local dev folder]
