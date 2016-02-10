@@ -95,23 +95,19 @@ Right now eemove is only configured for ExpressionEngine 3. Once the source is m
 **NOTE:** eemove assumes your directory structure is with the **system** folder above root.
 
 ```
--[ExpressionEngine Local dev folder]
---app
----admin.php
----index.php
----images
-----uploads
----themes
----...
---system
----ee
----user
-----addons
-----templates
-----...
---eemove.config
---eemove.ignore
-
+[ExpressionEngine Local dev folder]
+├── app
+|   ├── admin.php
+|   ├── index.php
+|   ├── images
+|   ├── themes
+│   └── ....
+├── system
+|   ├── ee
+|   ├── user
+│   └── ...
+├── eemove.config
+└── eemove.ignore
 ```
 
 You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
