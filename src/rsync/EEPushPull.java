@@ -11,17 +11,12 @@ package rsync;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 import com.google.common.base.Strings;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 import helpers.ConfigReader;
 import helpers.EEconfig;
@@ -158,29 +153,6 @@ public class EEPushPull implements EEExtras {
 		tempBashCmd.delete();
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Transfer complete " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
-	}
-
-	/*
-	 * If uploading files to server, ensure proper permissions set
-	 */
-	private void fixPermissions(Connection connection) throws IOException {
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
-		System.out.println(consolMsg);
-		// TODO
-	}
-
-	/*
-	 * Creates a connection to host and returns it
-	 */
-	public Connection connectTo() throws IOException {
-		Connection connection = new Connection(config.getHost());
-		connection.connect();
-		if (cr.isUseKeyAuth()) {
-			connection.authenticateWithPublicKey(config.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
-		} else {
-			connection.authenticateWithPassword(config.getSshUser(), config.getSshPass());
-		}
-		return connection;
 	}
 
 }

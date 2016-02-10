@@ -19,6 +19,7 @@ import com.google.common.base.Strings;
 import db.DBPushPull;
 import helpers.ConfigReader;
 import helpers.EEconfig;
+import helpers.PermissionsFixer;
 import rsync.EEPushPull;
 import util.EEExtras;
 
@@ -114,7 +115,14 @@ public class EEMove implements EEExtras {
 				System.out.println(exampleCmd());
 			} else {
 				parts = command.split(" ");
-				if (parts.length < 4) {
+				if (parts.length == 2 && parts[0].equalsIgnoreCase("fixperms")) {
+					if (config.get(parts[1]) == null) {
+						System.out.println("Unable to find environment entered in config file, please try again.");
+					} else {
+						new PermissionsFixer(this.cr, config.get(parts[1]));
+					}
+				}
+				else if (parts.length < 4) {
 					System.out.println("The command you entered is invalid, please try again.");
 				} else {
 					pushPull = parts[0];
