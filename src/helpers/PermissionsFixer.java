@@ -61,19 +61,19 @@ public class PermissionsFixer {
 		// Determine if we have custom upload directory
 		String uploadDirPerms = "";
 		if(!cr.upDir.equals("")) 
-			uploadDirPerms = "&& chmod -R 777 " + appDest + "/" + cr.upDir;
+			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.upDir;
 		// Build the command
 		String command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
-				+ "&& chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
-				+ "&& chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
-				+ "&& chmod -R 777" + appDest + "/cache/"
+				+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
+				+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
+				+ " && chmod -R 777 " + appDest + "/cache/"
 				+ uploadDirPerms
-				+ "&& chmod -R 777" + appDest + "/images/avatars/"
-				+ "&& chmod -R 777" + appDest + "/images/captchas/"
-				+ "&& chmod -R 777" + appDest + "/images/member_photos/"
-				+ "&& chmod -R 777" + appDest + "/images/pm_attachments/"
-				+ "&& chmod -R 777" + appDest + "/images/signature_attachments/"
-				+ "&& chmod -R 777" + appDest + "/images/uploads/";
+				+ " && chmod -R 777 " + appDest + "/images/avatars/"
+				+ " && chmod -R 777 " + appDest + "/images/captchas/"
+				+ " && chmod -R 777 " + appDest + "/images/member_photos/"
+				+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
+				+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
+				+ " && chmod -R 777 " + appDest + "/images/uploads/";
 		// Show user the command we're sending
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 		// Create the session and execute command on desired environment
