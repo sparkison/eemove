@@ -193,22 +193,22 @@ public class EEMove implements EEExtras {
 							// Push plugin directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Add-ons ", 80, '▬');
 							System.out.println(consolMsg);
-							appSrc += "/themes/user/";
-							appDest += "/themes/user/";
-							sysSrc += "/user/addons/";
-							sysDest += "/user/addons/";
+							appSrc += EEExtras.EE3_ADDONS_THEMES;
+							appDest += EEExtras.EE3_ADDONS_THEMES;
+							sysSrc += EEExtras.EE3_ADDONS_FILES;
+							sysDest += EEExtras.EE3_ADDONS_FILES;
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						}else if (directory.equalsIgnoreCase("update")) {
 							// Push plugin directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Update files ", 80, '▬');
 							System.out.println(consolMsg);
-							String configSrc = sysSrc + "/user/config/config.php";
-							String configDest = sysDest + "/user/config/config.php";
-							appSrc += "/themes/ee/";
-							appDest += "/themes/ee/";
-							sysSrc += "/ee/";
-							sysDest += "/ee/";
+							String configSrc = sysSrc + EEExtras.EE3_CONFIG_FILE;
+							String configDest = sysDest + EEExtras.EE3_CONFIG_FILE;
+							appSrc += EEExtras.EE3_SYSTEM_THEMES;
+							appDest += EEExtras.EE3_SYSTEM_THEMES;
+							sysSrc += EEExtras.EE3_SYSTEM_FILES;
+							sysDest += EEExtras.EE3_SYSTEM_FILES;
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(configSrc, configDest, type, isDryRun, thisConfig, cr);
@@ -216,18 +216,18 @@ public class EEMove implements EEExtras {
 							// Push theme directory to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Templates ", 80, '▬');
 							System.out.println(consolMsg);
-							appSrc += "/dist/";
-							appDest += "/dist/";
-							sysSrc += "/user/templates/";
-							sysDest += "/user/templates/";
+							appSrc += EEExtras.EE3_TEMPLATE_RESOURCES;
+							appDest += EEExtras.EE3_TEMPLATE_RESOURCES;
+							sysSrc += EEExtras.EE3_TEMPLATES;
+							sysDest += EEExtras.EE3_TEMPLATES;
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Uploads ", 80, '▬');
 							System.out.println(consolMsg);
-							String uploadSrc = appSrc + "/images/uploads/";
-							String uploadDest = appDest + "/images/uploads/";
+							String uploadSrc = appSrc + EEExtras.EE3_IMAGE_UPLOADS;
+							String uploadDest = appDest + EEExtras.EE3_IMAGE_UPLOADS;
 							new EEPushPull(uploadSrc, uploadDest, type, isDryRun, thisConfig, cr);
 							if (!uploadDir.equals("")) {
 								consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Custom Uploads Directory ", 80, '▬');
