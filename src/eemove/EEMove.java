@@ -256,7 +256,7 @@ public class EEMove implements EEExtras {
 							System.out.println(consolMsg);
 							String source, destination;
 							
-							System.out.println(EEExtras.ANSI_GREEN + "Note: for syncing directories recursivley be sure to include trailing slash (\"/\")." + EEExtras.ANSI_RESET);
+							System.out.println(EEExtras.ANSI_YELLOW + "[Note: for syncing directories recursivley be sure to include trailing slash (\"/\")]" + EEExtras.ANSI_RESET);
 							System.out.print(EEExtras.ANSI_GREEN + "Enter the local path (relative to " + EEExtras.CWD + "): " + EEExtras.ANSI_RESET);
 							source = scan.nextLine();
 							System.out.print(EEExtras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + EEExtras.ANSI_RESET);
@@ -268,8 +268,16 @@ public class EEMove implements EEExtras {
 							} else {
 								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\" to \"" + EEExtras.CWD + source + "\"" + EEExtras.ANSI_RESET);
 							}
-														
-							new EEPushPull(source, destination, type, isDryRun, thisConfig, cr);
+							
+							System.out.print("\n" + EEExtras.ANSI_YELLOW + "Is this correct? (Y/N): " + EEExtras.ANSI_RESET);
+							String proceed = scan.nextLine();
+							
+							if( proceed.equalsIgnoreCase("y") || proceed.equalsIgnoreCase("yes") ) {
+								new EEPushPull(source, destination, type, isDryRun, thisConfig, cr);
+							} else {
+								System.out.println(EEExtras.ANSI_YELLOW + "Operation canceled.\n" + EEExtras.ANSI_RESET);
+							}
+							
 						} else if (directory.equalsIgnoreCase("database")) {
 							// Database push/pull doesn't support dry-run, tell
 							// user
