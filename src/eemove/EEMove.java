@@ -256,6 +256,7 @@ public class EEMove implements EEExtras {
 							System.out.println(consolMsg);
 							String source, destination;
 							
+							System.out.println(EEExtras.ANSI_GREEN + "Note: for syncing directories recursivley be sure to include trailing slash (\"/\")." + EEExtras.ANSI_RESET);
 							System.out.print(EEExtras.ANSI_GREEN + "Enter the local path (relative to " + EEExtras.CWD + "): " + EEExtras.ANSI_RESET);
 							source = scan.nextLine();
 							System.out.print(EEExtras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + EEExtras.ANSI_RESET);
@@ -263,9 +264,9 @@ public class EEMove implements EEExtras {
 							System.out.println();
 							
 							if (type.equalsIgnoreCase("push")) {
-								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + EEExtras.CWD + "/" + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":/" + destination + "\"" + EEExtras.ANSI_RESET);
+								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + EEExtras.CWD + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\"" + EEExtras.ANSI_RESET);
 							} else {
-								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":/" + destination + "\" to \"" + EEExtras.CWD + "/" + source + "\"" + EEExtras.ANSI_RESET);
+								System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\" to \"" + EEExtras.CWD + source + "\"" + EEExtras.ANSI_RESET);
 							}
 														
 							new EEPushPull(source, destination, type, isDryRun, thisConfig, cr);
