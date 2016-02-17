@@ -93,8 +93,8 @@ public class DBPushPull implements EEExtras {
 				/*
 				 * Remove the remote dump as we're done with it and it contains updated database info only relevant to local
 				 */
-				//System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + remoteBackup);
-				//remoteBackup.delete();
+				System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + remoteBackup);
+				remoteBackup.delete();
 			}
 
 			/*
