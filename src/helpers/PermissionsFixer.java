@@ -66,7 +66,7 @@ public class PermissionsFixer {
 		String command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
 				+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
 				+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
-				+ " && chmod -R 777 " + appDest + "/themes/"
+				+ " && chmod -R 755 " + appDest + "/themes/"
 				+ " && chmod -R 777 " + appDest + "/cache/"
 				+ uploadDirPerms
 				+ " && chmod -R 777 " + appDest + "/images/avatars/"
