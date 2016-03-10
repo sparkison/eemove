@@ -63,18 +63,38 @@ public class PermissionsFixer {
 		if(!cr.upDir.equals("")) 
 			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.upDir;
 		// Build the command
-		String command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
-				+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
-				+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
-				+ " && chmod -R 755 " + appDest + "/themes/"
-				+ " && chmod -R 777 " + appDest + "/cache/"
-				+ uploadDirPerms
-				+ " && chmod -R 777 " + appDest + "/images/avatars/"
-				+ " && chmod -R 777 " + appDest + "/images/captchas/"
-				+ " && chmod -R 777 " + appDest + "/images/member_photos/"
-				+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
-				+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
-				+ " && chmod -R 777 " + appDest + "/images/uploads/";
+		String command = "";
+		if(cr.eeVer == 3) {
+			command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
+					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
+					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
+					+ " && chmod -R 755 " + appDest + "/themes/"
+					+ " && chmod -R 777 " + appDest + "/cache/"
+					+ uploadDirPerms
+					+ " && chmod -R 777 " + appDest + "/images/avatars/"
+					+ " && chmod -R 777 " + appDest + "/images/captchas/"
+					+ " && chmod -R 777 " + appDest + "/images/member_photos/"
+					+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
+					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
+					+ " && chmod -R 777 " + appDest + "/images/uploads/";
+		} else if(cr.eeVer == 2) {
+			command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/cache/"
+					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/templates/"
+					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/config.php"
+					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/database.php"
+					+ " && chmod -R 755 " + appDest + "/themes/"
+					+ uploadDirPerms
+					+ " && chmod -R 777 " + appDest + "/images/avatars/"
+					+ " && chmod -R 777 " + appDest + "/images/captchas/"
+					+ " && chmod -R 777 " + appDest + "/images/member_photos/"
+					+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
+					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
+					+ " && chmod -R 777 " + appDest + "/images/uploads/";
+		} else {
+			System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+			System.exit(1);
+		}
+		
 		// Show user the command we're sending
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 		// Create the session and execute command on desired environment
