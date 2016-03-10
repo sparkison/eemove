@@ -193,22 +193,47 @@ public class EEMove implements EEExtras {
 							// Push plugin directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Add-ons ", 80, '▬');
 							System.out.println(consolMsg);
-							appSrc += EEExtras.EE3_ADDONS_THEMES;
-							appDest += EEExtras.EE3_ADDONS_THEMES;
-							sysSrc += EEExtras.EE3_ADDONS_FILES;
-							sysDest += EEExtras.EE3_ADDONS_FILES;
+							if(cr.eeVer == 3) {
+								appSrc += EEExtras.EE3_ADDONS_THEMES;
+								appDest += EEExtras.EE3_ADDONS_THEMES;
+								sysSrc += EEExtras.EE3_ADDONS_FILES;
+								sysDest += EEExtras.EE3_ADDONS_FILES;
+							} else if(cr.eeVer == 2) {
+								appSrc += EEExtras.EE2_ADDONS_THEMES;
+								appDest += EEExtras.EE2_ADDONS_THEMES;
+								sysSrc += EEExtras.EE2_ADDONS_FILES;
+								sysDest += EEExtras.EE2_ADDONS_FILES;
+							} else {
+								System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+								System.exit(1);
+							}
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						}else if (directory.equalsIgnoreCase("update")) {
 							// Push plugin directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Update files ", 80, '▬');
 							System.out.println(consolMsg);
-							String configSrc = sysSrc + EEExtras.EE3_CONFIG_FILE;
-							String configDest = sysDest + EEExtras.EE3_CONFIG_FILE;
-							appSrc += EEExtras.EE3_SYSTEM_THEMES;
-							appDest += EEExtras.EE3_SYSTEM_THEMES;
-							sysSrc += EEExtras.EE3_SYSTEM_FILES;
-							sysDest += EEExtras.EE3_SYSTEM_FILES;
+							String configSrc = "";
+							String configDest = "";
+							if(cr.eeVer == 3) {
+								configSrc = sysSrc + EEExtras.EE3_CONFIG_FILE;
+								configDest = sysDest + EEExtras.EE3_CONFIG_FILE;
+								appSrc += EEExtras.EE3_SYSTEM_THEMES;
+								appDest += EEExtras.EE3_SYSTEM_THEMES;
+								sysSrc += EEExtras.EE3_SYSTEM_FILES;
+								sysDest += EEExtras.EE3_SYSTEM_FILES;
+							} else if(cr.eeVer == 2) {
+								configSrc = sysSrc + EEExtras.EE2_CONFIG_FILE;
+								configDest = sysDest + EEExtras.EE2_CONFIG_FILE;
+								appSrc += EEExtras.EE2_SYSTEM_THEMES;
+								appDest += EEExtras.EE2_SYSTEM_THEMES;
+								sysSrc += EEExtras.EE2_SYSTEM_FILES;
+								sysDest += EEExtras.EE2_SYSTEM_FILES;
+							} else {
+								System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+								System.exit(1);
+							}
+							
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(configSrc, configDest, type, isDryRun, thisConfig, cr);
@@ -216,18 +241,40 @@ public class EEMove implements EEExtras {
 							// Push theme directory to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Templates ", 80, '▬');
 							System.out.println(consolMsg);
-							appSrc += EEExtras.EE3_TEMPLATE_RESOURCES;
-							appDest += EEExtras.EE3_TEMPLATE_RESOURCES;
-							sysSrc += EEExtras.EE3_TEMPLATES;
-							sysDest += EEExtras.EE3_TEMPLATES;
+							if(cr.eeVer == 3) {
+								appSrc += EEExtras.EE3_TEMPLATE_RESOURCES;
+								appDest += EEExtras.EE3_TEMPLATE_RESOURCES;
+								sysSrc += EEExtras.EE3_TEMPLATES;
+								sysDest += EEExtras.EE3_TEMPLATES;
+							} else if(cr.eeVer == 2) {
+								appSrc += EEExtras.EE2_TEMPLATE_RESOURCES;
+								appDest += EEExtras.EE2_TEMPLATE_RESOURCES;
+								sysSrc += EEExtras.EE2_TEMPLATES;
+								sysDest += EEExtras.EE2_TEMPLATES;
+							} else {
+								System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+								System.exit(1);
+							}
+							
 							new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 							new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 						} else if (directory.equalsIgnoreCase("uploads")) {
 							// Push upload directories to environment
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Uploads ", 80, '▬');
 							System.out.println(consolMsg);
-							String uploadSrc = appSrc + EEExtras.EE3_IMAGE_UPLOADS;
-							String uploadDest = appDest + EEExtras.EE3_IMAGE_UPLOADS;
+							String uploadSrc = "";
+							String uploadDest = "";
+							if(cr.eeVer == 3) {
+								uploadSrc = appSrc + EEExtras.EE3_IMAGE_UPLOADS;
+								uploadDest = appDest + EEExtras.EE3_IMAGE_UPLOADS;
+							} else if(cr.eeVer == 2) {
+								uploadSrc = appSrc + EEExtras.EE2_IMAGE_UPLOADS;
+								uploadDest = appDest + EEExtras.EE2_IMAGE_UPLOADS;
+							} else {
+								System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+								System.exit(1);
+							}
+							
 							new EEPushPull(uploadSrc, uploadDest, type, isDryRun, thisConfig, cr);
 							if (!uploadDir.equals("")) {
 								consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Custom Uploads Directory ", 80, '▬');

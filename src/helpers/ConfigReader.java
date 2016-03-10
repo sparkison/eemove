@@ -28,6 +28,7 @@ public class ConfigReader implements EEExtras {
 
 	public File keyfile;
 	public String keyPass;
+	public Integer eeVer;
 	public String sysDir;
 	public String appDir;
 	public String upDir;
@@ -81,6 +82,8 @@ public class ConfigReader implements EEExtras {
 						String keyItem = subValueKey.toString();
 						if (keyItem.equalsIgnoreCase("ee_system")) {
 							this.sysDir = subValues.get(subValueKey).toString();
+						} else if (keyItem.equalsIgnoreCase("ee_version")) {
+							this.eeVer = Integer.parseInt(subValues.get(subValueKey).toString());
 						} else if (keyItem.equalsIgnoreCase("ee_app")) {
 							this.appDir = subValues.get(subValueKey).toString();
 						} else if (keyItem.equalsIgnoreCase("upload_dir")) {
@@ -204,6 +207,9 @@ public class ConfigReader implements EEExtras {
 
 				formatter.format("%s", "globals:\n");
 
+				line = "ee_version: \"3\" # ExpressionEngine version, 2 or 3 are currently supported";
+				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
+				
 				line = "ee_system: \"system\"";
 				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
 
