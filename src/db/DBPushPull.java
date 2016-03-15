@@ -63,12 +63,12 @@ public class DBPushPull implements EEExtras {
 		connection = null;
 		try {
 			// Try to connect to server
-			connection = connectTo();
+			//connection = connectTo();
 			/*
 			 * If connection successful, make backups of local and remote
 			 * databases and save them to the projects db_backup folder
 			 */
-			File remoteBackup = makeRemoteDbBackup(connection);
+			File remoteBackup = makeRemoteDbBackup();
 			File localBackup = localDbBackup();
 
 			/*
@@ -79,7 +79,7 @@ public class DBPushPull implements EEExtras {
 				 * Push local dump to remote, import the dump, then remove the
 				 * dump file from the server
 				 */
-				importLocalDbBackup(connection, localBackup);
+				importLocalDbBackup(localBackup);
 				/*
 				 * Remove the local dump as we're done with it and it contains updated database info only relevant to remote
 				 */
@@ -121,7 +121,7 @@ public class DBPushPull implements EEExtras {
 	 * writing it to local file. This means we don't need to write the output to
 	 * a file and download it and remove it later, much cleaner
 	 */
-	private File makeRemoteDbBackup(Connection connection) throws IOException {
+	private File makeRemoteDbBackup() throws IOException {
 		String fileName = destConfig.getEnvironment() + "_db_" + timestamp + ".sql";
 		
 		String command = "mysqldump --opt --quick --add-drop-table --skip-comments --no-create-db --user=" + destConfig.getDbUser()
@@ -130,17 +130,24 @@ public class DBPushPull implements EEExtras {
 
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 
-		Session session = null;
-		try {
-			session = connection.openSession();
-			session.execCommand(command);			
-		} finally {
-			if (session != null) {
-				session.close();
-			}
+		String ssh = "";
+		if( cr.useKeyAuth ) {
+			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
+		} else {
+			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
+				
+		String commandWithAuth = ssh + " '" + command + "'";
+		
+		if( ! executeCommand( commandWithAuth ) ) {
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
+			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.exit(-1);
+		}
+		
 		// Get the backup file, adapt it, and return it
-		File backupFile = importRemoteDbBackup(connection, fileName);
+		File backupFile = importRemoteDbBackup(fileName);
 		return backupFile;
 	}
 
@@ -287,14 +294,22 @@ public class DBPushPull implements EEExtras {
 	 * Pull the remote database from the remote server
 	 * Once downloaded, remove it from the server
 	 */
-	private File importRemoteDbBackup(Connection connection, String remoteFile) throws IOException {
-		SCPClient scp = new SCPClient(connection);
-		scp.get("/tmp/" + remoteFile, EEExtras.CWD + "/db_backups/");
+	private File importRemoteDbBackup(String remoteFile) throws IOException {
+		String ssh = "";
+		if( !cr.useKeyAuth ) {
+			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" ";
+		}
+		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/";
+		
+		if( ! executeCommand( command ) ) {
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute SCP command " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
+			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.exit(-1);
+		}
 		// Pass things off to the next method to import the database and delete
 		// the sql dump file
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + "scp " + destConfig.getSshUser()
-				+ "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/"
-				+ remoteFile);
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 		// Remove the file from the remote server
 		removeTempFile("/tmp/" + remoteFile);
 		// The name of the remote dump and the lines to remove
@@ -312,13 +327,23 @@ public class DBPushPull implements EEExtras {
 	/*
 	 * Push the local database up to the server
 	 */
-	private void importLocalDbBackup(Connection connection, File file) throws IOException {
-		SCPClient scp = new SCPClient(connection);
-		scp.put(file.getAbsolutePath(), "/tmp/");
+	private void importLocalDbBackup(File file) throws IOException {
+		String ssh = "";
+		if( !cr.useKeyAuth ) {
+			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" ";
+		}
+		String command = ssh + "scp " + file.getAbsolutePath() + " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/";
+		
+		if( ! executeCommand( command ) ) {
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute SCP command " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
+			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.exit(-1);
+		}
+		
 		// Pass things off to the next method to import the database and delete
 		// the sql dump file
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + "scp " + file.getAbsolutePath()
-				+ " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + file.getName());
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 		importLocalDbBackupToRemote(file);
 	}
 
@@ -330,45 +355,35 @@ public class DBPushPull implements EEExtras {
 				+ " --port=" + destConfig.getDbPort() + " --database=" + destConfig.getDatabase() + " < " + "/tmp/"
 				+ file.getName();
 		
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
-		
-		List<String> result = new LinkedList<>();
-		Session session = null;
-		try {
-			session = connection.openSession();
-			session.execCommand(command);
-			InputStream stdout = new StreamGobbler(session.getStdout());
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
-				String line = br.readLine();
-				int lineCount = 0;
-				while (line != null) {
-					// Print out loading animation
-					if(lineCount % 5 == 0) System.out.print("*** -- ***\r");
-					else if(lineCount % 5 == 1) System.out.print("*** \\  ***\r");
-					else if(lineCount % 5 == 2) System.out.print("*** |  ***\r");
-					else if(lineCount % 5 == 3) System.out.print("*** /  ***\r");
-					else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
-					lineCount++;
-					result.add(line);
-					line = br.readLine();
-				}
-			}
-		} catch (IOException e) {
-			System.out.println("Error importing dabase to server: " + e.getMessage());
-		} finally {
-			if (session != null) {
-				session.close();
-			}
+		String ssh = "";
+		if( cr.useKeyAuth ) {
+			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
+		} else {
+			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 		
-		// Clean up the loading animation line
-		System.out.print("          \r");
+		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		
+		String commandWithAuth = ssh + " '" + command + "'";
+		
+		try {
+			if( ! executeCommand( commandWithAuth ) ) {
+				String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
+				System.out.println(consolMsg);
+				System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+				System.exit(-1);
+			}
+		} catch (IOException e1) {
+			System.out.println("Error removing temporary dump from server: " + e1.getMessage());
+			e1.printStackTrace();
+		}
 		
 		// Remove the file after importing it
 		try {
 			removeTempFile("/tmp/" + file.getName());
-		} catch (IOException e) {
-			System.out.println("Error removing temporary dump from server: " + e.getMessage());
+		} catch (IOException e2) {
+			System.out.println("Error removing temporary dump from server: " + e2.getMessage());
+			e2.printStackTrace();
 		}
 	}
 
@@ -378,27 +393,24 @@ public class DBPushPull implements EEExtras {
 	private void removeTempFile(String filename) throws IOException {
 		String command = "rm " + filename;
 		
+		String ssh = "";
+		if( cr.useKeyAuth ) {
+			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
+		} else {
+			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" " + destConfig.getSshUser() + "@" + destConfig.getHost();
+		}
+		
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
 		
-		List<String> result = new LinkedList<>();
-		Session session = null;
-		try {
-			session = connection.openSession();
-			session.execCommand(command);
-			InputStream stdout = new StreamGobbler(session.getStdout());
-
-			try (BufferedReader br = new BufferedReader(new InputStreamReader(stdout))) {
-				String line = br.readLine();
-				while (line != null) {
-					result.add(line);
-					line = br.readLine();
-				}
-			}
-		} finally {
-			if (session != null) {
-				session.close();
-			}
+		String commandWithAuth = ssh + " '" + command + "'";
+		
+		if( ! executeCommand( commandWithAuth ) ) {
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute RM command " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
+			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.exit(-1);
 		}
+
 	}
 	
 	/*
@@ -458,29 +470,78 @@ public class DBPushPull implements EEExtras {
 	}
 
 	/*
-	 * Creates a connection to host and returns it
+	 * Create temp file, execute command, delete and return delete status
 	 */
-	public Connection connectTo() throws IOException {
-		Connection connection = new Connection(destConfig.getHost());
-		connection.connect();
-		String consolMsg = "";
-		if (cr.isUseKeyAuth()) {
-			connection.authenticateWithPublicKey(destConfig.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Connecting to "
-					+ destConfig.getEnvironment() + " host using PKA " + EEExtras.ANSI_RESET, 80, '▬');
-		} else {
-			if ( !(connection.isAuthMethodAvailable(destConfig.getSshUser(), destConfig.getSshPass())) ) {
-				consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Password authentication method not supported by server " + EEExtras.ANSI_RESET, 80, '▬');
-				System.out.println(consolMsg);
-				System.out.println(EEExtras.ANSI_YELLOW + "Please change your authentication method to key and try again." + EEExtras.ANSI_RESET);
-				System.exit(-1);
+	private boolean executeCommand(String command) throws IOException {
+		/*
+		 * Create temp file so we can use exec command Not ideal, but best I
+		 * could come up with for now Uses underlying system commands, not
+		 * relying on external libraries this way. File will be deleted at end
+		 * of execution. In the case of program error, will also be removed upon
+		 * JVM termination (if it still persists).
+		 */
+		File tempBashCmd = File.createTempFile("tmp", ".sh", new File("/tmp"));
+		FileWriter bashFile = new FileWriter(tempBashCmd);
+		tempBashCmd.setExecutable(true);
+		tempBashCmd.deleteOnExit();
+
+		/*
+		 * Write out expect command to tmp shell script (if using password authentication
+		 */
+		bashFile.write("#!/bin/bash");
+		bashFile.write("\n");
+		bashFile.write(command);
+		bashFile.write("\n");
+		bashFile.close();
+		
+		Runtime rt = Runtime.getRuntime();
+		Process proc = null;
+		try {
+			// Using underlying 'sh' command to pass password for rsync
+			proc = rt.exec("sh " + tempBashCmd.getAbsolutePath());
+			
+			// Use StreamGobbler to for err/stdout to prevent blocking
+			InputStream stdout = new StreamGobbler(proc.getInputStream());
+			InputStream stderr = new StreamGobbler(proc.getErrorStream());
+			OutputStream stdin = proc.getOutputStream();
+			InputStreamReader isrErr = new InputStreamReader(stderr);
+			BufferedReader brErr = new BufferedReader(isrErr);
+
+			// Print output to stdout
+			String val = null;
+			InputStreamReader isrStd = new InputStreamReader(stdout);
+			BufferedReader brStd = new BufferedReader(isrStd);
+			while ((val = brStd.readLine()) != null) {
+				System.out.println(">>" + val);
+				if (new String(val.getBytes()).contains("assword:")) {
+					System.out.println(">>sending password ...");
+				}
 			}
-			connection.authenticateWithPassword(destConfig.getSshUser(), destConfig.getSshPass());
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Connecting to "
-					+ destConfig.getEnvironment() + " host using PASSWORD " + EEExtras.ANSI_RESET, 80, '▬');
+
+			// Print errors stdout so user knows what went wrong
+			while ((val = brErr.readLine()) != null) {
+				if(!val.contains("stdin: is not a tty"))
+					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+			}
+			int exitVal = proc.waitFor();
+
+			if (exitVal != 0) {
+				System.out.println(EEExtras.ANSI_YELLOW
+						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
+						+ EEExtras.ANSI_RESET);
+			}
+
+			// Clean up
+			brStd.close();
+			brErr.close();
+			stdin.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		System.out.println(consolMsg);
-		return connection;
+		// Remove the file, print completion message
+		//boolean deleteStatus = tempBashCmd.delete();
+		return( true );
 	}
 
 }

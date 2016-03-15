@@ -57,13 +57,23 @@ public class EEPushPull implements EEExtras {
 		if (isDryRun)
 			dryRun = "--dry-run";
 		String rsyncCommand = "";
-		if (type.equals("push"))
-			rsyncCommand = "rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
-					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
-		else
-			rsyncCommand = "rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
-					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
-
+		
+		if(cr.isUseKeyAuth()) {
+			if (type.equals("push"))
+				rsyncCommand = "rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+						+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+			else
+				rsyncCommand = "rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+		} else {
+			if (type.equals("push"))
+				rsyncCommand = "sshpass -p \""+config.getSshPass()+"\" rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+						+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+			else
+				rsyncCommand = "sshpass -p \""+config.getSshPass()+"\" rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+		}
+		
 		/*
 		 * Create temp file so we can use exec command Not ideal, but best I
 		 * could come up with for now Uses underlying system commands, not
@@ -79,37 +89,18 @@ public class EEPushPull implements EEExtras {
 		/*
 		 * Write out expect command to tmp shell script (if using password authentication
 		 */
+		bashFile.write("#!/bin/bash");
+		bashFile.write("\n");
+		bashFile.write(rsyncCommand);
+		bashFile.write("\n");
+		bashFile.close();
 		
-		if (cr.isUseKeyAuth()) {
-			bashFile.write("#!/bin/bash");
-			bashFile.write("\n");
-			bashFile.write(rsyncCommand);
-			bashFile.write("\n");
-			bashFile.close();
-		} else {
-			bashFile.write("#!/usr/bin/expect -f");
-			bashFile.write("\n");
-			bashFile.write("set timeout -1");
-			bashFile.write("\n");
-			bashFile.write("spawn " + rsyncCommand);
-			bashFile.write("\n");
-			bashFile.write("expect -re \"assword:\"");
-			bashFile.write("\n");
-			bashFile.write("send \"" + config.getSshPass() + "\\n\"");
-			bashFile.write("\n");
-			bashFile.write("expect eof");
-			bashFile.write("\n");
-			bashFile.close();
-		}
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
 		try {
-			// Using underlying 'expect' command to pass password for rsync
-			if (cr.isUseKeyAuth()) {
-				proc = rt.exec("sh " + tempBashCmd.getAbsolutePath());
-			} else {
-				proc = rt.exec("expect " + tempBashCmd.getAbsolutePath());
-			}
+			// Using underlying 'sh' command to pass password for rsync
+			proc = rt.exec("sh " + tempBashCmd.getAbsolutePath());
+			
 			// Use StreamGobbler to for err/stdout to prevent blocking
 			InputStream stdout = new StreamGobbler(proc.getInputStream());
 			InputStream stderr = new StreamGobbler(proc.getErrorStream());
