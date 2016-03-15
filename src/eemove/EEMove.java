@@ -418,6 +418,10 @@ public class EEMove implements EEExtras {
 			ignoreFile.write("\n");
 			ignoreFile.write("/user/cache/");
 			ignoreFile.write("\n");
+			ignoreFile.write("eemove.config");
+			ignoreFile.write("\n");
+			ignoreFile.write("eemove.ignore");
+			ignoreFile.write("\n");
 			ignoreFile.close();
 		}
 		rsyncIgnore.setExecutable(true);

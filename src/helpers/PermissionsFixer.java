@@ -124,6 +124,12 @@ public class PermissionsFixer {
 		if (cr.isUseKeyAuth()) {
 			connection.authenticateWithPublicKey(config.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
 		} else {
+			if ( !(connection.isAuthMethodAvailable(config.getSshUser(), config.getSshPass())) ) {
+				String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Password authentication method not supported by server " + EEExtras.ANSI_RESET, 80, '▬');
+				System.out.println(consolMsg);
+				System.out.println(EEExtras.ANSI_YELLOW + "Please change your authentication method to key and try again." + EEExtras.ANSI_RESET);
+				System.exit(-1);
+			}
 			connection.authenticateWithPassword(config.getSshUser(), config.getSshPass());
 		}
 		return connection;

@@ -469,6 +469,12 @@ public class DBPushPull implements EEExtras {
 			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Connecting to "
 					+ destConfig.getEnvironment() + " host using PKA " + EEExtras.ANSI_RESET, 80, '▬');
 		} else {
+			if ( !(connection.isAuthMethodAvailable(destConfig.getSshUser(), destConfig.getSshPass())) ) {
+				consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Password authentication method not supported by server " + EEExtras.ANSI_RESET, 80, '▬');
+				System.out.println(consolMsg);
+				System.out.println(EEExtras.ANSI_YELLOW + "Please change your authentication method to key and try again." + EEExtras.ANSI_RESET);
+				System.exit(-1);
+			}
 			connection.authenticateWithPassword(destConfig.getSshUser(), destConfig.getSshPass());
 			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Connecting to "
 					+ destConfig.getEnvironment() + " host using PASSWORD " + EEExtras.ANSI_RESET, 80, '▬');
