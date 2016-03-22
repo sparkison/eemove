@@ -3,9 +3,11 @@ Automated deployment for ExpressionEngine websites
 ![alt text][logo]
 ---
 
+## Dependencies
+eemove utilizes `rsync`, `ssh`, and `sshpass` (if not using keys for authentication). These items will need to be installed on your OS for eemove to work correctly.
+
 ## Included libraries
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) - used for digesting the config file
-* [Ganymed SSH-2 for Java](http://www.ganymed.ethz.ch/ssh2/) - used for establishing SSH connections and issuing SCP commands
 * [Guava](https://github.com/google/guava)
 
 ## Build instructions
@@ -47,6 +49,7 @@ Helper commands
 # Global EE settings
 
 globals:
+  ee_version: "3" # ExpressionEngine version, 2 or 3 are currently supported
   ee_system: "system"
   ee_app: "app"
   upload_dir: "uploads" # optional, if using custom upload directory/ies
@@ -90,7 +93,7 @@ staging:
 ```
 
 ## Additional info
-Right now eemove is only configured for ExpressionEngine 3. Once the source is more stable and had more testing will likely add EE2 support.
+None at this time
 
 **NOTE:** eemove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
 
