@@ -67,10 +67,10 @@ public class EEPushPull implements EEExtras {
 						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 		} else {
 			if (type.equals("push"))
-				rsyncCommand = "sshpass -p \""+config.getSshPass()+"\" rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+				rsyncCommand = EEExtras.SSHPASSPATH + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
 						+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 			else
-				rsyncCommand = "sshpass -p \""+config.getSshPass()+"\" rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+				rsyncCommand = EEExtras.SSHPASSPATH + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
 						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 		}
 		

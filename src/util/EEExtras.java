@@ -44,6 +44,15 @@ public interface EEExtras {
 	public static final String PATH = OS.indexOf("Mac") >= 0 ? "/Applications/MAMP/Library/bin" : "/usr/local/bin";
 	
 	/*
+	 * Set the path variable to the mysql/mysqldump commands
+	 * 
+	 * TODO find a better way to do this? Currently will need to compile for
+	 * 		different OS (Mac vs Linux) could reside in multiple different paths
+	 * 		depending on end user system
+	 */
+	public static final String SSHPASSPATH = OS.indexOf("Mac") >= 0 ? "/usr/local/bin/" : "/usr/local/bin/";
+	
+	/*
 	 * Directories
 	 * Directories for EE2 and EE3 (currently used in main EEMove class)
 	 * 

@@ -134,7 +134,7 @@ public class DBPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
-			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" " + destConfig.getSshUser() + "@" + destConfig.getHost();
+			ssh = EEExtras.SSHPASSPATH + "sshpass -p '" + destConfig.getSshPass() + "' " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 				
 		String commandWithAuth = ssh + " '" + command + "'";
@@ -297,7 +297,7 @@ public class DBPushPull implements EEExtras {
 	private File importRemoteDbBackup(String remoteFile) throws IOException {
 		String ssh = "";
 		if( !cr.useKeyAuth ) {
-			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" ";
+			ssh = EEExtras.SSHPASSPATH + "sshpass -p '" + destConfig.getSshPass() + "' ";
 		}
 		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/";
 		
@@ -330,7 +330,7 @@ public class DBPushPull implements EEExtras {
 	private void importLocalDbBackup(File file) throws IOException {
 		String ssh = "";
 		if( !cr.useKeyAuth ) {
-			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" ";
+			ssh = EEExtras.SSHPASSPATH + "sshpass -p '" + destConfig.getSshPass() + "' ";
 		}
 		String command = ssh + "scp " + file.getAbsolutePath() + " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/";
 		
@@ -359,7 +359,7 @@ public class DBPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
-			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" " + destConfig.getSshUser() + "@" + destConfig.getHost();
+			ssh = EEExtras.SSHPASSPATH + "sshpass -p '" + destConfig.getSshPass() + "' " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 		
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
@@ -397,7 +397,7 @@ public class DBPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
-			ssh = "sshpass -p \"" + destConfig.getSshPass() + "\" " + destConfig.getSshUser() + "@" + destConfig.getHost();
+			ssh = EEExtras.SSHPASSPATH + "sshpass -p '" + destConfig.getSshPass() + "' " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 		
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
@@ -540,8 +540,8 @@ public class DBPushPull implements EEExtras {
 			e.printStackTrace();
 		}
 		// Remove the file, print completion message
-		//boolean deleteStatus = tempBashCmd.delete();
-		return( true );
+		boolean deleteStatus = tempBashCmd.delete();
+		return( deleteStatus );
 	}
 
 }
