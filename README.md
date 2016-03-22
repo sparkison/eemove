@@ -93,9 +93,8 @@ staging:
 ```
 
 ## Additional info
-None at this time
 
-**NOTE:** eemove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
+eemove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
 
 ```
 [ExpressionEngine Local dev folder]
