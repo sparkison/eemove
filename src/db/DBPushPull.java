@@ -353,8 +353,8 @@ public class DBPushPull implements EEExtras {
 	 * Import the local db to the remote server, then remove it
 	 */
 	private void importLocalDbBackupToRemote(File file) {
-		String command = "mysql --verbose --user=" + destConfig.getDbUser() + " --password=" + destConfig.getDbPass()
-				+ " --port=" + destConfig.getDbPort() + " --database=" + destConfig.getDatabase() + " < " + "/tmp/"
+		String command = "mysql --verbose --user=" + destConfig.getDbUser() + " --password=\"" + destConfig.getDbPass().replace("'", "\'")
+				+ "\" --port=" + destConfig.getDbPort() + " --database=" + destConfig.getDatabase() + " < " + "/tmp/"
 				+ file.getName();
 		
 		String ssh = "";
