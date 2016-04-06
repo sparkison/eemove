@@ -515,12 +515,18 @@ public class DBPushPull implements EEExtras {
 			String val = null;
 			InputStreamReader isrStd = new InputStreamReader(stdout);
 			BufferedReader brStd = new BufferedReader(isrStd);
+			int lineCount = 0;
 			while ((val = brStd.readLine()) != null) {
-				System.out.println(">>" + val);
-				if (new String(val.getBytes()).contains("assword:")) {
-					System.out.println(">>sending password ...");
-				}
+				// Print out loading animation
+				if(lineCount % 5 == 0) System.out.print("*** -- ***\r");
+				else if(lineCount % 5 == 1) System.out.print("*** \\  ***\r");
+				else if(lineCount % 5 == 2) System.out.print("*** |  ***\r");
+				else if(lineCount % 5 == 3) System.out.print("*** /  ***\r");
+				else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
+				lineCount++;
 			}
+			// Clean up the loading animation line
+			System.out.print("          \r");
 
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
