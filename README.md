@@ -51,7 +51,7 @@ Helper commands
 globals:
   ee_version: "3" # ExpressionEngine version, 2 or 3 are currently supported
   ee_system: "system"
-  ee_app: "app"
+  ee_app: "app" # leave blank if system is not above root
   upload_dir: "uploads" # optional, if using custom upload directory/ies
   above_root: "true" # use true or false to signify whether the system folder is above root or not
 
