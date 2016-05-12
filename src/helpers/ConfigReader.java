@@ -226,13 +226,7 @@ public class ConfigReader implements EEExtras {
 				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
 
 				line = "type: \"key\" # use either 'key' for public key authentication or 'password' for password";
-				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
-
-				line = "keyfile: \"/user/john/.ssh/id_rsa\" # optional, only needed if using 'key' for type. Use an absolute path here";
-				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
-
-				line = "keypass: \"password\" # optional, only needed if using 'key' for type and the key file is password protected";
-				formatter.format("%" + (line.length() + 6) + "s", line + "\n\n");
+				formatter.format("%" + (line.length() + 5) + "s", line + "\n\n");
 
 				formatter.format("%s", "# Begin environment specific configuration(s)\n\n");
 
