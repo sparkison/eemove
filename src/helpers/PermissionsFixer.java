@@ -12,33 +12,31 @@ import java.io.IOException;
 
 import com.google.common.base.Strings;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.Session;
 import util.EEExtras;
 
 public class PermissionsFixer {
-	
+
 	private ConfigReader cr;
 	private EEconfig config;
-	
+	private CommandExecuter ce;
+
 	// Constructor
 	public PermissionsFixer(ConfigReader cr, EEconfig config) {
 		this.cr = cr;
 		this.config = config;
+		this.ce = new CommandExecuter(config);
 		try {
 			this.fixPermissions();
 		} catch (IOException e) {
 			System.out.println("Error setting permissions: " + e.getMessage()); 
 		}
 	}
-	
+
 	/*
 	 * If uploading files to server, ensure proper permissions set
 	 * re: https://docs.expressionengine.com/latest/installation/installation.html#file-permissions
 	 */
 	public void fixPermissions() throws IOException {
-		// Create a connection
-		Connection connection = this.connectTo();
 		// Notify user of our intent
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
@@ -58,14 +56,25 @@ public class PermissionsFixer {
 		} else {
 			sysDest = config.getDirectory() + "/";
 		}
+		
 		// Determine if we have custom upload directory
 		String uploadDirPerms = "";
 		if(!cr.upDir.equals("")) 
 			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.upDir;
+		
 		// Build the command
-		String command = "";
+		String command = "find " + appDest + " -type f -exec chmod 644 {} \\;"
+				+ " && find " + appDest + " -type d -exec chmod 755 {} \\;";
+		
+		// If system in separate directory from main app, fix it permissions as well
+		if(!sysDest.equals(appDest)) {
+			command += " && find " + sysDest + " -type f -exec chmod 644 {} \\;"
+					+ " && find " + sysDest + " -type d -exec chmod 755 {} \\;";
+		}
+		
+		// Set version specific permissions
 		if(cr.eeVer == 3) {
-			command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
+			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
 					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
 					+ " && chmod -R 755 " + appDest + "/themes/"
@@ -78,7 +87,7 @@ public class PermissionsFixer {
 					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/uploads/";
 		} else if(cr.eeVer == 2) {
-			command = "chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/cache/"
+			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/cache/"
 					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/templates/"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/config.php"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/database.php"
@@ -94,45 +103,30 @@ public class PermissionsFixer {
 			System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
 			System.exit(1);
 		}
-		
+
 		// Show user the command we're sending
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+
 		// Create the session and execute command on desired environment
-		Session session = null;
-		try {
-			session = connection.openSession();
-			session.execCommand(command);			
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-			if (connection != null) {
-				connection.close();
-			}
+		String ssh = "";
+		if( cr.useKeyAuth ) {
+			ssh = "ssh -i " + cr.getKeyfile() + " " + config.getSshUser() + "@" + config.getHost();
+		} else {
+			ssh = EEExtras.SSHPASSPATH + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
 		}
+
+		String commandWithAuth = ssh + " '" + command + "'";
+
+		if( ! this.ce.executeCommand( commandWithAuth ) ) {
+			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
+			System.out.println(consolMsg);
+			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.exit(-1);
+		}
+
 		consolMsg = Strings.padEnd(
 				"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Complete! " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
-	}
-
-	/*
-	 * Creates a connection to host and returns it
-	 */
-	public Connection connectTo() throws IOException {
-		Connection connection = new Connection(config.getHost());
-		connection.connect();
-		if (cr.isUseKeyAuth()) {
-			connection.authenticateWithPublicKey(config.getSshUser(), cr.getKeyfile(), cr.getKeyPass());
-		} else {
-			if ( !(connection.isAuthMethodAvailable(config.getSshUser(), config.getSshPass())) ) {
-				String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Password authentication method not supported by server " + EEExtras.ANSI_RESET, 80, '▬');
-				System.out.println(consolMsg);
-				System.out.println(EEExtras.ANSI_YELLOW + "Please change your authentication method to key and try again." + EEExtras.ANSI_RESET);
-				System.exit(-1);
-			}
-			connection.authenticateWithPassword(config.getSshUser(), config.getSshPass());
-		}
-		return connection;
 	}
 
 }

@@ -21,15 +21,10 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.common.base.Strings;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.SCPClient;
-import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import helpers.CommandExecuter;
 import helpers.ConfigReader;
 import helpers.EEconfig;
 import util.EEExtras;
@@ -38,10 +33,10 @@ public class DBPushPull implements EEExtras {
 
 	// Class variables
 	private EEconfig destConfig, localConfig;
-	private Connection connection;
 	private String timestamp;
 	private ConfigReader cr;
 	private String type;
+	private CommandExecuter ce;
 
 	// Make sure backup folder exists, if not create it
 	@SuppressWarnings("unused")
@@ -55,12 +50,11 @@ public class DBPushPull implements EEExtras {
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;
 		this.type = type;
+		this.ce = new CommandExecuter(destConfig);
 		// Grab the config file info
 		this.cr = cr;
 		// Grab a timestamp
 		timestamp = new SimpleDateFormat("MM.dd.yyyy_HH.mm.ss").format(new Date());
-		// Initiate a null connection
-		connection = null;
 		try {
 			// Try to connect to server
 			//connection = connectTo();
@@ -107,10 +101,6 @@ public class DBPushPull implements EEExtras {
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				connection.close();
-			}
 		}
 
 	}
@@ -141,7 +131,7 @@ public class DBPushPull implements EEExtras {
 				
 		String commandWithAuth = ssh + " '" + command + "'";
 		
-		if( ! executeCommand( commandWithAuth ) ) {
+		if( ! this.ce.executeCommand( commandWithAuth ) ) {
 			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
@@ -303,7 +293,7 @@ public class DBPushPull implements EEExtras {
 		}
 		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/";
 		
-		if( ! executeCommand( command ) ) {
+		if( ! this.ce.executeCommand( command ) ) {
 			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute SCP command " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
@@ -336,7 +326,7 @@ public class DBPushPull implements EEExtras {
 		}
 		String command = ssh + "scp " + file.getAbsolutePath() + " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/";
 		
-		if( ! executeCommand( command ) ) {
+		if( ! this.ce.executeCommand( command ) ) {
 			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute SCP command " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
@@ -369,7 +359,7 @@ public class DBPushPull implements EEExtras {
 		String commandWithAuth = ssh + " '" + command + "'";
 		
 		try {
-			if( ! executeCommand( commandWithAuth ) ) {
+			if( ! this.ce.executeCommand( commandWithAuth ) ) {
 				String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
 				System.out.println(consolMsg);
 				System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
@@ -406,7 +396,7 @@ public class DBPushPull implements EEExtras {
 		
 		String commandWithAuth = ssh + " '" + command + "'";
 		
-		if( ! executeCommand( commandWithAuth ) ) {
+		if( ! this.ce.executeCommand( commandWithAuth ) ) {
 			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute RM command " + EEExtras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
@@ -469,89 +459,6 @@ public class DBPushPull implements EEExtras {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	/*
-	 * Create temp file, execute command, delete and return delete status
-	 */
-	private boolean executeCommand(String command) throws IOException {
-		/*
-		 * Create temp file so we can use exec command Not ideal, but best I
-		 * could come up with for now Uses underlying system commands, not
-		 * relying on external libraries this way. File will be deleted at end
-		 * of execution. In the case of program error, will also be removed upon
-		 * JVM termination (if it still persists).
-		 */
-		File tempBashCmd = File.createTempFile("tmp", ".sh", new File("/tmp"));
-		FileWriter bashFile = new FileWriter(tempBashCmd);
-		tempBashCmd.setExecutable(true);
-		tempBashCmd.deleteOnExit();
-
-		/*
-		 * Write out expect command to tmp shell script (if using password authentication
-		 */
-		bashFile.write("#!/bin/bash");
-		bashFile.write("\n");
-		bashFile.write("export SSHPASS='"+destConfig.getSshPass()+"'");
-		bashFile.write("\n\n");
-		bashFile.write(command);
-		bashFile.write("\n");
-		bashFile.close();
-		
-		Runtime rt = Runtime.getRuntime();
-		Process proc = null;
-		try {
-			// Using underlying 'sh' command to pass password for rsync
-			proc = rt.exec("sh " + tempBashCmd.getAbsolutePath());
-			
-			// Use StreamGobbler to for err/stdout to prevent blocking
-			InputStream stdout = new StreamGobbler(proc.getInputStream());
-			InputStream stderr = new StreamGobbler(proc.getErrorStream());
-			OutputStream stdin = proc.getOutputStream();
-			InputStreamReader isrErr = new InputStreamReader(stderr);
-			BufferedReader brErr = new BufferedReader(isrErr);
-
-			// Print output to stdout
-			String val = null;
-			InputStreamReader isrStd = new InputStreamReader(stdout);
-			BufferedReader brStd = new BufferedReader(isrStd);
-			int lineCount = 0;
-			while ((val = brStd.readLine()) != null) {
-				// Print out loading animation
-				if(lineCount % 5 == 0) System.out.print("*** -- ***\r");
-				else if(lineCount % 5 == 1) System.out.print("*** \\  ***\r");
-				else if(lineCount % 5 == 2) System.out.print("*** |  ***\r");
-				else if(lineCount % 5 == 3) System.out.print("*** /  ***\r");
-				else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
-				lineCount++;
-			}
-			// Clean up the loading animation line
-			System.out.print("          \r");
-
-			// Print errors stdout so user knows what went wrong
-			while ((val = brErr.readLine()) != null) {
-				if(!val.contains("stdin: is not a tty"))
-					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
-			}
-			int exitVal = proc.waitFor();
-
-			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW
-						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
-						+ EEExtras.ANSI_RESET);
-			}
-
-			// Clean up
-			brStd.close();
-			brErr.close();
-			stdin.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// Remove the file, print completion message
-		boolean deleteStatus = tempBashCmd.delete();
-		return( deleteStatus );
 	}
 
 }
