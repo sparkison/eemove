@@ -112,7 +112,7 @@ public class PermissionsFixer {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + config.getSshUser() + "@" + config.getHost();
 		} else {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
+			ssh = cr.getSshPassPath() + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
 		}
 
 		String commandWithAuth = ssh + " '" + command + "'";

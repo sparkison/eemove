@@ -126,7 +126,7 @@ public class DBPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
+			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 				
 		String commandWithAuth = ssh + " '" + command + "'";
@@ -153,7 +153,7 @@ public class DBPushPull implements EEExtras {
 				EEExtras.CWD + "/db_backups/" + localConfig.getEnvironment() + "_db_" + timestamp + ".sql");
 		OutputStream out = new FileOutputStream(localDbBackup);
 		String[] command = { "/bin/sh", "-c",
-				EEExtras.PATH + "/mysqldump --opt --add-drop-table --skip-comments --no-create-db --user=" + localConfig.getDbUser()
+				cr.getMysqlPath() + "mysqldump --opt --add-drop-table --skip-comments --no-create-db --user=" + localConfig.getDbUser()
 						+ " --password=" + localConfig.getDbPass() + " --port=" + localConfig.getDbPort()
 						+ " --databases " + localConfig.getDatabase() };
 
@@ -222,7 +222,7 @@ public class DBPushPull implements EEExtras {
 	 */
 	private void importRemoteDbBackup(File file) {
 		String[] command = { "/bin/sh", "-c",
-				EEExtras.PATH + "/mysql --user=" + localConfig.getDbUser() + " --password="
+				cr.getMysqlPath() + "mysq --user=" + localConfig.getDbUser() + " --password="
 						+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
 						+ localConfig.getDatabase() + " < " + file.getAbsolutePath() };
 
@@ -289,7 +289,7 @@ public class DBPushPull implements EEExtras {
 	private File importRemoteDbBackup(String remoteFile) throws IOException {
 		String ssh = "";
 		if( !cr.useKeyAuth ) {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ";
+			ssh = cr.getSshPassPath() + "sshpass -e ";
 		}
 		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/";
 		
@@ -322,7 +322,7 @@ public class DBPushPull implements EEExtras {
 	private void importLocalDbBackup(File file) throws IOException {
 		String ssh = "";
 		if( !cr.useKeyAuth ) {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ";
+			ssh = cr.getSshPassPath() + "sshpass -e ";
 		}
 		String command = ssh + "scp " + file.getAbsolutePath() + " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/";
 		
@@ -351,7 +351,7 @@ public class DBPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
+			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 		
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
@@ -389,7 +389,7 @@ public class DBPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
+			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 		
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);

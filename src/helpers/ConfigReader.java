@@ -32,6 +32,8 @@ public class ConfigReader implements EEExtras {
 	public String sysDir;
 	public String appDir;
 	public String upDir;
+	public String sshPassPath;
+	public String mysqlPath;
 	public boolean useKeyAuth;
 	public boolean aboveRoot;
 
@@ -39,6 +41,10 @@ public class ConfigReader implements EEExtras {
 	 * Constructor
 	 */
 	public ConfigReader(String configFile) {
+		// Preset some defaults
+		this.sshPassPath = "/usr/local/bin/";
+		this.mysqlPath = "/usr/local/bin/";
+		// Set the config
 		this.CONF = configFile;
 	}
 
@@ -102,6 +108,15 @@ public class ConfigReader implements EEExtras {
 									this.keyfile = new File(authentication.get(authItem).toString());
 								} else if (authItem.toString().equals("keypass")) {
 									this.keyPass = authentication.get(authItem).toString();
+								}
+							}
+						} else if (keyItem.equalsIgnoreCase("executables")) {
+							Map executables = (LinkedHashMap) subValues.get(subValueKey);
+							for (Object pathItem : executables.keySet()) {
+								if (pathItem.toString().equals("sshpass")) {
+									this.sshPassPath = executables.get(pathItem).toString();
+								} else if (pathItem.toString().equals("mysql")) {
+									this.mysqlPath = executables.get(pathItem).toString();
 								}
 							}
 						}
@@ -222,6 +237,15 @@ public class ConfigReader implements EEExtras {
 				line = "above_root: \"true\" # use true or false to signify whether the system folder is above root or not";
 				formatter.format("%" + (line.length() + 4) + "s", line + "\n\n");
 
+				line = "executables:";
+				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
+				
+				line = "# sshpass: \"\" # optional, specify path to sshpass, will default to /usr/local/bin/. Type `which sshpass` in terminal to determin where the executable is located";
+				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
+				
+				line = "# mysql: \"\" # optiona, base path to mysql and mysqldump, will default to /usr/local/bin/. Type `which mysql` in terminal to determin where the executable is located";
+				formatter.format("%" + (line.length() + 5) + "s", line + "\n");
+			
 				line = "authentication:";
 				formatter.format("%" + (line.length() + 3) + "s", line + "\n");
 
@@ -356,5 +380,13 @@ public class ConfigReader implements EEExtras {
 	public boolean isUseKeyAuth() {
 		return useKeyAuth;
 	}
+	
+	public String getSshPassPath() {
+		return sshPassPath;
+	}
 
+	public String getMysqlPath() {
+		return mysqlPath;
+	}
+	
 }

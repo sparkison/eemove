@@ -62,10 +62,10 @@ public class EEPushPull implements EEExtras {
 						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 		} else {
 			if (type.equals("push"))
-				rsyncCommand = EEExtras.SSHPASSPATH + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+				rsyncCommand = cr.getSshPassPath() + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
 						+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 			else
-				rsyncCommand = EEExtras.SSHPASSPATH + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
+				rsyncCommand = cr.getSshPassPath() + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
 						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 		}
 		
@@ -73,7 +73,7 @@ public class EEPushPull implements EEExtras {
 		if( cr.useKeyAuth ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + config.getSshUser() + "@" + config.getHost();
 		} else {
-			ssh = EEExtras.SSHPASSPATH + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
+			ssh = cr.getSshPassPath() + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
 		}
 				
 		String commandWithAuth = ssh + " '" + rsyncCommand + "'";
