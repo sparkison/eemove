@@ -54,6 +54,10 @@ globals:
   ee_app: "app" # leave blank if system is not above root
   upload_dir: "uploads" # optional, if using custom upload directory/ies
   above_root: "true" # use true or false to signify whether the system folder is above root or not
+  
+  executables:
+    sshpass: "/path/to/sshpass/bin/" # optional, specify path to sshpass, will default to /usr/local/bin/. Type `which sshpass` in terminal to determin where the executable is located
+    mysql: "/path/to/mysql/bin/" # optiona, base path to mysql and mysqldump, will default to /usr/local/bin/. Type `which mysql` in terminal to determin where the executable is located
 
   authentication:
     type: "key" # use either 'key' for public key authentication or 'password' for password
