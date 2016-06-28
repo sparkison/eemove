@@ -50,7 +50,7 @@ public class DBPushPull implements EEExtras {
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;
 		this.type = type;
-		this.ce = new CommandExecuter(destConfig);
+		this.ce = new CommandExecuter(destConfig, true);
 		// Grab the config file info
 		this.cr = cr;
 		// Grab a timestamp

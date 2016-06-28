@@ -1,19 +1,26 @@
 package helpers;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
+import ch.ethz.ssh2.StreamGobbler;
 import util.EEExtras;
 
 public class CommandExecuter {
 
 	private final EEconfig config;
-	
-	public CommandExecuter(EEconfig config) {
+	private final boolean indicator;
+
+	public CommandExecuter(EEconfig config, boolean indicator) {
 		this.config = config;
+		this.indicator = indicator;
 	}
-	
+
 	/*
 	 * Create temp file, execute command, delete and return delete status
 	 */
@@ -40,13 +47,47 @@ public class CommandExecuter {
 		bashFile.write(command);
 		bashFile.write("\n");
 		bashFile.close();
-		
+
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
 		try {
 			// Using underlying 'sh' command to pass password for rsync
+
 			proc = rt.exec("sh " + tempBashCmd.getAbsolutePath());
-			
+
+			// Use StreamGobbler to for err/stdout to prevent blocking
+			InputStream stdout = new StreamGobbler(proc.getInputStream());
+			InputStream stderr = new StreamGobbler(proc.getErrorStream());
+			OutputStream stdin = proc.getOutputStream();
+			InputStreamReader isrErr = new InputStreamReader(stderr);
+			BufferedReader brErr = new BufferedReader(isrErr);
+
+			// Print output to stdout
+			String val = null;
+			InputStreamReader isrStd = new InputStreamReader(stdout);
+			BufferedReader brStd = new BufferedReader(isrStd);
+			int lineCount = 0;
+			while ((val = brStd.readLine()) != null) {
+				if(indicator) {
+					// Print out loading animation
+					if(lineCount % 5 == 0) System.out.print("*** -- ***\r");
+					else if(lineCount % 5 == 1) System.out.print("*** \\  ***\r");
+					else if(lineCount % 5 == 2) System.out.print("*** |  ***\r");
+					else if(lineCount % 5 == 3) System.out.print("*** /  ***\r");
+					else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
+					lineCount++;
+				} else {
+					System.out.println(">" + val);
+				}
+			}
+			// Clean up the loading animation line
+			System.out.print("          \r");
+
+			// Print errors stdout so user knows what went wrong
+			while ((val = brErr.readLine()) != null) {
+				if(!val.contains("stdin: is not a tty"))
+					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+			}
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
@@ -55,6 +96,11 @@ public class CommandExecuter {
 						+ EEExtras.ANSI_RESET);
 			}
 
+			// Clean up
+			brStd.close();
+			brErr.close();
+			stdin.close();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,5 +108,5 @@ public class CommandExecuter {
 		boolean deleteStatus = tempBashCmd.delete();
 		return( deleteStatus );
 	}
-	
+
 }

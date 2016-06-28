@@ -36,7 +36,7 @@ public class EEPushPull implements EEExtras {
 		this.user = config.getSshUser();
 		this.host = config.getHost();
 		this.cr = cr;
-		this.ce = new CommandExecuter(config);
+		this.ce = new CommandExecuter(config, false);
 		try {
 			push(this.config);
 		} catch (Exception e) {
@@ -50,33 +50,26 @@ public class EEPushPull implements EEExtras {
 		// password if not set
 		String dryRun = "";
 		if (isDryRun)
-			dryRun = "--dry-run";
+			dryRun = " --dry-run";
 		String rsyncCommand = "";
-		
-		if(cr.isUseKeyAuth()) {
-			if (type.equals("push"))
-				rsyncCommand = "rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
-						+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
-			else
-				rsyncCommand = "rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
-						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
-		} else {
-			if (type.equals("push"))
-				rsyncCommand = cr.getSshPassPath() + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
-						+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
-			else
-				rsyncCommand = cr.getSshPassPath() + "sshpass -p '"+config.getSshPass()+"' rsync -rv -e \"ssh -p " + config.getSshPort() + "\" " + dryRun + " --exclude-from="
-						+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
-		}
 		
 		String ssh = "";
 		if( cr.useKeyAuth ) {
-			ssh = "ssh -i " + cr.getKeyfile() + " " + config.getSshUser() + "@" + config.getHost();
+			ssh = "ssh -i " + cr.getKeyfile();
 		} else {
-			ssh = cr.getSshPassPath() + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
+			ssh = cr.getSshPassPath() + "sshpass -e";
 		}
-				
-		String commandWithAuth = ssh + " '" + rsyncCommand + "'";
+		
+		if (type.equals("push"))
+			rsyncCommand = "rsync -rv" + dryRun + " --exclude-from="
+					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+		else
+			rsyncCommand = "rsync -rv" + dryRun + " --exclude-from="
+					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+		
+		
+		String commandWithAuth = ssh + " " + rsyncCommand;
+		
 		String consolMsg = "";
 		if( ! this.ce.executeCommand( commandWithAuth ) ) {
 			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
