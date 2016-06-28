@@ -222,7 +222,7 @@ public class DBPushPull implements EEExtras {
 	 */
 	private void importRemoteDbBackup(File file) {
 		String[] command = { "/bin/sh", "-c",
-				cr.getMysqlPath() + "mysq --user=" + localConfig.getDbUser() + " --password="
+				cr.getMysqlPath() + "mysql --user=" + localConfig.getDbUser() + " --password="
 						+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
 						+ localConfig.getDatabase() + " < " + file.getAbsolutePath() };
 
