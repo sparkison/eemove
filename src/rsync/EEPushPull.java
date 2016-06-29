@@ -52,24 +52,25 @@ public class EEPushPull implements EEExtras {
 		if (isDryRun)
 			dryRun = " --dry-run";
 		String rsyncCommand = "";
-		
+
 		String ssh = "";
+		String rsyncSsh = "";
 		if( cr.useKeyAuth ) {
-			ssh = "ssh -i " + cr.getKeyfile();
+			rsyncSsh = " -e ssh -i " + cr.getKeyfile();
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e";
 		}
-		
+
 		if (type.equals("push"))
-			rsyncCommand = "rsync -rv" + dryRun + " --exclude-from="
+			rsyncCommand = "rsync" + rsyncSsh + " -rv" + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync -rv" + dryRun + " --exclude-from="
+			rsyncCommand = "rsync" + rsyncSsh + " -rv" + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
-		
-		
+
+
 		String commandWithAuth = ssh + " " + rsyncCommand;
-		
+
 		String consolMsg = "";
 		if( ! this.ce.executeCommand( commandWithAuth ) ) {
 			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
@@ -77,11 +78,11 @@ public class EEPushPull implements EEExtras {
 			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
 			System.exit(-1);
 		}
-		
+
 		consolMsg = Strings.padEnd(
 				"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Complete! " + EEExtras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
-		
+
 	}
 
 }
