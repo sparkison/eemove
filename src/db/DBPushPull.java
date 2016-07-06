@@ -118,7 +118,7 @@ public class DBPushPull implements EEExtras {
 
 		String command = "mysqldump --opt --quick --add-drop-table --skip-comments --no-create-db --host="
 				+ destConfig.getDbHost() + " --user=" + destConfig.getDbUser()
-				+ " --password=\"" + destConfig.getDbPass().replace("'", "\'") + "\" --port=" + destConfig.getDbPort() + " --databases "
+				+ " --password=" + destConfig.getDbPass().replace("'", "\'").replace("$", "\\$") + " --port=" + destConfig.getDbPort() + " --databases "
 				+ destConfig.getDatabase() + " --result-file=/tmp/" + fileName;
 
 		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
@@ -155,7 +155,7 @@ public class DBPushPull implements EEExtras {
 		OutputStream out = new FileOutputStream(localDbBackup);
 		String[] command = { "/bin/sh", "-c",
 				cr.getMysqlPath() + "mysqldump --opt --add-drop-table --skip-comments --no-create-db --user=" + localConfig.getDbUser()
-				+ " --password=" + localConfig.getDbPass() + " --port=" + localConfig.getDbPort()
+				+ " --password=" + localConfig.getDbPass().replace("'", "\'") + " --port=" + localConfig.getDbPort()
 				+ " --databases " + localConfig.getDatabase() };
 
 		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | " + EEExtras.ANSI_RESET + Arrays.toString(command));
@@ -224,7 +224,7 @@ public class DBPushPull implements EEExtras {
 	private void importRemoteDbBackup(File file) {
 		String[] command = { "/bin/sh", "-c",
 				cr.getMysqlPath() + "mysql --user=" + localConfig.getDbUser() + " --password="
-						+ localConfig.getDbPass() + " --port=" + localConfig.getDbPort() + " --database="
+						+ localConfig.getDbPass().replace("'", "\'") + " --port=" + localConfig.getDbPort() + " --database="
 						+ localConfig.getDatabase() + " < " + file.getAbsolutePath() };
 
 		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | " + EEExtras.ANSI_RESET + Arrays.toString(command));
@@ -344,8 +344,8 @@ public class DBPushPull implements EEExtras {
 	 * Import the local db to the remote server, then remove it
 	 */
 	private void importLocalDbBackupToRemote(File file) {
-		String command = "mysql --verbose --host= " + destConfig.getDbHost() + " --user=" + destConfig.getDbUser() + " --password=\"" + destConfig.getDbPass().replace("'", "\'")
-				+ "\" --port=" + destConfig.getDbPort() + " --database=" + destConfig.getDatabase() + " < " + "/tmp/"
+		String command = "mysql --verbose --host=" + destConfig.getDbHost() + " --user=" + destConfig.getDbUser() + " --password=" + destConfig.getDbPass().replace("'", "\'")
+				+ " --port=" + destConfig.getDbPort() + " --database=" + destConfig.getDatabase() + " < " + "/tmp/"
 				+ file.getName();
 
 		String ssh = "";

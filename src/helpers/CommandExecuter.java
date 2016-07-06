@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ch.ethz.ssh2.StreamGobbler;
 import util.EEExtras;
@@ -18,7 +21,7 @@ public class CommandExecuter {
 
 	public CommandExecuter(EEconfig config, boolean indicator) {
 		this.config = config;
-		this.indicator = indicator;
+		this.indicator = indicator;		
 	}
 
 	/*
@@ -44,7 +47,7 @@ public class CommandExecuter {
 		bashFile.write("\n");
 		bashFile.write("export SSHPASS='"+config.getSshPass()+"'");
 		bashFile.write("\n\n");
-		bashFile.write(command);
+		bashFile.write(escapeSepcialChars(command));
 		bashFile.write("\n");
 		bashFile.close();
 
@@ -77,7 +80,7 @@ public class CommandExecuter {
 					else if(lineCount % 5 == 4) System.out.print("*** -- ***\r");
 					lineCount++;
 				} else {
-					System.out.println(">" + val);
+					System.out.println("> " + val);
 				}
 			}
 			// Clean up the loading animation line
@@ -107,6 +110,13 @@ public class CommandExecuter {
 		// Remove the file, print completion message
 		boolean deleteStatus = tempBashCmd.delete();
 		return( deleteStatus );
+	}
+	
+	private String escapeSepcialChars(String cmd) {
+		return cmd
+				.replace("$","\\$")
+				.replace(";","\\;")
+				.replace("\"","\\\"");
 	}
 
 }
