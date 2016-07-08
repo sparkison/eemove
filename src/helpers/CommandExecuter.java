@@ -112,6 +112,9 @@ public class CommandExecuter {
 		return( deleteStatus );
 	}
 	
+	/*
+	 * Escape characters that cause problems with bash or sql
+	 */
 	private String escapeSepcialChars(String cmd) {
 		return cmd
 				.replace("$","\\$")
