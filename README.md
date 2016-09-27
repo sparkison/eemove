@@ -19,29 +19,38 @@ Or you can download one of the precompiled release via the [releases](https://gi
 
 Move **eemove.jar** to wherever you like, then `cd` into your ExpressionEngine websites root on your local dev and run using `java -jar /PATH_TO_EEMOVE/eemove.jar`, and simply follow the prompts!
 
+Alternatively, if you get tired of typing out `java -jar ...` every time, you can add eemove as a bash alias. 
+To do so, edit your `bash_profile` (E.g. `nano ~/.bash_profile`) and add the following:
+```
+# Shortcut for eemove
+alias eemove="java -jar /usr/bin/eemove.jar"
+```
+
+Exit and save your bash profile, and finally reload it (`source ~/.bash_profile`) and you should be able to enter `eemove` at the terminal to display the eemove help screen.
+
 ## Useage
-Push everything to staging environment: `push -d staging all`
+Push uploads to staging environment: `eemove push -l staging -u`
 
 Breakdown of the above command:
 
 1. `push` what we're going to do, can be either `push` or `pull`
-2. `-d` the "dry run" flag for Rsync. If using `-d` will execute a dry run and no files will actually be copied. To issue a live run use the `-l` flag instead
+2. `-l` the "dry run" flag for Rsync. If using `-d` will execute a dry run and no files will actually be copied. To issue a live run use the `-l` flag instead
 3. The environment to push/pull to/from
 4. What to push/pull. Options are
   1. `all` for everything (doesn't include database; for files only)
-  2. `uploads` for the upload directories (both user defined and **images/uploads**)
-  3. `templates` for the **system/user/templates** directory
-  4. `addons` for the **system/user/addons** and **app/themes/user** directories
+  2. `uploads|-u` for the upload directories (both user defined and **images/uploads**)
+  3. `templates|-t` for the **system/user/templates** directory
+  4. `addons|-a` for the **system/user/addons** and **app/themes/user** directories
   5. `app` for the public facing directories
   6. `system` for the system directory
   7. `custom` specify a custom local and remote directory to push/pull to/from
   8. `update` for the **system/ee** and **app/themes/ee** directories as well as the **system/user/config/config.php** file
-  9. `database` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
+  9. `database|-d` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
 Helper commands
 
-1. `help` displays an example list of commands
-2. `fixperms [environment]` attempts to fix permissions on the environment selected (eg. `fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
+1. `eemove` displays an example list of commands
+2. `eemove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
 
 ## Config file example
 
