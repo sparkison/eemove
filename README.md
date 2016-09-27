@@ -50,7 +50,7 @@ Breakdown of the above command:
 Helper commands
 
 1. `eemove` displays an example list of commands
-2. `eemove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
+2. `eemove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `eemove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
 
 ## Config file example
 
