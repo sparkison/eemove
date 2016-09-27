@@ -129,6 +129,6 @@ You can download my EE project bootstrap here: [ee_bootstrap](https://github.com
 
 ### Notice
 
-This project is currently a work in progress... check back soon for updates, fixes and amendments
+This project is currently a work in progress... check back often for updates, fixes and amendments
 
 [logo]: https://github.com/sparkison/eemove/blob/master/resources/images/eemove.jpg "eemove logo"
