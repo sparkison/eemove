@@ -43,6 +43,8 @@ public class CommandExecuter {
 		/*
 		 * Write out expect command to tmp shell script (if using password authentication
 		 */
+		System.out.println(EEExtras.ANSI_GREEN + "Executing command: " + command + EEExtras.ANSI_RESET);
+		
 		bashFile.write("#!/bin/bash");
 		bashFile.write("\n");
 		bashFile.write("export SSHPASS='"+config.getSshPass()+"'");

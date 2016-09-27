@@ -56,7 +56,7 @@ public class EEPushPull implements EEExtras {
 		String ssh = "";
 		String rsyncSsh = "";
 		if( cr.useKeyAuth ) {
-			rsyncSsh = " -e ssh -i " + cr.getKeyfile();
+			rsyncSsh = " -e 'ssh -i " + cr.getKeyfile() + "'";
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e";
 		}
