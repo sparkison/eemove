@@ -23,7 +23,7 @@ Alternatively, if you get tired of typing out `java -jar ...` every time, you ca
 To do so, edit your `bash_profile` (E.g. `nano ~/.bash_profile`) and add the following:
 ```
 # Shortcut for eemove
-alias eemove="java -jar /usr/bin/eemove.jar"
+alias eemove="java -jar /PATH_TO_EEMOVE/eemove.jar"
 ```
 
 Exit and save your bash profile, and finally reload it (`source ~/.bash_profile`) and you should be able to enter `eemove` at the terminal to display the eemove help screen.
