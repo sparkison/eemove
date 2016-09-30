@@ -6,7 +6,7 @@ Automated deployment for ExpressionEngine websites
 ## Dependencies
 eemove utilizes `rsync`, `ssh`, and `sshpass` (if not using keys for authentication). These items will need to be installed on your OS for eemove to work correctly.
 
-You will need to install the Java Runtime Environment (JRE). You find the latest release for you OS here: [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+You will need to install the Java Runtime Environment (JRE). You can find the latest release for you OS here: [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 ## Included libraries
 * [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) - used for digesting the config file
 * [Guava](https://github.com/google/guava)
