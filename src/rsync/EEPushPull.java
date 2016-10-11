@@ -62,10 +62,10 @@ public class EEPushPull implements EEExtras {
 		}
 
 		if (type.equals("push"))
-			rsyncCommand = "rsync" + rsyncSsh + " -rv" + dryRun + " --exclude-from="
+			rsyncCommand = "rsync --progress" + rsyncSsh + " -rlpt --compress --omit-dir-times --delete" + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
-			rsyncCommand = "rsync" + rsyncSsh + " -rv" + dryRun + " --exclude-from="
+			rsyncCommand = "rsync --progress" + rsyncSsh + " -rlpt --compress --omit-dir-times --delete" + dryRun + " --exclude-from="
 					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 
 
