@@ -127,6 +127,7 @@ cmsmove assumes your directory structure is with the **system** folder above roo
 ├── eemove.config
 └── eemove.ignore
 ```
+You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
 
 # Craft Examples
 
@@ -224,8 +225,6 @@ cmsmove assumes your directory structure is with the **craft** folder above root
 ├── craftmove.config
 └── craftmove.ignore
 ```
-
-You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
 
 ### Notice
 
