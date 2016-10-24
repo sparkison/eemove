@@ -18,15 +18,15 @@ import com.google.common.base.Strings;
 
 import db.DBPushPull;
 import helpers.ConfigReader;
-import helpers.EEconfig;
+import helpers.Config;
 import helpers.PermissionsFixer;
-import rsync.EEPushPull;
-import util.EEExtras;
+import rsync.PushPull;
+import util.Extras;
 
-public class EEMove implements EEExtras {
+public class EEMove implements Extras {
 
 	// Our primary variables
-	private HashMap<String, EEconfig> config;
+	private HashMap<String, Config> config;
 	private File rsyncIgnore = new File("eemove.ignore");
 	// EE folder structure configuration, set some defaults just in case
 	private String eeApp;
@@ -50,7 +50,7 @@ public class EEMove implements EEExtras {
 
 		// See if we have enough (need at least two)
 		if(args.length < 2) {
-			System.out.println(EEExtras.ANSI_RED + "Incorrect number of arguments supplied. Example of valid commands:" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_RED + "Incorrect number of arguments supplied. Example of valid commands:" + Extras.ANSI_RESET);
 			System.out.println(exampleCmd());
 			System.exit(0);
 		}
@@ -124,7 +124,7 @@ public class EEMove implements EEExtras {
 				System.out.println("Unable to find environment entered in config file, please try again.");
 			} else {
 				// Get the configuration
-				EEconfig thisConfig = config.get(environment);
+				Config thisConfig = config.get(environment);
 				// Get the directory parts
 				String envDirParts[] = thisConfig.getDirectory().split("/");
 				// Determine app and system destination directories
@@ -166,164 +166,164 @@ public class EEMove implements EEExtras {
 				if (directory.equalsIgnoreCase("all")) {
 					// Push all contents of app and system
 					// directories to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " All ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " All ", 80, '▬');
 					System.out.println(consolMsg);
 					appSrc += "/";
 					appDest += "/";
 					sysSrc += "/";
 					sysDest += "/";
-					new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
-					new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+					new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+					new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 				} else if (directory.equalsIgnoreCase("addons") || directory.equalsIgnoreCase("-a")) {
 					// Push plugin directories to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Add-ons ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Add-ons ", 80, '▬');
 					System.out.println(consolMsg);
 					if(cr.eeVer == 3) {
-						appSrc += EEExtras.EE3_ADDONS_THEMES;
-						appDest += EEExtras.EE3_ADDONS_THEMES;
-						sysSrc += EEExtras.EE3_ADDONS_FILES;
-						sysDest += EEExtras.EE3_ADDONS_FILES;
+						appSrc += Extras.EE3_ADDONS_THEMES;
+						appDest += Extras.EE3_ADDONS_THEMES;
+						sysSrc += Extras.EE3_ADDONS_FILES;
+						sysDest += Extras.EE3_ADDONS_FILES;
 					} else if(cr.eeVer == 2) {
-						appSrc += EEExtras.EE2_ADDONS_THEMES;
-						appDest += EEExtras.EE2_ADDONS_THEMES;
-						sysSrc += EEExtras.EE2_ADDONS_FILES;
-						sysDest += EEExtras.EE2_ADDONS_FILES;
+						appSrc += Extras.EE2_ADDONS_THEMES;
+						appDest += Extras.EE2_ADDONS_THEMES;
+						sysSrc += Extras.EE2_ADDONS_FILES;
+						sysDest += Extras.EE2_ADDONS_FILES;
 					} else {
 						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
 						System.exit(1);
 					}
-					new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
-					new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+					new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+					new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 				}else if (directory.equalsIgnoreCase("update")) {
 					// Push plugin directories to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Update files ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Update files ", 80, '▬');
 					System.out.println(consolMsg);
 					String configSrc = "";
 					String configDest = "";
 					if(cr.eeVer == 3) {
-						configSrc = sysSrc + EEExtras.EE3_CONFIG_FILE;
-						configDest = sysDest + EEExtras.EE3_CONFIG_FILE;
-						appSrc += EEExtras.EE3_SYSTEM_THEMES;
-						appDest += EEExtras.EE3_SYSTEM_THEMES;
-						sysSrc += EEExtras.EE3_SYSTEM_FILES;
-						sysDest += EEExtras.EE3_SYSTEM_FILES;
+						configSrc = sysSrc + Extras.EE3_CONFIG_FILE;
+						configDest = sysDest + Extras.EE3_CONFIG_FILE;
+						appSrc += Extras.EE3_SYSTEM_THEMES;
+						appDest += Extras.EE3_SYSTEM_THEMES;
+						sysSrc += Extras.EE3_SYSTEM_FILES;
+						sysDest += Extras.EE3_SYSTEM_FILES;
 					} else if(cr.eeVer == 2) {
-						configSrc = sysSrc + EEExtras.EE2_CONFIG_FILE;
-						configDest = sysDest + EEExtras.EE2_CONFIG_FILE;
-						appSrc += EEExtras.EE2_SYSTEM_THEMES;
-						appDest += EEExtras.EE2_SYSTEM_THEMES;
-						sysSrc += EEExtras.EE2_SYSTEM_FILES;
-						sysDest += EEExtras.EE2_SYSTEM_FILES;
+						configSrc = sysSrc + Extras.EE2_CONFIG_FILE;
+						configDest = sysDest + Extras.EE2_CONFIG_FILE;
+						appSrc += Extras.EE2_SYSTEM_THEMES;
+						appDest += Extras.EE2_SYSTEM_THEMES;
+						sysSrc += Extras.EE2_SYSTEM_FILES;
+						sysDest += Extras.EE2_SYSTEM_FILES;
 					} else {
 						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 
-					new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
-					new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
-					new EEPushPull(configSrc, configDest, type, isDryRun, thisConfig, cr);
+					new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+					new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+					new PushPull(configSrc, configDest, type, isDryRun, thisConfig, cr);
 				} else if (directory.equalsIgnoreCase("templates") || directory.equalsIgnoreCase("-t")) {
 					// Push theme directory to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Templates ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Templates ", 80, '▬');
 					System.out.println(consolMsg);
 					if(cr.eeVer == 3) {
-						appSrc += EEExtras.EE3_TEMPLATE_RESOURCES;
-						appDest += EEExtras.EE3_TEMPLATE_RESOURCES;
-						sysSrc += EEExtras.EE3_TEMPLATES;
-						sysDest += EEExtras.EE3_TEMPLATES;
+						appSrc += Extras.EE3_TEMPLATE_RESOURCES;
+						appDest += Extras.EE3_TEMPLATE_RESOURCES;
+						sysSrc += Extras.EE3_TEMPLATES;
+						sysDest += Extras.EE3_TEMPLATES;
 					} else if(cr.eeVer == 2) {
-						appSrc += EEExtras.EE2_TEMPLATE_RESOURCES;
-						appDest += EEExtras.EE2_TEMPLATE_RESOURCES;
-						sysSrc += EEExtras.EE2_TEMPLATES;
-						sysDest += EEExtras.EE2_TEMPLATES;
+						appSrc += Extras.EE2_TEMPLATE_RESOURCES;
+						appDest += Extras.EE2_TEMPLATE_RESOURCES;
+						sysSrc += Extras.EE2_TEMPLATES;
+						sysDest += Extras.EE2_TEMPLATES;
 					} else {
 						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 
-					new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
-					new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+					new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+					new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 				} else if (directory.equalsIgnoreCase("uploads") || directory.equalsIgnoreCase("-u")) {
 					// Push upload directories to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Uploads ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Uploads ", 80, '▬');
 					System.out.println(consolMsg);
 					String uploadSrc = "";
 					String uploadDest = "";
 					if(cr.eeVer == 3) {
-						uploadSrc = appSrc + EEExtras.EE3_IMAGE_UPLOADS;
-						uploadDest = appDest + EEExtras.EE3_IMAGE_UPLOADS;
+						uploadSrc = appSrc + Extras.EE3_IMAGE_UPLOADS;
+						uploadDest = appDest + Extras.EE3_IMAGE_UPLOADS;
 					} else if(cr.eeVer == 2) {
-						uploadSrc = appSrc + EEExtras.EE2_IMAGE_UPLOADS;
-						uploadDest = appDest + EEExtras.EE2_IMAGE_UPLOADS;
+						uploadSrc = appSrc + Extras.EE2_IMAGE_UPLOADS;
+						uploadDest = appDest + Extras.EE2_IMAGE_UPLOADS;
 					} else {
 						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 
-					new EEPushPull(uploadSrc, uploadDest, type, isDryRun, thisConfig, cr);
+					new PushPull(uploadSrc, uploadDest, type, isDryRun, thisConfig, cr);
 					if (!uploadDir.equals("")) {
-						consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Custom Uploads Directory ", 80, '▬');
+						consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Custom Uploads Directory ", 80, '▬');
 						System.out.println(consolMsg);
 						String customUploadSrc = appSrc + "/" + uploadDir + "/";
 						String customUploadDest = appDest + "/" + uploadDir + "/";
-						new EEPushPull(customUploadSrc, customUploadDest, type, isDryRun, thisConfig, cr);
+						new PushPull(customUploadSrc, customUploadDest, type, isDryRun, thisConfig, cr);
 					}
 				} else if (directory.equalsIgnoreCase("system")) {
 					// Push system directory to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " System ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " System ", 80, '▬');
 					System.out.println(consolMsg);
 					sysSrc += "/";
 					sysDest += "/";
-					new EEPushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+					new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 				} else if (directory.equalsIgnoreCase("app")) {
 					// Push app directory to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " App ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " App ", 80, '▬');
 					System.out.println(consolMsg);
 					appSrc += "/";
 					appDest += "/";
-					new EEPushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+					new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 				} else if (directory.equalsIgnoreCase("custom")) {
 					// Push app directory to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Custom Directory ", 80, '▬');
+					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Custom Directory ", 80, '▬');
 					System.out.println(consolMsg);
 					String source, destination;
 
-					System.out.println(EEExtras.ANSI_YELLOW + "[Note: for syncing directories recursivley be sure to include trailing slash (\"/\")]" + EEExtras.ANSI_RESET);
-					System.out.print(EEExtras.ANSI_GREEN + "Enter the local path (relative to " + EEExtras.CWD + "): " + EEExtras.ANSI_RESET);
+					System.out.println(Extras.ANSI_YELLOW + "[Note: for syncing directories recursivley be sure to include trailing slash (\"/\")]" + Extras.ANSI_RESET);
+					System.out.print(Extras.ANSI_GREEN + "Enter the local path (relative to " + Extras.CWD + "): " + Extras.ANSI_RESET);
 					source = scan.nextLine();
-					System.out.print(EEExtras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + EEExtras.ANSI_RESET);
+					System.out.print(Extras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + Extras.ANSI_RESET);
 					destination = scan.nextLine();
 					System.out.println();
 
 					if (type.equalsIgnoreCase("push")) {
-						System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + EEExtras.CWD + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\"" + EEExtras.ANSI_RESET);
+						System.out.println(Extras.ANSI_CYAN + pushPull + " \"" + Extras.CWD + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\"" + Extras.ANSI_RESET);
 					} else {
-						System.out.println(EEExtras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\" to \"" + EEExtras.CWD + source + "\"" + EEExtras.ANSI_RESET);
+						System.out.println(Extras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\" to \"" + Extras.CWD + source + "\"" + Extras.ANSI_RESET);
 					}
 
-					System.out.print("\n" + EEExtras.ANSI_YELLOW + "Is this correct? (Y/N): " + EEExtras.ANSI_RESET);
+					System.out.print("\n" + Extras.ANSI_YELLOW + "Is this correct? (Y/N): " + Extras.ANSI_RESET);
 					String proceed = scan.nextLine();
 
 					if( proceed.equalsIgnoreCase("y") || proceed.equalsIgnoreCase("yes") ) {
-						new EEPushPull(source, destination, type, isDryRun, thisConfig, cr);
+						new PushPull(source, destination, type, isDryRun, thisConfig, cr);
 					} else {
-						System.out.println(EEExtras.ANSI_YELLOW + "Operation canceled.\n" + EEExtras.ANSI_RESET);
+						System.out.println(Extras.ANSI_YELLOW + "Operation canceled.\n" + Extras.ANSI_RESET);
 					}
 
 				} else if (directory.equalsIgnoreCase("database") || directory.equalsIgnoreCase("-d")) {
 					// Database push/pull doesn't support dry-run, tell
 					// user
 					if (isDryRun) {
-						System.out.println(EEExtras.ANSI_RED
+						System.out.println(Extras.ANSI_RED
 								+ "Database push/pull does not support \"dry\" runs, please use the \"-l\" flag instead."
-								+ EEExtras.ANSI_RESET);
+								+ Extras.ANSI_RESET);
 					} else {
 						if (config.get("local") == null) {
-							System.out.println(EEExtras.ANSI_RED
+							System.out.println(Extras.ANSI_RED
 									+ "You do not have an environment for \"local\", please add one to your \"eemove.config\" file and try again."
-									+ EEExtras.ANSI_RESET);
+									+ Extras.ANSI_RESET);
 						} else {
-							String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + pushPull + EEExtras.ANSI_RESET + " Database ", 80, '▬');
+							String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Database ", 80, '▬');
 							System.out.println(consolMsg);
 							new DBPushPull(thisConfig, config.get("local"), type, cr);
 						}
@@ -342,7 +342,7 @@ public class EEMove implements EEExtras {
 	 */
 	private String exampleCmd() {
 		String returnString = "";
-		returnString += EEExtras.ANSI_YELLOW + "\n[Note] the flags [-d, -l] represent dry and live runs repsectively.\n"
+		returnString += Extras.ANSI_YELLOW + "\n[Note] the flags [-d, -l] represent dry and live runs repsectively.\n"
 				+ "To see what will be transfered without actually transfering anything use the -d flag.\n"
 				+ "[Note] must use the -l flag if doing a database push/pull.\n"
 				+ "[Note] command shorthand denoted within parenthesis. E.g. the shorthand for 'templates' us '-t' \n\n";
@@ -362,7 +362,7 @@ public class EEMove implements EEExtras {
 		returnString += "\"eemove pull -l staging templates(-t)\"\t(pulls templates from desired environment)\n";
 		returnString += "\"eemove pull -l production uploads(-u)\"\t(pulls uploads from desired environment)\n";
 		returnString += "\"eemove pull -l staging app\"\t\t(pulls app directory from desired environment)\n";
-		returnString += "\"eemove pull -l staging database(-d)\"\t(pulls database from desired environment)\n\n" + EEExtras.ANSI_RESET;
+		returnString += "\"eemove pull -l staging database(-d)\"\t(pulls database from desired environment)\n\n" + Extras.ANSI_RESET;
 		return returnString;
 	}
 

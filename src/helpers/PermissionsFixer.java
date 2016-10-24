@@ -19,15 +19,15 @@ import java.io.OutputStream;
 import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
-import util.EEExtras;
+import util.Extras;
 
 public class PermissionsFixer {
 
 	private ConfigReader cr;
-	private EEconfig config;
+	private Config config;
 
 	// Constructor
-	public PermissionsFixer(ConfigReader cr, EEconfig config) {
+	public PermissionsFixer(ConfigReader cr, Config config) {
 		this.cr = cr;
 		this.config = config;
 		try {
@@ -43,7 +43,7 @@ public class PermissionsFixer {
 	 */
 	public void fixPermissions() throws IOException {
 		// Notify user of our intent
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + "Updating permissions " + Extras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 		// Grab the system and app directories
 		String sysDest = "";
@@ -118,17 +118,17 @@ public class PermissionsFixer {
 		String commandWithAuth = ssh + " '" + command + "'";
 
 		// Show user the command we're sending
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + commandWithAuth);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + commandWithAuth);
 
 		if( ! executeCommand( commandWithAuth ) ) {
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute CHMOD command " + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute CHMOD command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 
 		consolMsg = Strings.padEnd(
-				"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Complete! " + EEExtras.ANSI_RESET, 80, '▬');
+				"▬▬ ✓ " + Extras.ANSI_CYAN + "Complete! " + Extras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 	}
 
@@ -192,14 +192,14 @@ public class PermissionsFixer {
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
 				if(!val.contains("stdin: is not a tty"))
-					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+					System.err.println(Extras.ANSI_RED + ">>[Error]: " + val + Extras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW
+				System.out.println(Extras.ANSI_YELLOW
 						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
-						+ EEExtras.ANSI_RESET);
+						+ Extras.ANSI_RESET);
 			}
 
 			// Clean up

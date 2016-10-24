@@ -26,13 +26,13 @@ import com.google.common.base.Strings;
 import ch.ethz.ssh2.StreamGobbler;
 import helpers.CommandExecuter;
 import helpers.ConfigReader;
-import helpers.EEconfig;
-import util.EEExtras;
+import helpers.Config;
+import util.Extras;
 
-public class DBPushPull implements EEExtras {
+public class DBPushPull implements Extras {
 
 	// Class variables
-	private EEconfig destConfig, localConfig;
+	private Config destConfig, localConfig;
 	private String timestamp;
 	private ConfigReader cr;
 	private String type;
@@ -40,12 +40,12 @@ public class DBPushPull implements EEExtras {
 
 	// Make sure backup folder exists, if not create it
 	@SuppressWarnings("unused")
-	private boolean dbBackupFolder = new File(EEExtras.CWD + "/db_backups").mkdir();
+	private boolean dbBackupFolder = new File(Extras.CWD + "/db_backups").mkdir();
 
 	/*
 	 * Constructor
 	 */
-	public DBPushPull(EEconfig destConfig, EEconfig localConfig, String type, ConfigReader cr) {
+	public DBPushPull(Config destConfig, Config localConfig, String type, ConfigReader cr) {
 		// Set the configurations
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;
@@ -77,7 +77,7 @@ public class DBPushPull implements EEExtras {
 				/*
 				 * Remove the local dump as we're done with it and it contains updated database info only relevant to remote
 				 */
-				System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + localBackup);
+				System.out.println(Extras.ANSI_GREEN + "\tlocal | delete file: " + Extras.ANSI_RESET + localBackup);
 				localBackup.delete();
 			} else {
 				/*
@@ -87,7 +87,7 @@ public class DBPushPull implements EEExtras {
 				/*
 				 * Remove the remote dump as we're done with it and it contains updated database info only relevant to local
 				 */
-				System.out.println(EEExtras.ANSI_GREEN + "\tlocal | delete file: " + EEExtras.ANSI_RESET + remoteBackup);
+				System.out.println(Extras.ANSI_GREEN + "\tlocal | delete file: " + Extras.ANSI_RESET + remoteBackup);
 				remoteBackup.delete();
 			}
 
@@ -95,7 +95,7 @@ public class DBPushPull implements EEExtras {
 			 * Database push/pull complete!
 			 */
 			String consolMsg = Strings.padEnd(
-					"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Database Transfer complete! " + EEExtras.ANSI_RESET, 80, '▬');
+					"▬▬ ✓ " + Extras.ANSI_CYAN + "Database Transfer complete! " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
 
 		} catch (IOException e) {
@@ -121,7 +121,7 @@ public class DBPushPull implements EEExtras {
 				+ " --password=" + destConfig.getDbPass().replace("'", "\'").replace("$", "\\$") + " --port=" + destConfig.getDbPort() + " --databases "
 				+ destConfig.getDatabase() + " --result-file=/tmp/" + fileName;
 
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + command);
 
 		String ssh = "";
 		if( cr.useKeyAuth ) {
@@ -133,9 +133,9 @@ public class DBPushPull implements EEExtras {
 		String commandWithAuth = ssh + " '" + command + "'";
 
 		if( ! this.ce.executeCommand( commandWithAuth ) ) {
-			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute MYSQL command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 
@@ -151,14 +151,14 @@ public class DBPushPull implements EEExtras {
 	 */
 	private File localDbBackup() throws IOException {
 		File localDbBackup = new File(
-				EEExtras.CWD + "/db_backups/" + localConfig.getEnvironment() + "_db_" + timestamp + ".sql");
+				Extras.CWD + "/db_backups/" + localConfig.getEnvironment() + "_db_" + timestamp + ".sql");
 		OutputStream out = new FileOutputStream(localDbBackup);
 		String[] command = { "/bin/sh", "-c",
 				cr.getMysqlPath() + "mysqldump --opt --add-drop-table --skip-comments --no-create-db --user=" + localConfig.getDbUser()
 				+ " --password=" + localConfig.getDbPass().replace("'", "\'") + " --port=" + localConfig.getDbPort()
 				+ " --databases " + localConfig.getDatabase() };
 
-		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | " + EEExtras.ANSI_RESET + Arrays.toString(command));
+		System.out.println(Extras.ANSI_GREEN + "\tlocal | " + Extras.ANSI_RESET + Arrays.toString(command));
 
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
@@ -191,15 +191,15 @@ public class DBPushPull implements EEExtras {
 
 			// Print errors stdout so user knows what went wrong
 			while ((line = brErr.readLine()) != null) {
-				System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + line + EEExtras.ANSI_RESET);
+				System.err.println(Extras.ANSI_RED + ">>[Error]: " + line + Extras.ANSI_RESET);
 			}
 
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW
+				System.out.println(Extras.ANSI_YELLOW
 						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
-						+ EEExtras.ANSI_RESET);
+						+ Extras.ANSI_RESET);
 			}
 
 			// Clean up
@@ -227,7 +227,7 @@ public class DBPushPull implements EEExtras {
 						+ localConfig.getDbPass().replace("'", "\'") + " --port=" + localConfig.getDbPort() + " --database="
 						+ localConfig.getDatabase() + " < " + file.getAbsolutePath() };
 
-		System.out.println(EEExtras.ANSI_GREEN + "\tlocal | " + EEExtras.ANSI_RESET + Arrays.toString(command));
+		System.out.println(Extras.ANSI_GREEN + "\tlocal | " + Extras.ANSI_RESET + Arrays.toString(command));
 
 		Runtime rt = Runtime.getRuntime();
 		Process proc = null;
@@ -259,7 +259,7 @@ public class DBPushPull implements EEExtras {
 
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
-				System.err.println(EEExtras.ANSI_RED + ">> [Error]: " + val + EEExtras.ANSI_RESET);
+				System.err.println(Extras.ANSI_RED + ">> [Error]: " + val + Extras.ANSI_RESET);
 			}
 
 			int exitVal = proc.waitFor();
@@ -268,9 +268,9 @@ public class DBPushPull implements EEExtras {
 			System.out.print("          \r");
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW
+				System.out.println(Extras.ANSI_YELLOW
 						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
-						+ EEExtras.ANSI_RESET);
+						+ Extras.ANSI_RESET);
 			}
 
 			// Clean up
@@ -292,21 +292,21 @@ public class DBPushPull implements EEExtras {
 		if( !cr.useKeyAuth ) {
 			ssh = cr.getSshPassPath() + "sshpass -e ";
 		}
-		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + EEExtras.CWD + "/db_backups/";
+		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + Extras.CWD + "/db_backups/";
 
 		if( ! this.ce.executeCommand( command ) ) {
-			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute SCP command " + EEExtras.ANSI_RESET, 80, '▬');
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute SCP command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 		// Pass things off to the next method to import the database and delete
 		// the sql dump file
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + command);
 		// Remove the file from the remote server
 		removeTempFile("/tmp/" + remoteFile);
 		// The name of the remote dump and the lines to remove
-		String localBackupOfRemoteDump = EEExtras.CWD + "/db_backups/" + remoteFile;
+		String localBackupOfRemoteDump = Extras.CWD + "/db_backups/" + remoteFile;
 		String[] removeLines = {"--", "USE"};
 		// Adapt the file for local import
 		adaptDump(localBackupOfRemoteDump, removeLines);
@@ -328,15 +328,15 @@ public class DBPushPull implements EEExtras {
 		String command = ssh + "scp " + file.getAbsolutePath() + " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/";
 
 		if( ! this.ce.executeCommand( command ) ) {
-			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute SCP command " + EEExtras.ANSI_RESET, 80, '▬');
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute SCP command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 
 		// Pass things off to the next method to import the database and delete
 		// the sql dump file
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + command);
 		importLocalDbBackupToRemote(file);
 	}
 
@@ -355,15 +355,15 @@ public class DBPushPull implements EEExtras {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + command);
 
 		String commandWithAuth = ssh + " '" + command + "'";
 
 		try {
 			if( ! this.ce.executeCommand( commandWithAuth ) ) {
-				String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
+				String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute MYSQL command " + Extras.ANSI_RESET, 80, '▬');
 				System.out.println(consolMsg);
-				System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+				System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 				System.exit(-1);
 			}
 		} catch (IOException e1) {
@@ -393,14 +393,14 @@ public class DBPushPull implements EEExtras {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		}
 
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + command);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + command);
 
 		String commandWithAuth = ssh + " '" + command + "'";
 
 		if( ! this.ce.executeCommand( commandWithAuth ) ) {
-			String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute RM command " + EEExtras.ANSI_RESET, 80, '▬');
+			String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute RM command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 

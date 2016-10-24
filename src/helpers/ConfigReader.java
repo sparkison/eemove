@@ -20,9 +20,9 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
-import util.EEExtras;
+import util.Extras;
 
-public class ConfigReader implements EEExtras {
+public class ConfigReader implements Extras {
 
 	private final String CONF;
 
@@ -52,13 +52,13 @@ public class ConfigReader implements EEExtras {
 	 * Parse the config file and return a HashMap of the environment variables
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public HashMap<String, EEconfig> getConfig() {
+	public HashMap<String, Config> getConfig() {
 
 		// Create the config file first, if it doesn't exist
 		this.confInit();
 
 		// The item we're going to return
-		HashMap<String, EEconfig> configVars = new HashMap<String, EEconfig>();
+		HashMap<String, Config> configVars = new HashMap<String, Config>();
 
 		// Instantiate the Yaml parser
 		Yaml yaml = new Yaml();
@@ -168,7 +168,7 @@ public class ConfigReader implements EEExtras {
 					 * We've got all of our config vars, create the EEconfig
 					 * object and add to hashmap
 					 */
-					configVars.put(environment, new EEconfig(environment, host, directory, user, pass, port, db, dbUser,
+					configVars.put(environment, new Config(environment, host, directory, user, pass, port, db, dbUser,
 							dbPass, dbHost, dbPort));
 
 					// Clear out the variables just to be safe
@@ -201,9 +201,9 @@ public class ConfigReader implements EEExtras {
 		FileWriter outFile;
 		File eemoveConfig = new File(CONF);
 		if (!eemoveConfig.exists()) {
-			System.out.println(EEExtras.ANSI_YELLOW
+			System.out.println(Extras.ANSI_YELLOW
 					+ "\n It looks like you don't have a config file created yet. Creating one for you now...\n"
-					+ EEExtras.ANSI_RESET);
+					+ Extras.ANSI_RESET);
 			try {
 				outFile = new FileWriter(eemoveConfig);
 				StringBuilder sb = new StringBuilder();
@@ -330,19 +330,19 @@ public class ConfigReader implements EEExtras {
 
 				// Bootstrap config file created
 				// Prompt user to edit the details and re-run eemove
-				System.out.println(EEExtras.ANSI_YELLOW + "Config file created." + EEExtras.ANSI_RESET);
-				System.out.println(EEExtras.ANSI_YELLOW
+				System.out.println(Extras.ANSI_YELLOW + "Config file created." + Extras.ANSI_RESET);
+				System.out.println(Extras.ANSI_YELLOW
 						+ "Please add environments and make adjustments as needed, then run eemove again to get started!\n"
-						+ EEExtras.ANSI_RESET);
-				System.out.println(EEExtras.ANSI_YELLOW + "****************************************************"
-						+ EEExtras.ANSI_RESET);
+						+ Extras.ANSI_RESET);
+				System.out.println(Extras.ANSI_YELLOW + "****************************************************"
+						+ Extras.ANSI_RESET);
 				// Exit eemove, can't use the auto-generated config as it
 				// doesn't contain actual environment variables
 				System.exit(0);
 
 			} catch (IOException e) {
 				System.out.println(
-						EEExtras.ANSI_RED + "Error wrting config file: " + e.getMessage() + EEExtras.ANSI_RESET);
+						Extras.ANSI_RED + "Error wrting config file: " + e.getMessage() + Extras.ANSI_RESET);
 				System.exit(0);
 			}
 			
