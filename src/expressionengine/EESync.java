@@ -15,19 +15,28 @@ public class EESync {
 
 	// Class variables
 	private HashMap<String, Config> config;
-	
+
 	// Folder structure configuration, set some defaults just in case
 	private String uploadDir;
 	private ConfigReader cr;
 
-	// Constructor
+	/**
+	 * Constructor
+	 * 
+	 * @param arguments
+	 * @param config
+	 * @param cr
+	 * @param cmsApp
+	 * @param cmsSystem
+	 * @param uploadDir
+	 * @param appAboveRoot
+	 */
 	public EESync(String[] arguments, HashMap<String, Config> config, ConfigReader cr, String cmsApp, String cmsSystem, String uploadDir, boolean appAboveRoot) {
 
 		this.config = config;
 		this.uploadDir = uploadDir;
 		this.cr = cr;
 
-		Scanner scan = new Scanner(System.in);
 		String parts[] = arguments;
 		String pushPull = "";
 		String runType = "";
@@ -73,7 +82,7 @@ public class EESync {
 				} else {
 					sysDest = thisConfig.getDirectory() + "/";
 				}
-				
+
 				sysDest += cmsSystem;
 				String appSrc = cmsApp;
 				String sysSrc = cmsSystem;
@@ -95,56 +104,33 @@ public class EESync {
 				else
 					isDryRun = false;
 
-				// Start working
+				/*
+				 * Determine what action user is taking
+				 */
 				if (directory.equalsIgnoreCase("all")) {
-					// Push all contents of app and system
+					// Push/Pull all contents of app and system
 					syncAll(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
 				} else if (directory.equalsIgnoreCase("addons") || directory.equalsIgnoreCase("-a")) {
-					// Push plugin directories to environment
+					// Push/Pull plugin directories to environment
 					syncAddons(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
 				}else if (directory.equalsIgnoreCase("update")) {
-					// Push update related directories to environment
+					// Push/Pull update related directories to environment
 					syncUpdate(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
 				} else if (directory.equalsIgnoreCase("templates") || directory.equalsIgnoreCase("-t")) {
-					// Push theme directory to environment
+					// Push/Pull theme directory to environment
 					syncTemplates(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
 				} else if (directory.equalsIgnoreCase("uploads") || directory.equalsIgnoreCase("-u")) {
-					// Push upload directories to environment
+					// Push/Pull upload directories to environment
 					syncUploads(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
-				} else if (directory.equalsIgnoreCase("system")) {
-					// Push system directory to environment
-					syncSystem(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
-				} else if (directory.equalsIgnoreCase("app")) {
-					// Push app directory to environment
-					syncApp(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
-				} else if (directory.equalsIgnoreCase("custom")) {
-					// Push app directory to environment
-					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Custom Directory ", 80, '▬');
-					System.out.println(consolMsg);
-					String source, destination;
-
-					System.out.println(Extras.ANSI_YELLOW + "[Note: for syncing directories recursivley be sure to include trailing slash (\"/\")]" + Extras.ANSI_RESET);
-					System.out.print(Extras.ANSI_GREEN + "Enter the local path (relative to " + Extras.CWD + "): " + Extras.ANSI_RESET);
-					source = scan.nextLine();
-					System.out.print(Extras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + Extras.ANSI_RESET);
-					destination = scan.nextLine();
-					System.out.println();
-
-					if (type.equalsIgnoreCase("push")) {
-						System.out.println(Extras.ANSI_CYAN + pushPull + " \"" + Extras.CWD + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\"" + Extras.ANSI_RESET);
-					} else {
-						System.out.println(Extras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\" to \"" + Extras.CWD + source + "\"" + Extras.ANSI_RESET);
-					}
-
-					System.out.print("\n" + Extras.ANSI_YELLOW + "Is this correct? (Y/N): " + Extras.ANSI_RESET);
-					String proceed = scan.nextLine();
-
-					if( proceed.equalsIgnoreCase("y") || proceed.equalsIgnoreCase("yes") ) {
-						new PushPull(source, destination, type, isDryRun, thisConfig, cr);
-					} else {
-						System.out.println(Extras.ANSI_YELLOW + "Operation canceled.\n" + Extras.ANSI_RESET);
-					}
-
+				} else if (directory.equalsIgnoreCase("ee")) {
+					// Push/Pull ExpressionEngine core directory to environment
+					syncEE(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
+				} else if (directory.equalsIgnoreCase("public")) {
+					// Push/Pull "app" directory to environment
+					syncPublic(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
+				} else if (directory.equalsIgnoreCase("custom") || directory.equalsIgnoreCase("-c")) {
+					// Push/Pull user specified folder/file
+					syncCustom(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
 				} else if (directory.equalsIgnoreCase("database") || directory.equalsIgnoreCase("-d")) {
 					// Database push/pull doesn't support dry-run, tell
 					syncDatabase(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);				
@@ -154,9 +140,21 @@ public class EESync {
 
 			}
 		}
-		scan.close();
+
 	}
-	
+
+	/**
+	 * Sync it all! ...except for the database
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
 	private void syncAll(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		// Push all contents of app and system
 		// directories to environment
@@ -169,23 +167,59 @@ public class EESync {
 		new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
-	
-	private void syncApp(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " App ", 80, '▬');
+
+	/**
+	 * Sync the main "public" directory
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
+	private void syncPublic(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Public ", 80, '▬');
 		System.out.println(consolMsg);
 		appSrc += "/";
 		appDest += "/";
 		new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 	}
-	
-	private void syncSystem(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " System ", 80, '▬');
+
+	/**
+	 * Sync the main "app" directory
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
+	private void syncEE(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " EE core ", 80, '▬');
 		System.out.println(consolMsg);
 		sysSrc += "/";
 		sysDest += "/";
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
-	
+
+	/**
+	 * Sync the addons
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
 	private void syncAddons(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Add-ons ", 80, '▬');
 		System.out.println(consolMsg);
@@ -206,7 +240,19 @@ public class EESync {
 		new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
-	
+
+	/**
+	 * Sync the system update related directories/files
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
 	private void syncUpdate(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Update files ", 80, '▬');
 		System.out.println(consolMsg);
@@ -235,7 +281,19 @@ public class EESync {
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 		new PushPull(configSrc, configDest, type, isDryRun, thisConfig, cr);
 	}
-	
+
+	/**
+	 * Sync the uploads directory
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
 	private void syncUploads(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Uploads ", 80, '▬');
 		System.out.println(consolMsg);
@@ -261,7 +319,19 @@ public class EESync {
 			new PushPull(customUploadSrc, customUploadDest, type, isDryRun, thisConfig, cr);
 		}
 	}
-	
+
+	/**
+	 * Sync the templates directory
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
 	private void syncTemplates(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Templates ", 80, '▬');
 		System.out.println(consolMsg);
@@ -283,7 +353,19 @@ public class EESync {
 		new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
-	
+
+	/**
+	 * Sync the database
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
 	private void syncDatabase(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		if (isDryRun) {
 			System.out.println(Extras.ANSI_RED
@@ -301,5 +383,50 @@ public class EESync {
 			}
 		}
 	}
-	
+
+	/**
+	 * Sync custom, user specified, source/destination directory/file
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
+	private void syncCustom(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
+
+		Scanner scan = new Scanner(System.in);
+
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Custom Directory ", 80, '▬');
+		System.out.println(consolMsg);
+		String source, destination;
+
+		System.out.println(Extras.ANSI_YELLOW + "[Note: for syncing directories recursivley be sure to include trailing slash (\"/\")]" + Extras.ANSI_RESET);
+		System.out.print(Extras.ANSI_GREEN + "Enter the local path (relative to " + Extras.CWD + "): " + Extras.ANSI_RESET);
+		source = scan.nextLine();
+		System.out.print(Extras.ANSI_GREEN + "Enter the remote path (enter an absolute path here): " + Extras.ANSI_RESET);
+		destination = scan.nextLine();
+		System.out.println();
+
+		if (type.equalsIgnoreCase("push")) {
+			System.out.println(Extras.ANSI_CYAN + pushPull + " \"" + Extras.CWD + source + "\" to \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\"" + Extras.ANSI_RESET);
+		} else {
+			System.out.println(Extras.ANSI_CYAN + pushPull + " \"" + thisConfig.getSshUser() + "@" + thisConfig.getHost() + ":" + destination + "\" to \"" + Extras.CWD + source + "\"" + Extras.ANSI_RESET);
+		}
+
+		System.out.print("\n" + Extras.ANSI_YELLOW + "Is this correct? (Y/N): " + Extras.ANSI_RESET);
+		String proceed = scan.nextLine();
+
+		if( proceed.equalsIgnoreCase("y") || proceed.equalsIgnoreCase("yes") ) {
+			new PushPull(source, destination, type, isDryRun, thisConfig, cr);
+		} else {
+			System.out.println(Extras.ANSI_YELLOW + "Operation canceled.\n" + Extras.ANSI_RESET);
+		}
+
+		scan.close();
+	}
+
 }

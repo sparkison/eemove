@@ -77,36 +77,7 @@ public class CRAFTPermissionsFixer {
 					+ " && find " + sysDest + " -type d -exec chmod 755 {} \\;";
 		}
 
-		if(cr.getCmsVer() == 3) {
-			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
-					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
-					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
-					+ " && chmod -R 755 " + appDest + "/themes/"
-					+ " && chmod -R 777 " + appDest + "/cache/"
-					+ uploadDirPerms
-					+ " && chmod -R 777 " + appDest + "/images/avatars/"
-					+ " && chmod -R 777 " + appDest + "/images/captchas/"
-					+ " && chmod -R 777 " + appDest + "/images/member_photos/"
-					+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
-					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
-					+ " && chmod -R 777 " + appDest + "/images/uploads/";
-		} else if(cr.getCmsVer() == 2) {
-			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/cache/"
-					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/templates/"
-					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/config.php"
-					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/database.php"
-					+ " && chmod -R 755 " + appDest + "/themes/"
-					+ uploadDirPerms
-					+ " && chmod -R 777 " + appDest + "/images/avatars/"
-					+ " && chmod -R 777 " + appDest + "/images/captchas/"
-					+ " && chmod -R 777 " + appDest + "/images/member_photos/"
-					+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
-					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
-					+ " && chmod -R 777 " + appDest + "/images/uploads/";
-		} else {
-			System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
-			System.exit(1);
-		}
+		command += uploadDirPerms;
 
 		// Create the session and execute command on desired environment
 		String ssh = "";
