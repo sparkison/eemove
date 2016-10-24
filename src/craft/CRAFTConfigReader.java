@@ -21,32 +21,16 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import helpers.Config;
+import helpers.ConfigReader;
 import util.Extras;
 
-public class CRAFTConfigReader implements Extras {
-
-	private final String CONF;
-
-	public File keyfile;
-	public String keyPass;
-	public Integer eeVer;
-	public String sysDir;
-	public String appDir;
-	public String upDir;
-	public String sshPassPath;
-	public String mysqlPath;
-	public boolean useKeyAuth;
-	public boolean aboveRoot;
+public class CRAFTConfigReader extends ConfigReader implements Extras {
 
 	/*
 	 * Constructor
 	 */
 	public CRAFTConfigReader(String configFile) {
-		// Preset some defaults
-		this.sshPassPath = "/usr/local/bin/";
-		this.mysqlPath = "/usr/local/bin/";
-		// Set the config
-		this.CONF = configFile;
+		super(configFile);
 	}
 
 	/*
@@ -68,7 +52,7 @@ public class CRAFTConfigReader implements Extras {
 
 		// Grab values form the config file
 		try {
-			yaml.load(new FileInputStream(new File(CONF)));
+			yaml.load(new FileInputStream(new File(this.getConf())));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -76,7 +60,7 @@ public class CRAFTConfigReader implements Extras {
 		// Parse the values received
 		Map<String, Map<?, ?>> values;
 		try {
-			values = (Map<String, Map<?, ?>>) yaml.load(new FileInputStream(new File(CONF)));
+			values = (Map<String, Map<?, ?>>) yaml.load(new FileInputStream(new File(this.getConf())));
 
 			for (String key : values.keySet()) {
 				Map<?, ?> subValues = values.get(key);
@@ -88,15 +72,15 @@ public class CRAFTConfigReader implements Extras {
 						// Get the key
 						String keyItem = subValueKey.toString();
 						if (keyItem.equalsIgnoreCase("ee_system")) {
-							this.sysDir = subValues.get(subValueKey).toString();
+							setSysDir(subValues.get(subValueKey).toString());
 						} else if (keyItem.equalsIgnoreCase("ee_version")) {
-							this.eeVer = Integer.parseInt(subValues.get(subValueKey).toString());
+							setCmsVer(Integer.parseInt(subValues.get(subValueKey).toString()));
 						} else if (keyItem.equalsIgnoreCase("ee_app")) {
-							this.appDir = subValues.get(subValueKey).toString();
+							setAppDir(subValues.get(subValueKey).toString());
 						} else if (keyItem.equalsIgnoreCase("upload_dir")) {
-							this.upDir = subValues.get(subValueKey).toString();
+							setUpDir(subValues.get(subValueKey).toString());
 						} else if (keyItem.equalsIgnoreCase("above_root")) {
-							this.aboveRoot = Boolean.valueOf(subValues.get(subValueKey).toString());
+							setIsAboveRoot(Boolean.valueOf(subValues.get(subValueKey).toString()));
 						} else if (keyItem.equalsIgnoreCase("authentication")) {
 							Map authentication = (LinkedHashMap) subValues.get(subValueKey);
 							for (Object authItem : authentication.keySet()) {
@@ -104,20 +88,20 @@ public class CRAFTConfigReader implements Extras {
 									boolean useKey = false;
 									if (authentication.get(authItem).toString().equals("key"))
 										useKey = true;
-									this.useKeyAuth = useKey;
+									setIsUseKeyAuth(useKey);
 								} else if (authItem.toString().equals("keyfile")) {
-									this.keyfile = new File(authentication.get(authItem).toString());
+									setKeyfile(new File(authentication.get(authItem).toString()));
 								} else if (authItem.toString().equals("keypass")) {
-									this.keyPass = authentication.get(authItem).toString();
+									setKeyPass(authentication.get(authItem).toString());
 								}
 							}
 						} else if (keyItem.equalsIgnoreCase("executables")) {
 							Map executables = (LinkedHashMap) subValues.get(subValueKey);
 							for (Object pathItem : executables.keySet()) {
 								if (pathItem.toString().equals("sshpass")) {
-									this.sshPassPath = executables.get(pathItem).toString();
+									setSshPassPath(executables.get(pathItem).toString());
 								} else if (pathItem.toString().equals("mysql")) {
-									this.mysqlPath = executables.get(pathItem).toString();
+									setMysqlPath(executables.get(pathItem).toString());
 								}
 							}
 						}
@@ -200,7 +184,7 @@ public class CRAFTConfigReader implements Extras {
 	public void confInit() {
 		// Create an example config file if not exist
 		FileWriter outFile;
-		File eemoveConfig = new File(CONF);
+		File eemoveConfig = new File(this.getConf());
 		if (!eemoveConfig.exists()) {
 			System.out.println(Extras.ANSI_YELLOW
 					+ "\n It looks like you don't have a config file created yet. Creating one for you now...\n"
@@ -349,45 +333,6 @@ public class CRAFTConfigReader implements Extras {
 			
 		}
 
-	}
-
-	/*
-	 * Getters
-	 */
-	public String getSysDir() {
-		return sysDir;
-	}
-
-	public String getAppDir() {
-		return appDir;
-	}
-
-	public String getUpDir() {
-		return upDir;
-	}
-
-	public boolean isAboveRoot() {
-		return aboveRoot;
-	}
-
-	public File getKeyfile() {
-		return keyfile;
-	}
-
-	public String getKeyPass() {
-		return keyPass;
-	}
-
-	public boolean isUseKeyAuth() {
-		return useKeyAuth;
-	}
-	
-	public String getSshPassPath() {
-		return sshPassPath;
-	}
-
-	public String getMysqlPath() {
-		return mysqlPath;
 	}
 	
 }
