@@ -342,28 +342,31 @@ public class CMSMove implements Extras {
 	 * Example commands
 	 */
 	private String exampleCmd() {
-		String returnString = "";
-		returnString += Extras.ANSI_YELLOW + "\n[Note] the flags [-d, -l] represent dry and live runs repsectively.\n"
+		String returnString = Extras.ANSI_YELLOW + "_________________________________________________________________\n";
+		returnString += "\n[ Notes ]\n1) the flags [-d, -l] represent dry and live runs repsectively. "
 				+ "To see what will be transfered without actually transfering anything use the -d flag.\n"
-				+ "[Note] must use the -l flag if doing a database push/pull.\n"
-				+ "[Note] command shorthand denoted within parenthesis. E.g. the shorthand for 'templates' us '-t' \n\n";
+				+ "2) must use the -l flag if doing a database push/pull.\n"
+				+ "3) command shorthand denoted within parenthesis. E.g. the shorthand for 'templates' us '-t' \n\n";
+		returnString += "[ Init examples ]\n";
+		returnString += "\"cmsmove init craft\"\t\t\t\t(initializes config files for Craft)\n";
+		returnString += "\"cmsmove init ee\"\t\t\t\t(initializes config files for ExpressionEngine)\n\n";
 		returnString += "[ Helper examples ]\n";
-		returnString += "\"move fixperms staging\"\t\t(attempts to fix permissions on selected environment using \"chmod\" command)\n\n";
+		returnString += "\"cmsmove fixperms staging\"\t\t\t(attempts to fix permissions on selected environment using \"chmod\" command)\n\n";
 		returnString += "[ Push examples ]\n";
-		returnString += "\"move push -l staging all\"\t\t(pushes app and system directories to desired environment)\n";
-		returnString += "\"move push -l staging addons(-a)\"\t(pushes add-ons to desired environment)\n";
-		returnString += "\"move push -l production templates(-t)\"\t(pushes templates to desired environment)\n";
-		returnString += "\"move push -l production uploads(-u)\"\t(pushes uploads to desired environment)\n";
-		returnString += "\"move push -l production system(-s)\"\t(pushes system directory to desired environment)\n";
-		returnString += "\"move push -l production database(-d)\"\t(pushes database to desired environment)\n";
-		returnString += "\"move push -l production custom(-c)\"\t(will be prompted for source and destination)\n";
-		returnString += "\"move push -l staging update\"\t(pushes the system/ee and app/themes/ee directories as well as the system/user/config/config.php file)\n";
+		returnString += "\"cmsmove push -l staging all\"\t\t\t(pushes app and system directories to desired environment)\n";
+		returnString += "\"cmsmove push -l staging addons(-a)\"\t\t(pushes add-ons to desired environment)\n";
+		returnString += "\"cmsmove push -l production templates(-t)\"\t(pushes templates to desired environment)\n";
+		returnString += "\"cmsmove push -l production uploads(-u)\"\t(pushes uploads to desired environment)\n";
+		returnString += "\"cmsmove push -l production system(-s)\"\t\t(pushes system directory to desired environment)\n";
+		returnString += "\"cmsmove push -l production database(-d)\"\t(pushes database to desired environment)\n";
+		returnString += "\"cmsmove push -l production custom(-c)\"\t\t(will be prompted for source and destination)\n";
+		returnString += "\"cmsmove push -l staging update\"\t\t(pushes the system/ee and app/themes/ee directories as well as the system/user/config/config.php file)\n";
 		returnString += "\n[ Pull examples ]\n";
-		returnString += "\"move pull -l production addons(-a)\"\t(pulls add-ons from desired environment)\n";
-		returnString += "\"move pull -l staging templates(-t)\"\t(pulls templates from desired environment)\n";
-		returnString += "\"move pull -l production uploads(-u)\"\t(pulls uploads from desired environment)\n";
-		returnString += "\"move pull -l staging app\"\t\t(pulls app directory from desired environment)\n";
-		returnString += "\"move pull -l staging database(-d)\"\t(pulls database from desired environment)\n\n" + Extras.ANSI_RESET;
+		returnString += "\"cmsmove pull -l production addons(-a)\"\t\t(pulls add-ons from desired environment)\n";
+		returnString += "\"cmsmove pull -l staging templates(-t)\"\t\t(pulls templates from desired environment)\n";
+		returnString += "\"cmsmove pull -l production uploads(-u)\"\t(pulls uploads from desired environment)\n";
+		returnString += "\"cmsmove pull -l staging app\"\t\t\t(pulls app directory from desired environment)\n";
+		returnString += "\"cmsmove pull -l staging database(-d)\"\t\t(pulls database from desired environment)\n\n" + Extras.ANSI_RESET;
 		return returnString;
 	}
 
@@ -412,7 +415,7 @@ public class CMSMove implements Extras {
 		rsyncIgnore.setExecutable(true);
 		rsyncIgnore.setReadable(true);
 	}
-	
+
 	/*
 	 * See if ignore file exists, and create it if not
 	 */
