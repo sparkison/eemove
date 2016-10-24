@@ -177,6 +177,8 @@ public class CMSMove implements Extras {
 		returnString += "\n[ Help command ]\n";
 		returnString += "\"cmsmove craft help\"\t\t\t\t(display list of Craft specific commands)\n";
 		returnString += "\"cmsmove ee help\"\t\t\t\t(display list of ExpressionEngine specific commands)\n\n";
+		
+		returnString += Extras.ANSI_RESET;
 
 		return returnString;
 	}
