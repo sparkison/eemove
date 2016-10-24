@@ -6,7 +6,7 @@
  *
  */
 
-package eemove;
+package cmsmove;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,7 +23,7 @@ import helpers.PermissionsFixer;
 import rsync.PushPull;
 import util.Extras;
 
-public class EEMove implements Extras {
+public class CMSMove implements Extras {
 
 	// Our primary variables
 	private HashMap<String, Config> config;
@@ -39,11 +39,11 @@ public class EEMove implements Extras {
 	// Since this program will be run from command line, add main method
 	public static void main(String[] args) {
 		// Start 'er up!!
-		new EEMove(args);
+		new CMSMove(args);
 	}
 
 	// Constructor
-	public EEMove(String[] args) {
+	public CMSMove(String[] args) {
 
 		// Set the arguments for other methods to use
 		this.arguments = args;
