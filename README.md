@@ -29,7 +29,7 @@ alias cmsmove="java -jar /PATH_TO_CMSMOVE/cmsmove.jar"
 
 Exit and save your bash profile, and finally reload it (`source ~/.bash_profile`) and you should be able to enter `cmsmove` at the terminal to display the cmsmove help screen.
 
-# ExpressionEngine
+# ExpressionEngine Examples
 
 ## Useage
 Push uploads to staging environment: `cmsmove push -l staging -u`
@@ -44,8 +44,8 @@ Breakdown of the above command:
   2. `uploads|-u` for the upload directories (both user defined and **images/uploads**)
   3. `templates|-t` for the **system/user/templates** directory
   4. `addons|-a` for the **system/user/addons** and **app/themes/user** directories
-  5. `app` for the public facing directories
-  6. `system` for the system directory
+  5. `public` for the public facing directories
+  6. `ee` for the system directory
   7. `custom` specify a custom local and remote directory to push/pull to/from
   8. `update` for the **system/ee** and **app/themes/ee** directories as well as the **system/user/config/config.php** file
   9. `database|-d` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
@@ -124,11 +124,11 @@ cmsmove assumes your directory structure is with the **system** folder above roo
 |   ├── ee
 |   ├── user
 │   └── ...
-├── cmsmove.config
-└── cmsmove.ignore
+├── eemove.config
+└── eemove.ignore
 ```
 
-# Craft
+# Craft Examples
 
 ## Useage
 Push uploads to staging environment: `cmsmove push -l staging -u`
@@ -140,14 +140,13 @@ Breakdown of the above command:
 3. The environment to push/pull to/from
 4. What to push/pull. Options are
   1. `all` for everything (doesn't include database; for files only)
-  2. `uploads|-u` for the upload directories (both user defined and **images/uploads**)
-  3. `templates|-t` for the **system/user/templates** directory
-  4. `addons|-a` for the **system/user/addons** and **app/themes/user** directories
-  5. `app` for the public facing directories
-  6. `system` for the system directory
+  2. `uploads|-u` for the user defined upload directories
+  3. `templates|-t` for the **craft/templates** directory
+  4. `plugins|-p` for the **craft/plugins** directory
+  5. `craft` for the public facing directories
+  6. `public` for the system directory
   7. `custom` specify a custom local and remote directory to push/pull to/from
-  8. `update` for the **system/ee** and **app/themes/ee** directories as well as the **system/user/config/config.php** file
-  9. `database|-d` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
+  8. `database|-d` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
 Helper commands
 
@@ -157,12 +156,11 @@ Helper commands
 ## Config file example
 
 ```yaml
-# Global EE settings
+# Global Craft settings
 
 globals:
-  ee_version: "3" # ExpressionEngine version, 2 or 3 are currently supported
-  ee_system: "system"
-  ee_app: "app" # leave blank if system is not above root
+  craft: "craft"
+  public: "public" # leave blank if system is not above root
   upload_dir: "uploads" # optional, if using custom upload directory/ies
   above_root: "true" # use true or false to signify whether the system folder is above root or not
   
@@ -188,7 +186,7 @@ local:
 
 staging:
   vhost: "http://example.com"
-  ee_path: "/var/www/your_site" # use an absolute path here
+  path: "/var/www/your_site" # use an absolute path here
 
   database:
     name: "database_name"
@@ -209,22 +207,22 @@ staging:
 
 ## Additional info
 
-cmsmove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
+cmsmove assumes your directory structure is with the **craft** folder above root per the [Craft installation docs](https://craftcms.com/docs/installing):
 
 ```
-[ExpressionEngine Local dev folder]
-├── app
-|   ├── admin.php
-|   ├── index.php
-|   ├── images
-|   ├── themes
+[Craft Local dev folder]
+├── craft
+|   ├── app
+|   ├── config
+|   ├── plugins
+|   ├── templates
 │   └── ....
-├── system
-|   ├── ee
-|   ├── user
+├── public
+|   ├── assets
+|   ├── index.php
 │   └── ...
-├── cmsmove.config
-└── cmsmove.ignore
+├── craftmove.config
+└── craftmove.ignore
 ```
 
 You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
