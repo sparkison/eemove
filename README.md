@@ -53,7 +53,8 @@ Breakdown of the above command:
 Helper commands
 
 1. `cmsmove` displays an example list of commands
-2. `cmsmove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `cmsmove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
+2. `cmsmove help ee` displays the list of ExpressionEngine specific commands
+3. `cmsmove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `cmsmove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
 
 ## Config file example
 
@@ -152,7 +153,8 @@ Breakdown of the above command:
 Helper commands
 
 1. `cmsmove` displays an example list of commands
-2. `cmsmove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `cmsmove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
+2. `cmsmove help craft` displays the list of Craft specific commands
+3. `cmsmove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `cmsmove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
 
 ## Config file example
 
