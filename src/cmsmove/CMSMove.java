@@ -27,14 +27,14 @@ public class CMSMove implements Extras {
 
 	// Our primary variables
 	private HashMap<String, Config> config;
-	private File rsyncIgnore = new File("eemove.ignore");
+	private File rsyncIgnore = new File("move.ignore");
 	// EE folder structure configuration, set some defaults just in case
-	private String eeApp;
-	private String eeSystem;
+	private String cmsApp;
+	private String cmsSystem;
 	private String uploadDir;
 	private EEConfigReader cr;
 	private String[] arguments;
-	private boolean eeAboveRoot = true;
+	private boolean appAboveRoot = true;
 
 	// Since this program will be run from command line, add main method
 	public static void main(String[] args) {
@@ -53,40 +53,41 @@ public class CMSMove implements Extras {
 			System.out.println(Extras.ANSI_RED + "Incorrect number of arguments supplied. Example of valid commands:" + Extras.ANSI_RESET);
 			System.out.println(exampleCmd());
 			System.exit(0);
+		} else {
+			try {
+				// Attempt to create move ignore file, if not created
+				eemoveIgnore();
+				// Instantiate the ConfigReader class for reading and creating our
+				// config file
+				cr = new EEConfigReader("move.config");
+				// System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
+				/*
+				 * Create or load our config file:
+				 * If no config file found, will generate a bootstrap one
+				 * then prompt user to adjust as needed and exit.
+				 */
+				this.config = cr.getConfig();
+				/*
+				 * If config file read successfully
+				 * grab some of the globals we'll need later
+				 */
+				this.cmsApp = cr.getAppDir();
+				this.cmsSystem = cr.getSysDir();
+				this.uploadDir = cr.getUpDir();
+				this.appAboveRoot = cr.isAboveRoot();
+				/*
+				 * Done loading config and getting needed startup info
+				 */
+			} catch (Exception e) { // Catch generic exception
+				System.out.println(
+						"There was an error creating the config file, please ensure the directory move is writeable.");
+				e.printStackTrace();
+				System.exit(0);
+			}
+			// If here, config file successfully wrote, or read.
+			syncItUp();
 		}
 
-		try {
-			// Attempt to create eemove ignore file, if not created
-			eemoveIgnore();
-			// Instantiate the ConfigReader class for reading and creating our
-			// config file
-			cr = new EEConfigReader("eemove.config");
-			// System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
-			/*
-			 * Create or load our config file:
-			 * If no config file found, will generate a bootstrap one
-			 * then prompt user to adjust as needed and exit.
-			 */
-			this.config = cr.getConfig();
-			/*
-			 * If config file read successfully
-			 * grab some of the globals we'll need later
-			 */
-			this.eeApp = cr.getAppDir();
-			this.eeSystem = cr.getSysDir();
-			this.uploadDir = cr.getUpDir();
-			this.eeAboveRoot = cr.isAboveRoot();
-			/*
-			 * Done loading config and getting needed startup info
-			 */
-		} catch (Exception e) { // Catch generic exception
-			System.out.println(
-					"There was an error creating the config file, please ensure the directory eemove is writeable.");
-			e.printStackTrace();
-			System.exit(0);
-		}
-		// If here, config file successfully wrote, or read.
-		syncItUp();
 	}
 
 	/*
@@ -130,7 +131,7 @@ public class CMSMove implements Extras {
 				// Determine app and system destination directories
 				String sysDest = "";
 				String appDest = thisConfig.getDirectory();
-				if (eeAboveRoot == true) {
+				if (appAboveRoot == true) {
 					for (int i = 0; i < envDirParts.length - 1; i++) {
 						if (envDirParts[i].equals("")) {
 							sysDest += "/";
@@ -141,9 +142,9 @@ public class CMSMove implements Extras {
 				} else {
 					sysDest = thisConfig.getDirectory() + "/";
 				}
-				sysDest += eeSystem;
-				String appSrc = eeApp;
-				String sysSrc = eeSystem;
+				sysDest += cmsSystem;
+				String appSrc = cmsApp;
+				String sysSrc = cmsSystem;
 				String type = "";
 				boolean isDryRun = true;
 
@@ -178,18 +179,18 @@ public class CMSMove implements Extras {
 					// Push plugin directories to environment
 					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Add-ons ", 80, '▬');
 					System.out.println(consolMsg);
-					if(cr.eeVer == 3) {
+					if(cr.getCmsVer() == 3) {
 						appSrc += Extras.EE3_ADDONS_THEMES;
 						appDest += Extras.EE3_ADDONS_THEMES;
 						sysSrc += Extras.EE3_ADDONS_FILES;
 						sysDest += Extras.EE3_ADDONS_FILES;
-					} else if(cr.eeVer == 2) {
+					} else if(cr.getCmsVer() == 2) {
 						appSrc += Extras.EE2_ADDONS_THEMES;
 						appDest += Extras.EE2_ADDONS_THEMES;
 						sysSrc += Extras.EE2_ADDONS_FILES;
 						sysDest += Extras.EE2_ADDONS_FILES;
 					} else {
-						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+						System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 					new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
@@ -200,14 +201,14 @@ public class CMSMove implements Extras {
 					System.out.println(consolMsg);
 					String configSrc = "";
 					String configDest = "";
-					if(cr.eeVer == 3) {
+					if(cr.getCmsVer() == 3) {
 						configSrc = sysSrc + Extras.EE3_CONFIG_FILE;
 						configDest = sysDest + Extras.EE3_CONFIG_FILE;
 						appSrc += Extras.EE3_SYSTEM_THEMES;
 						appDest += Extras.EE3_SYSTEM_THEMES;
 						sysSrc += Extras.EE3_SYSTEM_FILES;
 						sysDest += Extras.EE3_SYSTEM_FILES;
-					} else if(cr.eeVer == 2) {
+					} else if(cr.getCmsVer() == 2) {
 						configSrc = sysSrc + Extras.EE2_CONFIG_FILE;
 						configDest = sysDest + Extras.EE2_CONFIG_FILE;
 						appSrc += Extras.EE2_SYSTEM_THEMES;
@@ -215,7 +216,7 @@ public class CMSMove implements Extras {
 						sysSrc += Extras.EE2_SYSTEM_FILES;
 						sysDest += Extras.EE2_SYSTEM_FILES;
 					} else {
-						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+						System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 
@@ -226,18 +227,18 @@ public class CMSMove implements Extras {
 					// Push theme directory to environment
 					String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Templates ", 80, '▬');
 					System.out.println(consolMsg);
-					if(cr.eeVer == 3) {
+					if(cr.getCmsVer() == 3) {
 						appSrc += Extras.EE3_TEMPLATE_RESOURCES;
 						appDest += Extras.EE3_TEMPLATE_RESOURCES;
 						sysSrc += Extras.EE3_TEMPLATES;
 						sysDest += Extras.EE3_TEMPLATES;
-					} else if(cr.eeVer == 2) {
+					} else if(cr.getCmsVer() == 2) {
 						appSrc += Extras.EE2_TEMPLATE_RESOURCES;
 						appDest += Extras.EE2_TEMPLATE_RESOURCES;
 						sysSrc += Extras.EE2_TEMPLATES;
 						sysDest += Extras.EE2_TEMPLATES;
 					} else {
-						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+						System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 
@@ -249,14 +250,14 @@ public class CMSMove implements Extras {
 					System.out.println(consolMsg);
 					String uploadSrc = "";
 					String uploadDest = "";
-					if(cr.eeVer == 3) {
+					if(cr.getCmsVer() == 3) {
 						uploadSrc = appSrc + Extras.EE3_IMAGE_UPLOADS;
 						uploadDest = appDest + Extras.EE3_IMAGE_UPLOADS;
-					} else if(cr.eeVer == 2) {
+					} else if(cr.getCmsVer() == 2) {
 						uploadSrc = appSrc + Extras.EE2_IMAGE_UPLOADS;
 						uploadDest = appDest + Extras.EE2_IMAGE_UPLOADS;
 					} else {
-						System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+						System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
 						System.exit(1);
 					}
 
@@ -320,7 +321,7 @@ public class CMSMove implements Extras {
 					} else {
 						if (config.get("local") == null) {
 							System.out.println(Extras.ANSI_RED
-									+ "You do not have an environment for \"local\", please add one to your \"eemove.config\" file and try again."
+									+ "You do not have an environment for \"local\", please add one to your \"move.config\" file and try again."
 									+ Extras.ANSI_RESET);
 						} else {
 							String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Database ", 80, '▬');
@@ -347,22 +348,22 @@ public class CMSMove implements Extras {
 				+ "[Note] must use the -l flag if doing a database push/pull.\n"
 				+ "[Note] command shorthand denoted within parenthesis. E.g. the shorthand for 'templates' us '-t' \n\n";
 		returnString += "[ Helper examples ]\n";
-		returnString += "\"eemove fixperms staging\"\t\t(attempts to fix permissions on selected environment using \"chmod\" command)\n\n";
+		returnString += "\"move fixperms staging\"\t\t(attempts to fix permissions on selected environment using \"chmod\" command)\n\n";
 		returnString += "[ Push examples ]\n";
-		returnString += "\"eemove push -l staging all\"\t\t(pushes app and system directories to desired environment)\n";
-		returnString += "\"eemove push -l staging addons(-a)\"\t(pushes add-ons to desired environment)\n";
-		returnString += "\"eemove push -l production templates(-t)\"\t(pushes templates to desired environment)\n";
-		returnString += "\"eemove push -l production uploads(-u)\"\t(pushes uploads to desired environment)\n";
-		returnString += "\"eemove push -l production system(-s)\"\t(pushes system directory to desired environment)\n";
-		returnString += "\"eemove push -l production database(-d)\"\t(pushes database to desired environment)\n";
-		returnString += "\"eemove push -l production custom(-c)\"\t(will be prompted for source and destination)\n";
-		returnString += "\"eemove push -l staging update\"\t(pushes the system/ee and app/themes/ee directories as well as the system/user/config/config.php file)\n";
+		returnString += "\"move push -l staging all\"\t\t(pushes app and system directories to desired environment)\n";
+		returnString += "\"move push -l staging addons(-a)\"\t(pushes add-ons to desired environment)\n";
+		returnString += "\"move push -l production templates(-t)\"\t(pushes templates to desired environment)\n";
+		returnString += "\"move push -l production uploads(-u)\"\t(pushes uploads to desired environment)\n";
+		returnString += "\"move push -l production system(-s)\"\t(pushes system directory to desired environment)\n";
+		returnString += "\"move push -l production database(-d)\"\t(pushes database to desired environment)\n";
+		returnString += "\"move push -l production custom(-c)\"\t(will be prompted for source and destination)\n";
+		returnString += "\"move push -l staging update\"\t(pushes the system/ee and app/themes/ee directories as well as the system/user/config/config.php file)\n";
 		returnString += "\n[ Pull examples ]\n";
-		returnString += "\"eemove pull -l production addons(-a)\"\t(pulls add-ons from desired environment)\n";
-		returnString += "\"eemove pull -l staging templates(-t)\"\t(pulls templates from desired environment)\n";
-		returnString += "\"eemove pull -l production uploads(-u)\"\t(pulls uploads from desired environment)\n";
-		returnString += "\"eemove pull -l staging app\"\t\t(pulls app directory from desired environment)\n";
-		returnString += "\"eemove pull -l staging database(-d)\"\t(pulls database from desired environment)\n\n" + Extras.ANSI_RESET;
+		returnString += "\"move pull -l production addons(-a)\"\t(pulls add-ons from desired environment)\n";
+		returnString += "\"move pull -l staging templates(-t)\"\t(pulls templates from desired environment)\n";
+		returnString += "\"move pull -l production uploads(-u)\"\t(pulls uploads from desired environment)\n";
+		returnString += "\"move pull -l staging app\"\t\t(pulls app directory from desired environment)\n";
+		returnString += "\"move pull -l staging database(-d)\"\t(pulls database from desired environment)\n\n" + Extras.ANSI_RESET;
 		return returnString;
 	}
 
@@ -405,6 +406,50 @@ public class CMSMove implements Extras {
 			ignoreFile.write("eemove.config");
 			ignoreFile.write("\n");
 			ignoreFile.write("eemove.ignore");
+			ignoreFile.write("\n");
+			ignoreFile.close();
+		}
+		rsyncIgnore.setExecutable(true);
+		rsyncIgnore.setReadable(true);
+	}
+	
+	/*
+	 * See if ignore file exists, and create it if not
+	 */
+	private void craftmoveIgnore() throws IOException {
+		if (!rsyncIgnore.exists()) {
+			FileWriter ignoreFile = new FileWriter(rsyncIgnore);
+			ignoreFile.write("*.sql");
+			ignoreFile.write("\n");
+			ignoreFile.write("*.swp");
+			ignoreFile.write("\n");
+			ignoreFile.write(".git");
+			ignoreFile.write("\n");
+			ignoreFile.write(".sass-cache");
+			ignoreFile.write("\n");
+			ignoreFile.write(".DS_Store");
+			ignoreFile.write("\n");
+			ignoreFile.write("npm-debug.log");
+			ignoreFile.write("\n");
+			ignoreFile.write("db_backups");
+			ignoreFile.write("\n");
+			ignoreFile.write("node_modules");
+			ignoreFile.write("\n");
+			ignoreFile.write("bower_components");
+			ignoreFile.write("\n");
+			ignoreFile.write("sized/");
+			ignoreFile.write("\n");
+			ignoreFile.write("thumbs/");
+			ignoreFile.write("\n");
+			ignoreFile.write("_thumbs/");
+			ignoreFile.write("\n");
+			ignoreFile.write("# ignore system in the case it's in same directory as app");
+			ignoreFile.write("\n");
+			ignoreFile.write("app");
+			ignoreFile.write("\n");
+			ignoreFile.write("craftmove.config");
+			ignoreFile.write("\n");
+			ignoreFile.write("craftmove.ignore");
 			ignoreFile.write("\n");
 			ignoreFile.close();
 		}

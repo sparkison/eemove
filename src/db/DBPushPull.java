@@ -24,9 +24,9 @@ import java.util.Date;
 import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
-import expressionengine.EEConfigReader;
 import helpers.CommandExecuter;
 import helpers.Config;
+import helpers.ConfigReader;
 import util.Extras;
 
 public class DBPushPull implements Extras {
@@ -34,7 +34,7 @@ public class DBPushPull implements Extras {
 	// Class variables
 	private Config destConfig, localConfig;
 	private String timestamp;
-	private EEConfigReader cr;
+	private ConfigReader cr;
 	private String type;
 	private CommandExecuter ce;
 
@@ -45,7 +45,7 @@ public class DBPushPull implements Extras {
 	/*
 	 * Constructor
 	 */
-	public DBPushPull(Config destConfig, Config localConfig, String type, EEConfigReader cr) {
+	public DBPushPull(Config destConfig, Config localConfig, String type, ConfigReader cr) {
 		// Set the configurations
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;
@@ -124,7 +124,7 @@ public class DBPushPull implements Extras {
 		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + command);
 
 		String ssh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
@@ -289,7 +289,7 @@ public class DBPushPull implements Extras {
 	 */
 	private File importRemoteDbBackup(String remoteFile) throws IOException {
 		String ssh = "";
-		if( !cr.useKeyAuth ) {
+		if( !cr.isUseKeyAuth() ) {
 			ssh = cr.getSshPassPath() + "sshpass -e ";
 		}
 		String command = ssh + "scp " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/" + remoteFile + " " + Extras.CWD + "/db_backups/";
@@ -322,7 +322,7 @@ public class DBPushPull implements Extras {
 	 */
 	private void importLocalDbBackup(File file) throws IOException {
 		String ssh = "";
-		if( !cr.useKeyAuth ) {
+		if( !cr.isUseKeyAuth() ) {
 			ssh = cr.getSshPassPath() + "sshpass -e ";
 		}
 		String command = ssh + "scp " + file.getAbsolutePath() + " " + destConfig.getSshUser() + "@" + destConfig.getHost() + ":/tmp/";
@@ -349,7 +349,7 @@ public class DBPushPull implements Extras {
 				+ file.getName();
 
 		String ssh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();
@@ -387,7 +387,7 @@ public class DBPushPull implements Extras {
 		String command = "rm " + filename;
 
 		String ssh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + destConfig.getSshUser() + "@" + destConfig.getHost();
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + destConfig.getSshUser() + "@" + destConfig.getHost();

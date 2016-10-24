@@ -10,9 +10,9 @@ package rsync;
 
 import com.google.common.base.Strings;
 
-import expressionengine.EEConfigReader;
 import helpers.CommandExecuter;
 import helpers.Config;
+import helpers.ConfigReader;
 import util.Extras;
 
 public class PushPull implements Extras {
@@ -23,11 +23,11 @@ public class PushPull implements Extras {
 	private String host;
 	private String user;
 	private String type;
-	private EEConfigReader cr;
+	private ConfigReader cr;
 	private boolean isDryRun = true;
 	private CommandExecuter ce;
 
-	public PushPull(String src, String dest, String type, boolean dryRun, Config config, EEConfigReader cr) {
+	public PushPull(String src, String dest, String type, boolean dryRun, Config config, ConfigReader cr) {
 		this.src = Extras.CWD + "/" + src;
 		this.dest = dest;
 		this.isDryRun = dryRun;
@@ -55,7 +55,7 @@ public class PushPull implements Extras {
 
 		String ssh = "";
 		String rsyncSsh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			rsyncSsh = " -e 'ssh -i " + cr.getKeyfile() + "'";
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e";

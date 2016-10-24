@@ -51,7 +51,7 @@ public class EEPermissionsFixer {
 		String appDest = config.getDirectory();
 		String envDirParts[] = config.getDirectory().split("/");
 		// Determine if system is above root or not
-		if (cr.aboveRoot == true) {
+		if (cr.isAboveRoot() == true) {
 			for (int i = 0; i < envDirParts.length - 1; i++) {
 				if (envDirParts[i].equals("")) {
 					sysDest += "/";
@@ -64,8 +64,8 @@ public class EEPermissionsFixer {
 		}
 		// Determine if we have custom upload directory
 		String uploadDirPerms = "";
-		if(!cr.upDir.equals("")) 
-			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.upDir;
+		if(!cr.getUpDir().equals("")) 
+			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.getUpDir();
 
 		// Build the command
 		String command = "find " + appDest + " -type f -exec chmod 644 {} \\;"
@@ -77,7 +77,7 @@ public class EEPermissionsFixer {
 					+ " && find " + sysDest + " -type d -exec chmod 755 {} \\;";
 		}
 
-		if(cr.eeVer == 3) {
+		if(cr.getCmsVer() == 3) {
 			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
 					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
@@ -90,7 +90,7 @@ public class EEPermissionsFixer {
 					+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/uploads/";
-		} else if(cr.eeVer == 2) {
+		} else if(cr.getCmsVer() == 2) {
 			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/cache/"
 					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/templates/"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/config.php"
@@ -104,13 +104,13 @@ public class EEPermissionsFixer {
 					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/uploads/";
 		} else {
-			System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+			System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
 			System.exit(1);
 		}
 
 		// Create the session and execute command on desired environment
 		String ssh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + config.getSshUser() + "@" + config.getHost();
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
