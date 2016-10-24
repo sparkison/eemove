@@ -1,10 +1,10 @@
-# eemove
+# cmsmove
 Automated deployment for ExpressionEngine websites
 ![alt text][logo]
 ---
 
 ## Dependencies
-eemove utilizes `rsync`, `ssh`, and `sshpass` (if not using keys for authentication). These items will need to be installed on your OS for eemove to work correctly.
+cmsmove utilizes `rsync`, `ssh`, and `sshpass` (if not using keys for authentication). These items will need to be installed on your OS for cmsmove to work correctly.
 
 You will need to install the Java Runtime Environment (JRE). You can find the latest release for your OS by going here: [Java SE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) and selecting the JRE Download button.
 ## Included libraries
@@ -14,23 +14,23 @@ You will need to install the Java Runtime Environment (JRE). You can find the la
 ## Build instructions
 Includes ANT build file. Compile using `ant compile clean dist`
 
-jar file `eemove.jar` will be created within the newly created **dist** folder.
+jar file `cmsmove.jar` will be created within the newly created **dist** folder.
 
-Or you can download one of the precompiled release via the [releases](https://github.com/sparkison/eemove/releases) tab. (Note: the releases are typically a few commits behind master. For the latest version download and compile the source).
+Or you can download one of the precompiled release via the [releases](https://github.com/sparkison/cmsmove/releases) tab. (Note: the releases are typically a few commits behind master. For the latest version download and compile the source).
 
-Move **eemove.jar** to wherever you like, then `cd` into your ExpressionEngine websites root on your local dev and run using `java -jar /PATH_TO_EEMOVE/eemove.jar`, and simply follow the prompts!
+Move **cmsmove.jar** to wherever you like, then `cd` into your ExpressionEngine websites root on your local dev and run using `java -jar /PATH_TO_EEMOVE/cmsmove.jar`, and simply follow the prompts!
 
-Alternatively, if you get tired of typing out `java -jar ...` every time, you can add eemove as a bash alias. 
+Alternatively, if you get tired of typing out `java -jar ...` every time, you can add cmsmove as a bash alias. 
 To do so, edit your `bash_profile` (E.g. `nano ~/.bash_profile`) and add the following:
 ```
-# Shortcut for eemove
-alias eemove="java -jar /PATH_TO_EEMOVE/eemove.jar"
+# Shortcut for cmsmove
+alias cmsmove="java -jar /PATH_TO_EEMOVE/cmsmove.jar"
 ```
 
-Exit and save your bash profile, and finally reload it (`source ~/.bash_profile`) and you should be able to enter `eemove` at the terminal to display the eemove help screen.
+Exit and save your bash profile, and finally reload it (`source ~/.bash_profile`) and you should be able to enter `cmsmove` at the terminal to display the cmsmove help screen.
 
 ## Useage
-Push uploads to staging environment: `eemove push -l staging -u`
+Push uploads to staging environment: `cmsmove push -l staging -u`
 
 Breakdown of the above command:
 
@@ -50,8 +50,8 @@ Breakdown of the above command:
 
 Helper commands
 
-1. `eemove` displays an example list of commands
-2. `eemove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `eemove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
+1. `cmsmove` displays an example list of commands
+2. `cmsmove fixperms [environment]` attempts to fix permissions on the environment selected (eg. `cmsmove fixperms staging`) using the [recommended settings](https://docs.expressionengine.com/latest/installation/installation.html#file-permissions)
 
 ## Config file example
 
@@ -108,7 +108,7 @@ staging:
 
 ## Additional info
 
-eemove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
+cmsmove assumes your directory structure is with the **system** folder above root per the [ExpressionEngine best practices](https://docs.expressionengine.com/latest/installation/best_practices.html):
 
 ```
 [ExpressionEngine Local dev folder]
@@ -122,8 +122,8 @@ eemove assumes your directory structure is with the **system** folder above root
 |   ├── ee
 |   ├── user
 │   └── ...
-├── eemove.config
-└── eemove.ignore
+├── cmsmove.config
+└── cmsmove.ignore
 ```
 
 You can download my EE project bootstrap here: [ee_bootstrap](https://github.com/sparkison/ee_bootstrap) to get started!
@@ -132,4 +132,4 @@ You can download my EE project bootstrap here: [ee_bootstrap](https://github.com
 
 This project is currently a work in progress... check back often for updates, fixes and amendments
 
-[logo]: https://github.com/sparkison/eemove/blob/master/resources/images/eemove.jpg "eemove logo"
+[logo]: https://github.com/sparkison/cmsmove/blob/master/resources/images/cmsmove.jpg "cmsmove logo"
