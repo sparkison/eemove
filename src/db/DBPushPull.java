@@ -24,8 +24,8 @@ import java.util.Date;
 import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
+import expressionengine.EEConfigReader;
 import helpers.CommandExecuter;
-import helpers.ConfigReader;
 import helpers.Config;
 import util.Extras;
 
@@ -34,7 +34,7 @@ public class DBPushPull implements Extras {
 	// Class variables
 	private Config destConfig, localConfig;
 	private String timestamp;
-	private ConfigReader cr;
+	private EEConfigReader cr;
 	private String type;
 	private CommandExecuter ce;
 
@@ -45,7 +45,7 @@ public class DBPushPull implements Extras {
 	/*
 	 * Constructor
 	 */
-	public DBPushPull(Config destConfig, Config localConfig, String type, ConfigReader cr) {
+	public DBPushPull(Config destConfig, Config localConfig, String type, EEConfigReader cr) {
 		// Set the configurations
 		this.destConfig = destConfig;
 		this.localConfig = localConfig;

@@ -6,7 +6,7 @@
  * 
  */
 
-package helpers;
+package expressionengine;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,9 +20,10 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
+import helpers.Config;
 import util.Extras;
 
-public class ConfigReader implements Extras {
+public class EEConfigReader implements Extras {
 
 	private final String CONF;
 
@@ -40,7 +41,7 @@ public class ConfigReader implements Extras {
 	/*
 	 * Constructor
 	 */
-	public ConfigReader(String configFile) {
+	public EEConfigReader(String configFile) {
 		// Preset some defaults
 		this.sshPassPath = "/usr/local/bin/";
 		this.mysqlPath = "/usr/local/bin/";

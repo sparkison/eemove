@@ -10,8 +10,8 @@ package rsync;
 
 import com.google.common.base.Strings;
 
+import expressionengine.EEConfigReader;
 import helpers.CommandExecuter;
-import helpers.ConfigReader;
 import helpers.Config;
 import util.Extras;
 
@@ -23,11 +23,11 @@ public class PushPull implements Extras {
 	private String host;
 	private String user;
 	private String type;
-	private ConfigReader cr;
+	private EEConfigReader cr;
 	private boolean isDryRun = true;
 	private CommandExecuter ce;
 
-	public PushPull(String src, String dest, String type, boolean dryRun, Config config, ConfigReader cr) {
+	public PushPull(String src, String dest, String type, boolean dryRun, Config config, EEConfigReader cr) {
 		this.src = Extras.CWD + "/" + src;
 		this.dest = dest;
 		this.isDryRun = dryRun;

@@ -17,9 +17,9 @@ import java.util.Scanner;
 import com.google.common.base.Strings;
 
 import db.DBPushPull;
-import helpers.ConfigReader;
+import expressionengine.EEConfigReader;
+import expressionengine.EEPermissionsFixer;
 import helpers.Config;
-import helpers.PermissionsFixer;
 import rsync.PushPull;
 import util.Extras;
 
@@ -32,7 +32,7 @@ public class CMSMove implements Extras {
 	private String eeApp;
 	private String eeSystem;
 	private String uploadDir;
-	private ConfigReader cr;
+	private EEConfigReader cr;
 	private String[] arguments;
 	private boolean eeAboveRoot = true;
 
@@ -60,7 +60,7 @@ public class CMSMove implements Extras {
 			eemoveIgnore();
 			// Instantiate the ConfigReader class for reading and creating our
 			// config file
-			cr = new ConfigReader("eemove.config");
+			cr = new EEConfigReader("eemove.config");
 			// System.out.print(EEExtras.ANSI_YELLOW + "Loading config file..." + EEExtras.ANSI_RESET);
 			/*
 			 * Create or load our config file:
@@ -107,7 +107,7 @@ public class CMSMove implements Extras {
 			if (config.get(parts[1]) == null) {
 				System.out.println("Unable to find environment entered in config file, please try again.");
 			} else {
-				new PermissionsFixer(this.cr, config.get(parts[1]));
+				new EEPermissionsFixer(this.cr, config.get(parts[1]));
 			}
 		}
 		// If not fix perms, need 4 arguments

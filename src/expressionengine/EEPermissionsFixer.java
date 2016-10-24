@@ -6,7 +6,7 @@
  * 
  */
 
-package helpers;
+package expressionengine;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,15 +19,16 @@ import java.io.OutputStream;
 import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
+import helpers.Config;
 import util.Extras;
 
-public class PermissionsFixer {
+public class EEPermissionsFixer {
 
-	private ConfigReader cr;
+	private EEConfigReader cr;
 	private Config config;
 
 	// Constructor
-	public PermissionsFixer(ConfigReader cr, Config config) {
+	public EEPermissionsFixer(EEConfigReader cr, Config config) {
 		this.cr = cr;
 		this.config = config;
 		try {
