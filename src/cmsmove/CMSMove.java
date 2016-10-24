@@ -17,9 +17,11 @@ import java.util.Scanner;
 import com.google.common.base.Strings;
 
 import craft.CRAFTConfigReader;
+import craft.CRAFTSync;
 import db.DBPushPull;
 import expressionengine.EEConfigReader;
 import expressionengine.EEPermissionsFixer;
+import expressionengine.EESync;
 import helpers.Config;
 import helpers.ConfigReader;
 import rsync.PushPull;
@@ -72,6 +74,9 @@ public class CMSMove implements Extras {
 					File eeIgnore = new File("eemove.ignore");
 					eemoveIgnore(eeIgnore);
 				} else {
+					/*
+					 * Not using init command, need to determine which CMS were using
+					 */
 					File craftIgnore = new File("craftmove.ignore");
 					File eeIgnore = new File("eemove.ignore");
 					if (craftIgnore.exists()) {
@@ -90,8 +95,6 @@ public class CMSMove implements Extras {
 					cr = new CRAFTConfigReader("craftmove.config");
 				else if (cmsType.equals("ee"))
 					cr = new EEConfigReader("eemove.config");
-				else
-					cr = new EEConfigReader("eemove.config");
 				
 				/*
 				 * Create or load our config file:
@@ -99,6 +102,7 @@ public class CMSMove implements Extras {
 				 * then prompt user to adjust as needed and exit.
 				 */
 				this.config = cr.getConfig();
+				
 				/*
 				 * If config file read successfully
 				 * grab some of the globals we'll need later
@@ -107,6 +111,7 @@ public class CMSMove implements Extras {
 				this.cmsSystem = cr.getSysDir();
 				this.uploadDir = cr.getUpDir();
 				this.appAboveRoot = cr.isAboveRoot();
+				
 				/*
 				 * Done loading config and getting needed startup info
 				 */
@@ -116,20 +121,17 @@ public class CMSMove implements Extras {
 				e.printStackTrace();
 				System.exit(0);
 			}
-			// If here, config file successfully wrote, or read.
-			eeSyncItUp();
+			
+			// String[] arguments, HashMap<String, Config> config, EEConfigReader cr, String cmsApp, String cmsSystem, String uploadDir, boolean appAboveRoot
+			
+			// Start working!
+			if (cmsType.equals("craft"))
+				new CRAFTSync(this.arguments, this.config, this.cr, this.cmsApp, this.cmsSystem, this.uploadDir, this.appAboveRoot);
+			else if (cmsType.equals("ee"))
+				new EESync(this.arguments, this.config, this.cr, this.cmsApp, this.cmsSystem, this.uploadDir, this.appAboveRoot);
+
 		}
 
-	}
-
-	/*
-	 * Start working!
-	 */
-	private void eeSyncItUp() {
-	
-	}
-	private void craftSyncItUp() {
-		
 	}
 
 	/*

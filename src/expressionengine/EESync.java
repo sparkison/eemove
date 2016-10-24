@@ -1,6 +1,5 @@
 package expressionengine;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -16,23 +15,15 @@ public class EESync {
 
 	// Class variables
 	private HashMap<String, Config> config;
-	private File rsyncIgnore = new File("eemove.ignore");
+	
 	// Folder structure configuration, set some defaults just in case
-	private String cmsApp;
-	private String cmsSystem;
 	private String uploadDir;
 	private ConfigReader cr;
-	private String[] arguments;
-	private boolean appAboveRoot = true;
 
 	// Constructor
-	public EESync(String[] arguments, HashMap<String, Config> config, EEConfigReader cr, String cmsApp, String cmsSystem, String uploadDir, boolean appAboveRoot) {
+	public EESync(String[] arguments, HashMap<String, Config> config, ConfigReader cr, String cmsApp, String cmsSystem, String uploadDir, boolean appAboveRoot) {
 
-		this.arguments = arguments;
 		this.config = config;
-		this.cmsApp = cmsApp;
-		this.cmsSystem = cmsSystem;
-		this.appAboveRoot = appAboveRoot;
 		this.uploadDir = uploadDir;
 		this.cr = cr;
 

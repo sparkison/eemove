@@ -20,15 +20,16 @@ import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
 import helpers.Config;
+import helpers.ConfigReader;
 import util.Extras;
 
 public class EEPermissionsFixer {
 
-	private EEConfigReader cr;
+	private ConfigReader cr;
 	private Config config;
 
 	// Constructor
-	public EEPermissionsFixer(EEConfigReader cr, Config config) {
+	public EEPermissionsFixer(ConfigReader cr, Config config) {
 		this.cr = cr;
 		this.config = config;
 		try {

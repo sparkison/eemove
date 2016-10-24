@@ -19,17 +19,17 @@ import java.io.OutputStream;
 import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
-import craft.CRAFTConfigReader;
 import helpers.Config;
+import helpers.ConfigReader;
 import util.Extras;
 
 public class CRAFTPermissionsFixer {
 
-	private CRAFTConfigReader cr;
+	private ConfigReader cr;
 	private Config config;
 
 	// Constructor
-	public CRAFTPermissionsFixer(CRAFTConfigReader cr, Config config) {
+	public CRAFTPermissionsFixer(ConfigReader cr, Config config) {
 		this.cr = cr;
 		this.config = config;
 		try {
@@ -41,7 +41,6 @@ public class CRAFTPermissionsFixer {
 
 	/*
 	 * If uploading files to server, ensure proper permissions set
-	 * re: https://docs.expressionengine.com/latest/installation/installation.html#file-permissions
 	 */
 	public void fixPermissions() throws IOException {
 		// Notify user of our intent
