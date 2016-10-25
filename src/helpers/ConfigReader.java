@@ -14,6 +14,7 @@ public abstract class ConfigReader {
 	private String upDir;
 	private String sshPassPath;
 	private String mysqlPath;
+	private String ignoreFile;
 	private boolean useKeyAuth;
 	private boolean aboveRoot;
 	
@@ -79,6 +80,10 @@ public abstract class ConfigReader {
 		return cmsVer;
 	}
 	
+	public String getIgnoreFile() {
+		return ignoreFile;
+	}
+	
 	/*
 	 * Setters
 	 */
@@ -121,4 +126,9 @@ public abstract class ConfigReader {
 	public void setCmsVer(Integer cmsVer) {
 		this.cmsVer = cmsVer;
 	}
+	
+	public void setIgnoreFile(String ignoreFile) {
+		this.ignoreFile = ignoreFile;
+	}
+	
 }

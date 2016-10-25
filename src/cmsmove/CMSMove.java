@@ -120,10 +120,14 @@ public class CMSMove implements Extras {
 				}
 
 				// Instantiate the ConfigReader class for reading and creating our config file
-				if (cmsType.equals("craft"))
+				if (cmsType.equals("craft")) {
 					cr = new CRAFTConfigReader("craftmove.config");
-				else if (cmsType.equals("ee"))
+					// Set the ignore file name
+					cr.setIgnoreFile("craftmove.ignore");
+				} else if (cmsType.equals("ee")) {
 					cr = new EEConfigReader("eemove.config");
+					cr.setIgnoreFile("eemove.ignore");
+				}
 
 				/*
 				 * Create or load our config file:

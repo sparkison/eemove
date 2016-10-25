@@ -23,6 +23,7 @@ public class PushPull implements Extras {
 	private String host;
 	private String user;
 	private String type;
+	private String ignoreFile;
 	private ConfigReader cr;
 	private boolean isDryRun = true;
 	private CommandExecuter ce;
@@ -36,6 +37,7 @@ public class PushPull implements Extras {
 		this.user = config.getSshUser();
 		this.host = config.getHost();
 		this.cr = cr;
+		this.ignoreFile = cr.getIgnoreFile();
 		this.ce = new CommandExecuter(config, false);
 		try {
 			push(this.config);
@@ -63,10 +65,10 @@ public class PushPull implements Extras {
 
 		if (type.equals("push"))
 			rsyncCommand = "rsync --progress" + rsyncSsh + " -rlpt --compress --omit-dir-times --delete" + dryRun + " --exclude-from="
-					+ Extras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+					+ Extras.CWD + "/" + ignoreFile + " " + src + " " + user + "@" + host + ":" + dest;
 		else
 			rsyncCommand = "rsync --progress" + rsyncSsh + " -rlpt --compress --omit-dir-times --delete" + dryRun + " --exclude-from="
-					+ Extras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+					+ Extras.CWD + "/"  + ignoreFile + " " + user + "@" + host + ":" + dest + " " + src;
 
 
 		String commandWithAuth = ssh + " " + rsyncCommand;
