@@ -96,12 +96,14 @@ public class EEConfigReader extends ConfigReader implements Extras {
 								}
 							}
 						} else if (keyItem.equalsIgnoreCase("executables")) {
-							Map executables = (LinkedHashMap) subValues.get(subValueKey);
-							for (Object pathItem : executables.keySet()) {
-								if (pathItem.toString().equals("sshpass")) {
-									setSshPassPath(executables.get(pathItem).toString());
-								} else if (pathItem.toString().equals("mysql")) {
-									setMysqlPath(executables.get(pathItem).toString());
+							if(subValues.get(subValueKey) != null) {
+								Map executables = (LinkedHashMap) subValues.get(subValueKey);
+								for (Object pathItem : executables.keySet()) {
+									if (pathItem.toString().equals("sshpass")) {
+										setSshPassPath(executables.get(pathItem).toString());
+									} else if (pathItem.toString().equals("mysql")) {
+										setMysqlPath(executables.get(pathItem).toString());
+									}
 								}
 							}
 						}
@@ -315,6 +317,8 @@ public class EEConfigReader extends ConfigReader implements Extras {
 
 				// Bootstrap config file created
 				// Prompt user to edit the details and re-run eemove
+				System.out.println(Extras.ANSI_YELLOW + "****************************************************"
+						+ Extras.ANSI_RESET);
 				System.out.println(Extras.ANSI_YELLOW + "Config file created." + Extras.ANSI_RESET);
 				System.out.println(Extras.ANSI_YELLOW
 						+ "Please add environments and make adjustments as needed, then run cmsmove again to get started!\n"
