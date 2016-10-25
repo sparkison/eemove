@@ -40,7 +40,8 @@ public class CommandExecuter {
 		/*
 		 * Write out expect command to tmp shell script (if using password authentication
 		 */
-		System.out.println(Extras.ANSI_GREEN + "Executing command: " + command + Extras.ANSI_RESET);
+		
+		// System.out.println(Extras.ANSI_GREEN + "Executing command: " + command + Extras.ANSI_RESET);
 		
 		bashFile.write("#!/bin/bash");
 		bashFile.write("\n");

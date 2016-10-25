@@ -9,8 +9,6 @@
 package cmsmove;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 
 import com.google.common.base.Strings;
