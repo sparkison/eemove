@@ -45,7 +45,7 @@ Breakdown of the above command:
   3. `templates|-t` for the **system/user/templates** directory
   4. `addons|-a` for the **system/user/addons** and **app/themes/user** directories
   5. `public` for the public facing directories
-  6. `ee` for the system directory
+  6. `ee` for the EE core directories
   7. `custom` specify a custom local and remote directory to push/pull to/from
   8. `update` for the **system/ee** and **app/themes/ee** directories as well as the **system/user/config/config.php** file
   9. `database|-d` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
@@ -145,8 +145,8 @@ Breakdown of the above command:
   2. `uploads|-u` for the user defined upload directories
   3. `templates|-t` for the **craft/templates** directory
   4. `plugins|-p` for the **craft/plugins** directory
-  5. `craft` for the public facing directories
-  6. `public` for the system directory
+  5. `craft` for the Craft core directories
+  6. `public` for the public facing directories
   7. `custom` specify a custom local and remote directory to push/pull to/from
   8. `database|-d` for the database (left as separate command; be careful with this one! A backup will be made of both source and destination first should the worst happen). **NOTE** Must use with `-l` flag, will be ignored if using `-d`
 
