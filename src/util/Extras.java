@@ -8,7 +8,7 @@
 
 package util;
 
-public interface EEExtras {
+public interface Extras {
 
 	/*
 	 * Some colors, just for fun! ;) Using to colorize the outputs of eemove
@@ -35,7 +35,7 @@ public interface EEExtras {
 	public static final String OS = System.getProperty("os.name");
 	
 	/*
-	 * Directories
+	 * EE Directories
 	 * Directories for EE2 and EE3 (currently used in main EEMove class)
 	 * 
 	 */
@@ -65,6 +65,14 @@ public interface EEExtras {
 	public static String EE2_TEMPLATES = "/expressionengine/templates/";
 	public static String EE3_TEMPLATE_RESOURCES = "/dist/"; // The template resources; css, js, etc.
 	public static String EE2_TEMPLATE_RESOURCES = "/dist/"; // The template resources; css, js, etc.
+	
+	/*
+	 * Craft Directories
+	 */
+	public static String CRAFT_APP = "/app/";
+	public static String CRAFT_CONFIG = "/config/";
+	public static String CRAFT_PLUGINS = "/plugins/";
+	public static String CRAFT_TEMPLATES = "/templates/";
 	
 }
 

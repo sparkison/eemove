@@ -7,19 +7,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import ch.ethz.ssh2.StreamGobbler;
-import util.EEExtras;
+import util.Extras;
 
 public class CommandExecuter {
 
-	private final EEconfig config;
+	private final Config config;
 	private final boolean indicator;
 
-	public CommandExecuter(EEconfig config, boolean indicator) {
+	public CommandExecuter(Config config, boolean indicator) {
 		this.config = config;
 		this.indicator = indicator;		
 	}
@@ -43,7 +40,8 @@ public class CommandExecuter {
 		/*
 		 * Write out expect command to tmp shell script (if using password authentication
 		 */
-		System.out.println(EEExtras.ANSI_GREEN + "Executing command: " + command + EEExtras.ANSI_RESET);
+		
+		// System.out.println(Extras.ANSI_GREEN + "Executing command: " + command + Extras.ANSI_RESET);
 		
 		bashFile.write("#!/bin/bash");
 		bashFile.write("\n");
@@ -91,14 +89,14 @@ public class CommandExecuter {
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
 				if(!val.contains("stdin: is not a tty"))
-					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+					System.err.println(Extras.ANSI_RED + ">>[Error]: " + val + Extras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW
+				System.out.println(Extras.ANSI_YELLOW
 						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
-						+ EEExtras.ANSI_RESET);
+						+ Extras.ANSI_RESET);
 			}
 
 			// Clean up
@@ -121,6 +119,8 @@ public class CommandExecuter {
 		return cmd
 				.replace("$","\\$")
 				.replace(";","\\;")
+				.replace(")","\\)")
+				.replace("(","\\(")
 				.replace("\"","\\\"");
 	}
 

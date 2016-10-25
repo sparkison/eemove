@@ -11,15 +11,15 @@ package rsync;
 import com.google.common.base.Strings;
 
 import helpers.CommandExecuter;
+import helpers.Config;
 import helpers.ConfigReader;
-import helpers.EEconfig;
-import util.EEExtras;
+import util.Extras;
 
-public class EEPushPull implements EEExtras {
+public class PushPull implements Extras {
 
 	private String src;
 	private String dest;
-	private EEconfig config;
+	private Config config;
 	private String host;
 	private String user;
 	private String type;
@@ -27,8 +27,8 @@ public class EEPushPull implements EEExtras {
 	private boolean isDryRun = true;
 	private CommandExecuter ce;
 
-	public EEPushPull(String src, String dest, String type, boolean dryRun, EEconfig config, ConfigReader cr) {
-		this.src = EEExtras.CWD + "/" + src;
+	public PushPull(String src, String dest, String type, boolean dryRun, Config config, ConfigReader cr) {
+		this.src = Extras.CWD + "/" + src;
 		this.dest = dest;
 		this.isDryRun = dryRun;
 		this.type = type;
@@ -45,7 +45,7 @@ public class EEPushPull implements EEExtras {
 		}
 	}
 
-	private void push(EEconfig config) throws Exception {
+	private void push(Config config) throws Exception {
 		// Currently uses passwordless SSH keys to login, will be prompted for
 		// password if not set
 		String dryRun = "";
@@ -55,7 +55,7 @@ public class EEPushPull implements EEExtras {
 
 		String ssh = "";
 		String rsyncSsh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			rsyncSsh = " -e 'ssh -i " + cr.getKeyfile() + "'";
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e";
@@ -63,24 +63,24 @@ public class EEPushPull implements EEExtras {
 
 		if (type.equals("push"))
 			rsyncCommand = "rsync --progress" + rsyncSsh + " -rlpt --compress --omit-dir-times --delete" + dryRun + " --exclude-from="
-					+ EEExtras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
+					+ Extras.CWD + "/eemove.ignore " + src + " " + user + "@" + host + ":" + dest;
 		else
 			rsyncCommand = "rsync --progress" + rsyncSsh + " -rlpt --compress --omit-dir-times --delete" + dryRun + " --exclude-from="
-					+ EEExtras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
+					+ Extras.CWD + "/eemove.ignore " + user + "@" + host + ":" + dest + " " + src;
 
 
 		String commandWithAuth = ssh + " " + rsyncCommand;
 
 		String consolMsg = "";
 		if( ! this.ce.executeCommand( commandWithAuth ) ) {
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute MYSQL command " + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute MYSQL command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 
 		consolMsg = Strings.padEnd(
-				"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Complete! " + EEExtras.ANSI_RESET, 80, '▬');
+				"▬▬ ✓ " + Extras.ANSI_CYAN + "Complete! " + Extras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 
 	}

@@ -8,7 +8,7 @@
 
 package helpers;
 
-public class EEconfig {
+public class Config {
 
 	private String environment;
 	private String host;
@@ -22,7 +22,7 @@ public class EEconfig {
 	private String dbHost;
 	private String dbPort;
 
-	public EEconfig(String environment, String host, String directory, String sshUser, String sshPass, String sshPort, String database,
+	public Config(String environment, String host, String directory, String sshUser, String sshPass, String sshPort, String database,
 			String dbUser, String dbPass, String dbHost, String dbPort) {
 		this.environment = environment;
 		this.host = host;

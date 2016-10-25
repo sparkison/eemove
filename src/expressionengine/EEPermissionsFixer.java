@@ -6,7 +6,7 @@
  * 
  */
 
-package helpers;
+package expressionengine;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,15 +19,17 @@ import java.io.OutputStream;
 import com.google.common.base.Strings;
 
 import ch.ethz.ssh2.StreamGobbler;
-import util.EEExtras;
+import helpers.Config;
+import helpers.ConfigReader;
+import util.Extras;
 
-public class PermissionsFixer {
+public class EEPermissionsFixer {
 
 	private ConfigReader cr;
-	private EEconfig config;
+	private Config config;
 
 	// Constructor
-	public PermissionsFixer(ConfigReader cr, EEconfig config) {
+	public EEPermissionsFixer(ConfigReader cr, Config config) {
 		this.cr = cr;
 		this.config = config;
 		try {
@@ -43,14 +45,14 @@ public class PermissionsFixer {
 	 */
 	public void fixPermissions() throws IOException {
 		// Notify user of our intent
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_CYAN + "Updating permissions " + EEExtras.ANSI_RESET, 80, '▬');
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + "Updating permissions " + Extras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 		// Grab the system and app directories
 		String sysDest = "";
 		String appDest = config.getDirectory();
 		String envDirParts[] = config.getDirectory().split("/");
 		// Determine if system is above root or not
-		if (cr.aboveRoot == true) {
+		if (cr.isAboveRoot() == true) {
 			for (int i = 0; i < envDirParts.length - 1; i++) {
 				if (envDirParts[i].equals("")) {
 					sysDest += "/";
@@ -63,8 +65,8 @@ public class PermissionsFixer {
 		}
 		// Determine if we have custom upload directory
 		String uploadDirPerms = "";
-		if(!cr.upDir.equals("")) 
-			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.upDir;
+		if(!cr.getUpDir().equals("")) 
+			uploadDirPerms = " && chmod -R 777 " + appDest + "/" + cr.getUpDir();
 
 		// Build the command
 		String command = "find " + appDest + " -type f -exec chmod 644 {} \\;"
@@ -76,7 +78,7 @@ public class PermissionsFixer {
 					+ " && find " + sysDest + " -type d -exec chmod 755 {} \\;";
 		}
 
-		if(cr.eeVer == 3) {
+		if(cr.getCmsVer() == 3) {
 			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/cache/"
 					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/user/templates/"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/user/config/config.php"
@@ -89,7 +91,7 @@ public class PermissionsFixer {
 					+ " && chmod -R 777 " + appDest + "/images/pm_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/uploads/";
-		} else if(cr.eeVer == 2) {
+		} else if(cr.getCmsVer() == 2) {
 			command += " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/cache/"
 					+ " && chmod -R 777 " + sysDest + cr.getSysDir() + "/expressionengine/templates/"
 					+ " && chmod 666 " + sysDest + cr.getSysDir() + "/expressionengine/config/config.php"
@@ -103,13 +105,13 @@ public class PermissionsFixer {
 					+ " && chmod -R 777 " + appDest + "/images/signature_attachments/"
 					+ " && chmod -R 777 " + appDest + "/images/uploads/";
 		} else {
-			System.out.println("ExpressionEngine version " + cr.eeVer + " not supported, please update config and try again.");
+			System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
 			System.exit(1);
 		}
 
 		// Create the session and execute command on desired environment
 		String ssh = "";
-		if( cr.useKeyAuth ) {
+		if( cr.isUseKeyAuth() ) {
 			ssh = "ssh -i " + cr.getKeyfile() + " " + config.getSshUser() + "@" + config.getHost();
 		} else {
 			ssh = cr.getSshPassPath() + "sshpass -e ssh " + config.getSshUser() + "@" + config.getHost();
@@ -118,17 +120,17 @@ public class PermissionsFixer {
 		String commandWithAuth = ssh + " '" + command + "'";
 
 		// Show user the command we're sending
-		System.out.println(EEExtras.ANSI_PURPLE + "\tremote | " + EEExtras.ANSI_RESET + commandWithAuth);
+		System.out.println(Extras.ANSI_PURPLE + "\tremote | " + Extras.ANSI_RESET + commandWithAuth);
 
 		if( ! executeCommand( commandWithAuth ) ) {
-			consolMsg = Strings.padEnd("▬▬ ✓ " + EEExtras.ANSI_RED + "Error: unable to execute CHMOD command " + EEExtras.ANSI_RESET, 80, '▬');
+			consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_RED + "Error: unable to execute CHMOD command " + Extras.ANSI_RESET, 80, '▬');
 			System.out.println(consolMsg);
-			System.out.println(EEExtras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + EEExtras.ANSI_RESET);
+			System.out.println(Extras.ANSI_YELLOW + "Please double check your credentials and eemove config file and try again" + Extras.ANSI_RESET);
 			System.exit(-1);
 		}
 
 		consolMsg = Strings.padEnd(
-				"▬▬ ✓ " + EEExtras.ANSI_CYAN + "Complete! " + EEExtras.ANSI_RESET, 80, '▬');
+				"▬▬ ✓ " + Extras.ANSI_CYAN + "Complete! " + Extras.ANSI_RESET, 80, '▬');
 		System.out.println(consolMsg);
 	}
 
@@ -192,14 +194,14 @@ public class PermissionsFixer {
 			// Print errors stdout so user knows what went wrong
 			while ((val = brErr.readLine()) != null) {
 				if(!val.contains("stdin: is not a tty"))
-					System.err.println(EEExtras.ANSI_RED + ">>[Error]: " + val + EEExtras.ANSI_RESET);
+					System.err.println(Extras.ANSI_RED + ">>[Error]: " + val + Extras.ANSI_RESET);
 			}
 			int exitVal = proc.waitFor();
 
 			if (exitVal != 0) {
-				System.out.println(EEExtras.ANSI_YELLOW
+				System.out.println(Extras.ANSI_YELLOW
 						+ ">>[Warning]: There might have been a problem executing the command. Please double check everything worked as expected."
-						+ EEExtras.ANSI_RESET);
+						+ Extras.ANSI_RESET);
 			}
 
 			// Clean up
