@@ -118,6 +118,8 @@ public class CommandExecuter {
 		return cmd
 				.replace("$","\\$")
 				.replace(";","\\;")
+				.replace(")","\\)")
+				.replace("(","\\(")
 				.replace("\"","\\\"");
 	}
 
