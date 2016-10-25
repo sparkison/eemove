@@ -39,15 +39,9 @@ public class CRAFTIgnore {
 			ignoreFile.write("\n");
 			ignoreFile.write("bower_components");
 			ignoreFile.write("\n");
-			ignoreFile.write("sized/");
+			ignoreFile.write("# ignore craft core in the case it's in same directory as app");
 			ignoreFile.write("\n");
-			ignoreFile.write("thumbs/");
-			ignoreFile.write("\n");
-			ignoreFile.write("_thumbs/");
-			ignoreFile.write("\n");
-			ignoreFile.write("# ignore system in the case it's in same directory as app");
-			ignoreFile.write("\n");
-			ignoreFile.write("app");
+			ignoreFile.write("craft");
 			ignoreFile.write("\n");
 			ignoreFile.write("craftmove.config");
 			ignoreFile.write("\n");
