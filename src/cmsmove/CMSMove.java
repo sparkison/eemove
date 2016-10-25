@@ -16,8 +16,10 @@ import java.util.HashMap;
 import com.google.common.base.Strings;
 
 import craft.CRAFTConfigReader;
+import craft.CRAFTIgnore;
 import craft.CRAFTSync;
 import expressionengine.EEConfigReader;
+import expressionengine.EEIgnore;
 import expressionengine.EESync;
 import helpers.Config;
 import helpers.ConfigReader;
@@ -93,11 +95,11 @@ public class CMSMove implements Extras {
 			try {
 				// Attempt to create move ignore file, if not created
 				if (cmsType.equals("craft")) {
-					File craftIgnore = new File("craftmove.ignore");
-					craftmoveIgnore(craftIgnore);
+					CRAFTIgnore ignore = new CRAFTIgnore(new File("craftmove.ignore"));
+					ignore.init();
 				} else if (cmsType.equals("ee")) {
-					File eeIgnore = new File("eemove.ignore");
-					eemoveIgnore(eeIgnore);
+					EEIgnore ignore = new EEIgnore(new File("eemove.ignore"));
+					ignore.init();
 				} else {
 					/*
 					 * Not using init command, need to determine which CMS were using
@@ -242,102 +244,6 @@ public class CMSMove implements Extras {
 		returnString += "\"cmsmove pull -l staging public\"\t\t(pulls public_html directory from desired environment)\n";
 		returnString += "\"cmsmove pull -l staging database(-d)\"\t\t(pulls database from desired environment)\n\n" + Extras.ANSI_RESET;
 		return returnString;
-	}
-
-	/**
-	 * See if EE ignore file exists, and create it if not
-	 * 
-	 * @param rsyncIgnore
-	 * @throws IOException
-	 */
-	private void eemoveIgnore(File rsyncIgnore) throws IOException {
-		if (!rsyncIgnore.exists()) {
-			FileWriter ignoreFile = new FileWriter(rsyncIgnore);
-			ignoreFile.write("*.sql");
-			ignoreFile.write("\n");
-			ignoreFile.write("*.swp");
-			ignoreFile.write("\n");
-			ignoreFile.write(".git");
-			ignoreFile.write("\n");
-			ignoreFile.write(".sass-cache");
-			ignoreFile.write("\n");
-			ignoreFile.write(".DS_Store");
-			ignoreFile.write("\n");
-			ignoreFile.write("npm-debug.log");
-			ignoreFile.write("\n");
-			ignoreFile.write("db_backups");
-			ignoreFile.write("\n");
-			ignoreFile.write("node_modules");
-			ignoreFile.write("\n");
-			ignoreFile.write("bower_components");
-			ignoreFile.write("\n");
-			ignoreFile.write("sized/");
-			ignoreFile.write("\n");
-			ignoreFile.write("thumbs/");
-			ignoreFile.write("\n");
-			ignoreFile.write("_thumbs/");
-			ignoreFile.write("\n");
-			ignoreFile.write("# ignore system in the case it's in same directory as app");
-			ignoreFile.write("\n");
-			ignoreFile.write("system");
-			ignoreFile.write("\n");
-			ignoreFile.write("/user/cache/");
-			ignoreFile.write("\n");
-			ignoreFile.write("eemove.config");
-			ignoreFile.write("\n");
-			ignoreFile.write("eemove.ignore");
-			ignoreFile.write("\n");
-			ignoreFile.close();
-		}
-		rsyncIgnore.setExecutable(true);
-		rsyncIgnore.setReadable(true);
-	}
-
-	/**
-	 * See if Craft ignore file exists, and create it if not
-	 * 
-	 * @param rsyncIgnore
-	 * @throws IOException
-	 */
-	private void craftmoveIgnore(File rsyncIgnore) throws IOException {
-		if (!rsyncIgnore.exists()) {
-			FileWriter ignoreFile = new FileWriter(rsyncIgnore);
-			ignoreFile.write("*.sql");
-			ignoreFile.write("\n");
-			ignoreFile.write("*.swp");
-			ignoreFile.write("\n");
-			ignoreFile.write(".git");
-			ignoreFile.write("\n");
-			ignoreFile.write(".sass-cache");
-			ignoreFile.write("\n");
-			ignoreFile.write(".DS_Store");
-			ignoreFile.write("\n");
-			ignoreFile.write("npm-debug.log");
-			ignoreFile.write("\n");
-			ignoreFile.write("db_backups");
-			ignoreFile.write("\n");
-			ignoreFile.write("node_modules");
-			ignoreFile.write("\n");
-			ignoreFile.write("bower_components");
-			ignoreFile.write("\n");
-			ignoreFile.write("sized/");
-			ignoreFile.write("\n");
-			ignoreFile.write("thumbs/");
-			ignoreFile.write("\n");
-			ignoreFile.write("_thumbs/");
-			ignoreFile.write("\n");
-			ignoreFile.write("# ignore system in the case it's in same directory as app");
-			ignoreFile.write("\n");
-			ignoreFile.write("app");
-			ignoreFile.write("\n");
-			ignoreFile.write("craftmove.config");
-			ignoreFile.write("\n");
-			ignoreFile.write("craftmove.ignore");
-			ignoreFile.write("\n");
-			ignoreFile.close();
-		}
-		rsyncIgnore.setExecutable(true);
-		rsyncIgnore.setReadable(true);
 	}
 
 }
