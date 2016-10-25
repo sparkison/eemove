@@ -42,7 +42,7 @@ public class CRAFTSync {
 		String runType = "";
 		String environment = "";
 		String directory = "";
-		
+
 		// Determine what the command is
 		if (parts.length == 2 && parts[0].equalsIgnoreCase("fixperms")) {
 			if (config.get(parts[1]) == null) {
@@ -220,11 +220,8 @@ public class CRAFTSync {
 	private void syncPlugins(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Plugins ", 80, '▬');
 		System.out.println(consolMsg);
-		
 		sysSrc += Extras.CRAFT_PLUGINS;
 		sysDest += Extras.CRAFT_PLUGINS;
-		
-		new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
 
@@ -241,28 +238,16 @@ public class CRAFTSync {
 	 * @param thisConfig
 	 */
 	private void syncUploads(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
-		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Uploads ", 80, '▬');
-		System.out.println(consolMsg);
-		String uploadSrc = "";
-		String uploadDest = "";
-		if(cr.getCmsVer() == 3) {
-			uploadSrc = appSrc + Extras.EE3_IMAGE_UPLOADS;
-			uploadDest = appDest + Extras.EE3_IMAGE_UPLOADS;
-		} else if(cr.getCmsVer() == 2) {
-			uploadSrc = appSrc + Extras.EE2_IMAGE_UPLOADS;
-			uploadDest = appDest + Extras.EE2_IMAGE_UPLOADS;
-		} else {
-			System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
-			System.exit(1);
-		}
-
-		new PushPull(uploadSrc, uploadDest, type, isDryRun, thisConfig, cr);
+		String consolMsg = "";
 		if (!uploadDir.equals("")) {
 			consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Custom Uploads Directory ", 80, '▬');
 			System.out.println(consolMsg);
 			String customUploadSrc = appSrc + "/" + uploadDir + "/";
 			String customUploadDest = appDest + "/" + uploadDir + "/";
 			new PushPull(customUploadSrc, customUploadDest, type, isDryRun, thisConfig, cr);
+		} else {
+			consolMsg = Extras.ANSI_YELLOW + "Nothing to do. No custom upload directories defined." + Extras.ANSI_RESET;
+			System.out.println(consolMsg);
 		}
 	}
 
@@ -281,22 +266,8 @@ public class CRAFTSync {
 	private void syncTemplates(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig) {
 		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Templates ", 80, '▬');
 		System.out.println(consolMsg);
-		if(cr.getCmsVer() == 3) {
-			appSrc += Extras.EE3_TEMPLATE_RESOURCES;
-			appDest += Extras.EE3_TEMPLATE_RESOURCES;
-			sysSrc += Extras.EE3_TEMPLATES;
-			sysDest += Extras.EE3_TEMPLATES;
-		} else if(cr.getCmsVer() == 2) {
-			appSrc += Extras.EE2_TEMPLATE_RESOURCES;
-			appDest += Extras.EE2_TEMPLATE_RESOURCES;
-			sysSrc += Extras.EE2_TEMPLATES;
-			sysDest += Extras.EE2_TEMPLATES;
-		} else {
-			System.out.println("ExpressionEngine version " + cr.getCmsVer() + " not supported, please update config and try again.");
-			System.exit(1);
-		}
-
-		new PushPull(appSrc, appDest, type, isDryRun, thisConfig, cr);
+		sysSrc += Extras.CRAFT_TEMPLATES;
+		sysDest += Extras.CRAFT_TEMPLATES;
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
 

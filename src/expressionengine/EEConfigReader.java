@@ -317,7 +317,7 @@ public class EEConfigReader extends ConfigReader implements Extras {
 				// Prompt user to edit the details and re-run eemove
 				System.out.println(Extras.ANSI_YELLOW + "Config file created." + Extras.ANSI_RESET);
 				System.out.println(Extras.ANSI_YELLOW
-						+ "Please add environments and make adjustments as needed, then run eemove again to get started!\n"
+						+ "Please add environments and make adjustments as needed, then run cmsmove again to get started!\n"
 						+ Extras.ANSI_RESET);
 				System.out.println(Extras.ANSI_YELLOW + "****************************************************"
 						+ Extras.ANSI_RESET);

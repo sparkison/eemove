@@ -182,13 +182,13 @@ public class CRAFTConfigReader extends ConfigReader implements Extras {
 	public void confInit() {
 		// Create an example config file if not exist
 		FileWriter outFile;
-		File eemoveConfig = new File(this.getConf());
-		if (!eemoveConfig.exists()) {
+		File craftmoveConfig = new File(this.getConf());
+		if (!craftmoveConfig.exists()) {
 			System.out.println(Extras.ANSI_YELLOW
 					+ "\n It looks like you don't have a config file created yet. Creating one for you now...\n"
 					+ Extras.ANSI_RESET);
 			try {
-				outFile = new FileWriter(eemoveConfig);
+				outFile = new FileWriter(craftmoveConfig);
 				StringBuilder sb = new StringBuilder();
 				Formatter formatter = new Formatter(sb);
 				String line;
@@ -312,7 +312,7 @@ public class CRAFTConfigReader extends ConfigReader implements Extras {
 				// Prompt user to edit the details and re-run eemove
 				System.out.println(Extras.ANSI_YELLOW + "Config file created." + Extras.ANSI_RESET);
 				System.out.println(Extras.ANSI_YELLOW
-						+ "Please add environments and make adjustments as needed, then run eemove again to get started!\n"
+						+ "Please add environments and make adjustments as needed, then run cmsmove again to get started!\n"
 						+ Extras.ANSI_RESET);
 				System.out.println(Extras.ANSI_YELLOW + "****************************************************"
 						+ Extras.ANSI_RESET);
