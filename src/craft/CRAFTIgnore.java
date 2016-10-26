@@ -43,6 +43,8 @@ public class CRAFTIgnore {
 			ignoreFile.write("\n");
 			ignoreFile.write("craft");
 			ignoreFile.write("\n");
+			ignoreFile.write("craft/storage/runtime/");
+			ignoreFile.write("\n");
 			ignoreFile.write("craftmove.config");
 			ignoreFile.write("\n");
 			ignoreFile.write("craftmove.ignore");
