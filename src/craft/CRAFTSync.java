@@ -128,6 +128,9 @@ public class CRAFTSync {
 				} else if (directory.equalsIgnoreCase("custom") || directory.equalsIgnoreCase("-c")) {
 					// Push/Pull user specified folder/file
 					syncCustom(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
+				} else if (directory.equalsIgnoreCase("config")) {
+					// Push/Pull Craft config folder/file
+					syncConfig(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);
 				} else if (directory.equalsIgnoreCase("database") || directory.equalsIgnoreCase("-d")) {
 					// Database push/pull doesn't support dry-run, tell
 					syncDatabase(pushPull, appSrc, appDest, sysSrc, sysDest, type, isDryRun, thisConfig);				
@@ -202,6 +205,26 @@ public class CRAFTSync {
 		System.out.println(consolMsg);
 		sysSrc += "/";
 		sysDest += "/";
+		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
+	}
+	
+	/**
+	 * Sync the Craft config folder
+	 * 
+	 * @param pushPull
+	 * @param appSrc
+	 * @param appDest
+	 * @param sysSrc
+	 * @param sysDest
+	 * @param type
+	 * @param isDryRun
+	 * @param thisConfig
+	 */
+	private void syncConfig(String pushPull, String appSrc, String appDest, String sysSrc, String sysDest, String type, boolean isDryRun, Config thisConfig){
+		String consolMsg = Strings.padEnd("▬▬ ✓ " + Extras.ANSI_CYAN + pushPull + Extras.ANSI_RESET + " Craft config ", 80, '▬');
+		System.out.println(consolMsg);
+		sysSrc += Extras.CRAFT_CONFIG;
+		sysDest += Extras.CRAFT_CONFIG;
 		new PushPull(sysSrc, sysDest, type, isDryRun, thisConfig, cr);
 	}
 
