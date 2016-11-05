@@ -121,6 +121,7 @@ public class CommandExecuter {
 				.replace(";","\\;")
 				.replace(")","\\)")
 				.replace("(","\\(")
+				.replace("&","\\&")
 				.replace("\"","\\\"");
 	}
 
