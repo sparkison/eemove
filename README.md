@@ -1,7 +1,10 @@
-# cmsmove
+# eemove
 Automated deployment for ExpressionEngine and Craft websites!
 ![alt text][logo]
 ---
+
+## NOTE
+This project is being abandoned in favor of a new port [cmsmove](https://github.com/sparkison/cmsmove) which uses the Composer CLI to allow for easier installation and upgrades. Go check it out!
 
 ## Dependencies
 cmsmove utilizes `rsync`, `ssh`, and `sshpass` (if not using keys for authentication). These items will need to be installed on your OS for cmsmove to work correctly.
